@@ -55,7 +55,12 @@ type ExperienceCategory = "Work" | "Clubs" | "Other";
 
 type ExperienceItem = {
   category: ExperienceCategory;
-  logo: string;
+  logo: {
+    alt: string;
+    image?: string;
+    text: string;
+    variant: string;
+  };
   title: string;
   org: string;
   date: string;
@@ -111,7 +116,7 @@ type PlaylistSlot = {
 
 const praxigenSignals = [
   { label: "Clinical Note", value: "3 missing criteria found" },
-  { label: "Payer Rule", value: "UHC / CPT 27447" },
+  { label: "Payer Rule", value: "UHC · CPT 27447" },
   { label: "Follow Up", value: "Adjuster due in 3 days" },
   { label: "Status", value: "Ready to submit" },
 ];
@@ -183,7 +188,11 @@ const experienceTabs: ExperienceCategory[] = ["Work", "Clubs", "Other"];
 const experiences: ExperienceItem[] = [
   {
     category: "Work",
-    logo: "MBC",
+    logo: {
+      alt: "Michigan Blockchain Consulting",
+      text: "MBC",
+      variant: "logo-mbc",
+    },
     title: "Project Manager / Business Analyst",
     org: "Michigan Blockchain Consulting",
     date: "Aug 2025 - Present",
@@ -193,7 +202,11 @@ const experiences: ExperienceItem[] = [
   },
   {
     category: "Work",
-    logo: "DNA",
+    logo: {
+      alt: "Michigan Medicine",
+      text: "MM",
+      variant: "logo-medicine",
+    },
     title: "Research Assistant",
     org: "Michigan Medicine, Department of Human Genetics",
     date: "Aug 2025 - Present",
@@ -203,7 +216,11 @@ const experiences: ExperienceItem[] = [
   },
   {
     category: "Work",
-    logo: "MM",
+    logo: {
+      alt: "University of Michigan",
+      text: "M",
+      variant: "logo-michigan",
+    },
     title: "Research Assistant",
     org: "Michigan Medicine + College of Engineering",
     date: "Nov 2024 - Sep 2025",
@@ -213,7 +230,11 @@ const experiences: ExperienceItem[] = [
   },
   {
     category: "Work",
-    logo: "NP",
+    logo: {
+      alt: "Neuropsychiatry and forensic neurology practice",
+      text: "NF",
+      variant: "logo-neuro",
+    },
     title: "Neuropsychiatry Intern",
     org: "Private neuropsychiatry and forensic neurology practice",
     date: "May 2025 - Aug 2025",
@@ -223,7 +244,11 @@ const experiences: ExperienceItem[] = [
   },
   {
     category: "Clubs",
-    logo: "CSA",
+    logo: {
+      alt: "Cancer Screening Advocates",
+      text: "CSA",
+      variant: "logo-csa",
+    },
     title: "President and Founding Campus Lead",
     org: "Cancer Screening Advocates",
     date: "Nov 2025 - Present",
@@ -233,7 +258,11 @@ const experiences: ExperienceItem[] = [
   },
   {
     category: "Clubs",
-    logo: "PSE",
+    logo: {
+      alt: "Pi Sigma Epsilon",
+      text: "PSE",
+      variant: "logo-pse",
+    },
     title: "DEI Director and Council Member",
     org: "Pi Sigma Epsilon",
     date: "Sep 2024 - Present",
@@ -243,7 +272,11 @@ const experiences: ExperienceItem[] = [
   },
   {
     category: "Clubs",
-    logo: "PDE",
+    logo: {
+      alt: "Phi Delta Epsilon",
+      text: "PhiDE",
+      variant: "logo-phide",
+    },
     title: "Marketing and Public Relations Chair",
     org: "Phi Delta Epsilon",
     date: "Nov 2024 - Present",
@@ -253,7 +286,11 @@ const experiences: ExperienceItem[] = [
   },
   {
     category: "Other",
-    logo: "MUS",
+    logo: {
+      alt: "Music",
+      text: "MUS",
+      variant: "logo-music",
+    },
     title: "Music and performance loops",
     org: "Guitar, piano, DJing, and playlist curation",
     date: "Ongoing",
@@ -263,7 +300,11 @@ const experiences: ExperienceItem[] = [
   },
   {
     category: "Other",
-    logo: "PB",
+    logo: {
+      alt: "Pickleball",
+      text: "PB",
+      variant: "logo-pickleball",
+    },
     title: "Pickleball and fast feedback",
     org: "Recreation, competition, and movement",
     date: "Now",
@@ -462,15 +503,17 @@ function IconLink({
   href,
   label,
   icon: Icon,
+  iconOnly = false,
 }: {
   href: string;
   label: string;
   icon: LucideIcon;
+  iconOnly?: boolean;
 }) {
   return (
     <a href={href} target="_blank" rel="noreferrer" aria-label={label}>
       <Icon size={18} strokeWidth={1.9} />
-      <span>{label}</span>
+      <span className={iconOnly ? "sr-only" : undefined}>{label}</span>
     </a>
   );
 }
@@ -650,9 +693,9 @@ function PortfolioHome() {
             </a>
           </div>
           <div className="social-strip" aria-label="External profiles">
-            <IconLink href={links.linkedin} label="LinkedIn" icon={Linkedin} />
-            <IconLink href={links.github} label="GitHub" icon={Github} />
-            <IconLink href={links.x} label="X / Twitter" icon={X} />
+            <IconLink href={links.linkedin} label="LinkedIn" icon={Linkedin} iconOnly />
+            <IconLink href={links.github} label="GitHub" icon={Github} iconOnly />
+            <IconLink href={links.x} label="X / Twitter" icon={X} iconOnly />
           </div>
         </div>
       </header>
@@ -698,10 +741,16 @@ function PortfolioHome() {
                 <span />
                 <span />
               </div>
+              <div className="praxigen-preview-nav">
+                <strong>Praxigen</strong>
+                <span>PA Lookup</span>
+                <span>Note Checker</span>
+                <span>Cases</span>
+              </div>
               <div className="spotlight-interface-header">
-                <span>Product Demo</span>
+                <span>Praxigen / Product Demo</span>
                 <strong>One workflow. Every payer step.</strong>
-                <p>Praxigen reads the note, checks payer rules, strengthens documentation, and tracks the case.</p>
+                <p>Praxigen reads the note, checks payer requirements, strengthens documentation, and tracks the case until the office gets an answer.</p>
               </div>
               <div className="praxigen-signal-grid">
                 {praxigenSignals.map((signal) => (
@@ -715,6 +764,10 @@ function PortfolioHome() {
                 {praxigenSteps.map((step) => (
                   <span key={step}>{step}</span>
                 ))}
+              </div>
+              <div className="praxigen-request-row">
+                <span>Toolkit</span>
+                <strong>Lookup · document · track · appeal</strong>
               </div>
             </div>
           </article>
@@ -769,23 +822,35 @@ function PortfolioHome() {
                   </div>
                   {project.preview === "crm" ? (
                     <>
+                      <div className="mini-back-link">Back home</div>
                       <div className="mini-interface-header">
                         <span>UStart League / Season 04</span>
                         <strong>Sign in to your team workspace.</strong>
-                        <p>Google Sheets stays the source of truth. The CRM makes it usable.</p>
+                        <p>Use your Google account. Your team's Google Sheet stays the source of truth — UStart just makes it usable.</p>
                       </div>
                       <div className="mini-login-button">Continue with Google</div>
+                      <div className="mini-access-note">Sheets + Drive access requested by the league manager. Admin access is granted by the league manager.</div>
                       <div className="mini-quote">
                         <span>// Validation Engine</span>
                         <p>"If you can give me back two hours every morning, take my money."</p>
+                        <small>— Dr. Priya Mehta · interview #47 · Helix Health</small>
                       </div>
                     </>
                   ) : (
                     <>
+                      <div className="grndwork-mini-nav">
+                        <strong><span /> grndwork</strong>
+                        <em>Join Early Access</em>
+                      </div>
+                      <div className="mini-pill">Now in early access</div>
                       <div className="mini-interface-header">
                         <span>grndwork</span>
                         <strong>Discover your path. Land your future.</strong>
-                        <p>Career clarity, internships, tracking, and outreach guidance.</p>
+                        <p>Helping students go from not knowing what to pursue to landing real opportunities.</p>
+                      </div>
+                      <div className="grndwork-mini-actions">
+                        <span>Join Early Access</span>
+                        <span>Learn More</span>
                       </div>
                       <div className="grndwork-metrics">
                         {grndworkMetrics.map((metric) => (
@@ -883,8 +948,12 @@ function PortfolioHome() {
         <div className="experience-list">
           {activeExperiences.map((experience) => (
             <article className="experience-item" key={`${experience.org}-${experience.title}`}>
-              <div className="experience-logo" aria-hidden="true">
-                {experience.logo}
+              <div className={`experience-logo ${experience.logo.variant}`} aria-label={experience.logo.alt}>
+                {experience.logo.image ? (
+                  <img src={experience.logo.image} alt="" loading="lazy" />
+                ) : (
+                  <span>{experience.logo.text}</span>
+                )}
               </div>
               <div className="experience-body">
                 <div className="experience-title-row">
