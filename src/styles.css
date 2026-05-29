@@ -303,7 +303,7 @@ h3 {
   font-size: clamp(2rem, 4vw, 3.85rem);
 }
 
-.grndwork-spotlight {
+.project-spotlight {
   display: grid;
   grid-template-columns: minmax(0, 0.88fr) minmax(360px, 0.78fr);
   gap: clamp(1.4rem, 3vw, 3rem);
@@ -318,7 +318,7 @@ h3 {
   box-shadow: 0 28px 80px rgba(2, 8, 18, 0.26);
 }
 
-.grndwork-copy {
+.spotlight-copy {
   min-width: 0;
 }
 
@@ -338,27 +338,29 @@ h3 {
   text-transform: uppercase;
 }
 
-.grndwork-copy h3 {
+.spotlight-copy h3 {
   margin-bottom: 0.75rem;
   font-size: clamp(2rem, 4vw, 4.1rem);
   line-height: 0.95;
 }
 
-.grndwork-copy p {
+.spotlight-copy p {
   max-width: 680px;
   color: rgba(255, 250, 240, 0.72);
   font-size: clamp(1rem, 1.35vw, 1.12rem);
   line-height: 1.62;
 }
 
-.grndwork-actions {
+.spotlight-actions,
+.honorable-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
   margin-top: 1.2rem;
 }
 
-.grndwork-interface {
+.spotlight-interface,
+.mini-interface {
   min-width: 0;
   padding: 0.85rem;
   background:
@@ -369,20 +371,21 @@ h3 {
   box-shadow: 0 24px 80px rgba(2, 8, 18, 0.35);
 }
 
-.grndwork-window-bar {
+.spotlight-window-bar {
   display: flex;
   gap: 0.4rem;
   margin-bottom: 0.9rem;
 }
 
-.grndwork-window-bar span {
+.spotlight-window-bar span {
   width: 0.66rem;
   height: 0.66rem;
   background: rgba(255, 250, 240, 0.16);
   border-radius: 999px;
 }
 
-.grndwork-interface-header {
+.spotlight-interface-header,
+.mini-interface-header {
   padding: 1.1rem;
   background:
     linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(255, 250, 240, 0.02)),
@@ -391,7 +394,9 @@ h3 {
   border-radius: 8px;
 }
 
-.grndwork-interface-header span,
+.spotlight-interface-header span,
+.mini-interface-header span,
+.praxigen-signal-grid span,
 .grndwork-metrics span {
   display: block;
   color: rgba(103, 216, 255, 0.82);
@@ -401,7 +406,8 @@ h3 {
   text-transform: uppercase;
 }
 
-.grndwork-interface-header strong {
+.spotlight-interface-header strong,
+.mini-interface-header strong {
   display: block;
   margin-top: 0.45rem;
   color: #fffaf0;
@@ -409,11 +415,19 @@ h3 {
   line-height: 1;
 }
 
-.grndwork-interface-header p {
+.spotlight-interface-header p,
+.mini-interface-header p {
   margin: 0.65rem 0 0;
   color: rgba(255, 250, 240, 0.62);
   font-size: 0.92rem;
   line-height: 1.45;
+}
+
+.praxigen-signal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.75rem;
 }
 
 .grndwork-metrics {
@@ -423,24 +437,48 @@ h3 {
   margin-top: 0.75rem;
 }
 
+.praxigen-signal-grid div,
 .grndwork-metrics div,
-.grndwork-role-list div {
+.grndwork-role-list div,
+.mini-quote {
   background: rgba(255, 250, 240, 0.035);
   border: 1px solid rgba(255, 250, 240, 0.07);
   border-radius: 8px;
 }
 
+.praxigen-signal-grid div,
 .grndwork-metrics div {
   min-height: 5.3rem;
   padding: 0.85rem;
 }
 
+.praxigen-signal-grid strong,
 .grndwork-metrics strong {
   display: block;
   margin-top: 0.45rem;
   color: #fffaf0;
   font-size: 1rem;
   line-height: 1.2;
+}
+
+.praxigen-step-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+}
+
+.praxigen-step-list span {
+  min-height: 2.65rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.55rem 0.75rem;
+  color: rgba(255, 250, 240, 0.78);
+  background: rgba(47, 125, 246, 0.08);
+  border: 1px solid rgba(103, 216, 255, 0.12);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 760;
 }
 
 .grndwork-role-list {
@@ -485,6 +523,117 @@ h3 {
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 800;
+}
+
+.honorable-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.2rem;
+  margin: 1.4rem 0 0.8rem;
+}
+
+.honorable-heading span {
+  color: var(--sky);
+  font-size: 0.78rem;
+  font-weight: 820;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.honorable-heading p {
+  max-width: 32rem;
+  margin: 0;
+  color: rgba(255, 250, 240, 0.62);
+  line-height: 1.45;
+  text-align: right;
+}
+
+.honorable-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.honorable-card {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(250px, 0.72fr);
+  gap: 1rem;
+  min-height: 26rem;
+  padding: 1rem;
+  background: rgba(6, 22, 42, 0.72);
+  border: 1px solid rgba(103, 216, 255, 0.18);
+  border-radius: 8px;
+}
+
+.honorable-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.honorable-copy p {
+  color: rgba(255, 250, 240, 0.68);
+  line-height: 1.55;
+}
+
+.honorable-actions {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.mini-interface {
+  align-self: stretch;
+  box-shadow: none;
+}
+
+.mini-interface-header {
+  padding: 0.95rem;
+}
+
+.mini-interface-header strong {
+  font-size: clamp(1.05rem, 2vw, 1.55rem);
+}
+
+.mini-login-button {
+  display: flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.75rem;
+  color: var(--ink);
+  background: #fffaf0;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 820;
+}
+
+.mini-quote {
+  margin-top: 0.75rem;
+  padding: 0.85rem;
+}
+
+.mini-quote span {
+  color: rgba(103, 216, 255, 0.82);
+  font-size: 0.72rem;
+  font-weight: 820;
+}
+
+.mini-quote p {
+  margin: 0.45rem 0 0;
+  color: rgba(255, 250, 240, 0.68);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.additional-project-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.additional-project-grid .featured-project-card {
+  min-height: auto;
 }
 
 .featured-project-grid,
@@ -1266,11 +1415,16 @@ h3 {
   .project-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .honorable-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 960px) {
   .featured-projects-heading,
-  .grndwork-spotlight,
+  .project-spotlight,
+  .honorable-card,
   .thesis-section,
   .split-section,
   .personal-bridge,
@@ -1284,6 +1438,15 @@ h3 {
 
   .experience-tabs {
     width: fit-content;
+  }
+
+  .honorable-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .honorable-heading p {
+    text-align: left;
   }
 }
 
@@ -1336,8 +1499,11 @@ h3 {
   }
 
   .featured-project-grid,
+  .additional-project-grid,
   .project-grid,
   .passion-grid,
+  .praxigen-signal-grid,
+  .praxigen-step-list,
   .memory-grid,
   .memory-grid-compact {
     grid-template-columns: 1fr;
@@ -1352,7 +1518,8 @@ h3 {
     grid-template-columns: 1fr;
   }
 
-  .grndwork-actions {
+  .spotlight-actions,
+  .honorable-actions {
     display: grid;
     grid-template-columns: 1fr;
   }

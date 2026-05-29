@@ -29,9 +29,12 @@ const links = {
   x: "https://x.com/mayajeangerdes",
 };
 
-const grndworkLinks = {
-  live: "https://grndwork.vercel.app",
-  repo: "https://github.com/mjmgerdes/grndwork",
+const projectLinks = {
+  praxigen: "https://praxigen.dev",
+  startupCrm: "https://ustartleague.lovable.app/login",
+  grndworkLive: "https://grndwork.vercel.app",
+  grndworkRepo: "https://github.com/mjmgerdes/grndwork",
+  foreverData: "https://foreverdata.live/",
 };
 
 type FeaturedProject = {
@@ -40,6 +43,12 @@ type FeaturedProject = {
   body: string;
   stack: string[];
   href: string;
+};
+
+type HonorableMention = FeaturedProject & {
+  cta: string;
+  preview: "crm" | "grndwork";
+  repo?: string;
 };
 
 type ExperienceCategory = "Work" | "Clubs" | "Other";
@@ -100,30 +109,30 @@ type PlaylistSlot = {
   tone: "blue" | "aqua" | "navy" | "coral";
 };
 
-const featuredProjects: FeaturedProject[] = [
-  {
-    name: "Praxigen",
-    tag: "Founder build",
-    body:
-      "AI prior authorization infrastructure for turning messy payer policy into usable clinical workflow context.",
-    stack: ["Healthtech", "AI workflows", "Payer ops"],
-    href: "https://praxigen.dev",
-  },
+const praxigenSignals = [
+  { label: "Clinical Note", value: "3 missing criteria found" },
+  { label: "Payer Rule", value: "UHC / CPT 27447" },
+  { label: "Follow Up", value: "Adjuster due in 3 days" },
+  { label: "Status", value: "Ready to submit" },
+];
+
+const praxigenSteps = [
+  "01 Read note",
+  "02 Match requirements",
+  "03 Prepare packet",
+  "04 Track outcome",
+];
+
+const honorableMentions: HonorableMention[] = [
   {
     name: "Startup CRM",
     tag: "Operator tool",
     body:
-      "A startup-oriented CRM for tracking founders, conversations, and relationship momentum across an early community.",
-    stack: ["CRM", "Community", "Startup ops"],
-    href: "https://ustartleague.lovable.app/login",
-  },
-  {
-    name: "ForeverData",
-    tag: "GTM support",
-    body:
-      "Helped shape go-to-market thinking for a data persistence product at the edge of storage and Web3 infrastructure.",
-    stack: ["GTM", "Data", "Infrastructure"],
-    href: "https://foreverdata.live/",
+      "A team workspace layer for startup league operators, turning a Google Sheet into a cleaner login, validation, and relationship-tracking surface.",
+    stack: ["CRM", "Google Sheets", "Team workspace"],
+    href: projectLinks.startupCrm,
+    cta: "Open CRM",
+    preview: "crm",
   },
   {
     name: "grndwork",
@@ -131,7 +140,21 @@ const featuredProjects: FeaturedProject[] = [
     body:
       "A live early-access app helping students move from vague ambition to career direction, internship tracking, and outreach systems.",
     stack: ["React", "FastAPI", "Waitlist"],
-    href: grndworkLinks.live,
+    href: projectLinks.grndworkLive,
+    cta: "View interface",
+    preview: "grndwork",
+    repo: projectLinks.grndworkRepo,
+  },
+];
+
+const additionalProjects: FeaturedProject[] = [
+  {
+    name: "ForeverData",
+    tag: "GTM support",
+    body:
+      "Helped shape go-to-market thinking for a data persistence product at the edge of storage and Web3 infrastructure.",
+    stack: ["GTM", "Data", "Infrastructure"],
+    href: projectLinks.foreverData,
   },
 ];
 
@@ -640,78 +663,158 @@ function PortfolioHome() {
             <p className="eyebrow dark">Projects</p>
             <h2>Current proof of build, taste, and distribution muscle.</h2>
           </div>
-          <article className="grndwork-spotlight">
-            <div className="grndwork-copy">
+          <article className="project-spotlight">
+            <div className="spotlight-copy">
               <span className="spotlight-kicker">Featured build</span>
-              <h3>grndwork</h3>
+              <h3>Praxigen</h3>
               <p>
-                A student career clarity platform with a polished early-access
-                interface, opportunity matching, application tracking, and
-                networking guidance. The repo is public, the deployment is live,
-                and the product thesis is crisp: help students go from not
-                knowing what to pursue to landing real opportunities.
+                AI prior authorization infrastructure for giving agents clean,
+                structured access to payer requirements, forms, and submission
+                criteria. This is the founder build: healthcare workflow pain,
+                clinical nuance, and a clear wedge into a paperwork-heavy
+                system.
               </p>
               <div className="tag-row">
-                <em>React</em>
-                <em>FastAPI</em>
-                <em>Postgres-ready waitlist</em>
-                <em>Career discovery</em>
+                <em>Healthtech</em>
+                <em>Prior authorization</em>
+                <em>Agent infrastructure</em>
+                <em>Payer workflows</em>
               </div>
-              <div className="grndwork-actions">
+              <div className="spotlight-actions">
                 <a
                   className="button primary"
-                  href={grndworkLinks.live}
+                  href={projectLinks.praxigen}
                   target="_blank"
                   rel="noreferrer"
                 >
                   <ExternalLink size={18} />
-                  View live interface
-                </a>
-                <a
-                  className="button secondary"
-                  href={grndworkLinks.repo}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Github size={18} />
-                  GitHub repo
+                  View Praxigen
                 </a>
               </div>
             </div>
-            <div className="grndwork-interface" aria-label="grndwork interface preview">
-              <div className="grndwork-window-bar" aria-hidden="true">
+            <div className="spotlight-interface praxigen-interface" aria-label="Praxigen interface preview">
+              <div className="spotlight-window-bar" aria-hidden="true">
                 <span />
                 <span />
                 <span />
               </div>
-              <div className="grndwork-interface-header">
-                <span>grndwork</span>
-                <strong>Discover your path. Land your future.</strong>
-                <p>Career clarity, internships, tracking, and outreach guidance for students.</p>
+              <div className="spotlight-interface-header">
+                <span>Product Demo</span>
+                <strong>One workflow. Every payer step.</strong>
+                <p>Praxigen reads the note, checks payer rules, strengthens documentation, and tracks the case.</p>
               </div>
-              <div className="grndwork-metrics">
-                {grndworkMetrics.map((metric) => (
-                  <div key={metric.label}>
-                    <span>{metric.label}</span>
-                    <strong>{metric.value}</strong>
+              <div className="praxigen-signal-grid">
+                {praxigenSignals.map((signal) => (
+                  <div key={signal.label}>
+                    <span>{signal.label}</span>
+                    <strong>{signal.value}</strong>
                   </div>
                 ))}
               </div>
-              <div className="grndwork-role-list">
-                {grndworkRoles.map(([role, company, location]) => (
-                  <div key={`${role}-${company}`}>
-                    <span>
-                      <strong>{role}</strong>
-                      <em>{company} / {location}</em>
-                    </span>
-                    <small>Track</small>
-                  </div>
+              <div className="praxigen-step-list">
+                {praxigenSteps.map((step) => (
+                  <span key={step}>{step}</span>
                 ))}
               </div>
             </div>
           </article>
-          <div className="featured-project-grid">
-            {featuredProjects.map((project) => (
+
+          <div className="honorable-heading">
+            <span>Honorable mentions</span>
+            <p>Smaller interface snapshots from adjacent builds that show range.</p>
+          </div>
+          <div className="honorable-grid">
+            {honorableMentions.map((project) => (
+              <article className="honorable-card" key={project.name}>
+                <div className="honorable-copy">
+                  <span className="project-card-topline">
+                    <small>{project.tag}</small>
+                    <ExternalLink size={17} />
+                  </span>
+                  <h3>{project.name}</h3>
+                  <p>{project.body}</p>
+                  <span className="tag-row">
+                    {project.stack.map((tag) => (
+                      <em key={tag}>{tag}</em>
+                    ))}
+                  </span>
+                  <div className="honorable-actions">
+                    <a
+                      className="button primary"
+                      href={project.href}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <ExternalLink size={17} />
+                      {project.cta}
+                    </a>
+                    {project.repo ? (
+                      <a
+                        className="button secondary"
+                        href={project.repo}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <Github size={17} />
+                        Repo
+                      </a>
+                    ) : null}
+                  </div>
+                </div>
+                <div className={`mini-interface mini-interface-${project.preview}`}>
+                  <div className="spotlight-window-bar" aria-hidden="true">
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                  {project.preview === "crm" ? (
+                    <>
+                      <div className="mini-interface-header">
+                        <span>UStart League / Season 04</span>
+                        <strong>Sign in to your team workspace.</strong>
+                        <p>Google Sheets stays the source of truth. The CRM makes it usable.</p>
+                      </div>
+                      <div className="mini-login-button">Continue with Google</div>
+                      <div className="mini-quote">
+                        <span>// Validation Engine</span>
+                        <p>"If you can give me back two hours every morning, take my money."</p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="mini-interface-header">
+                        <span>grndwork</span>
+                        <strong>Discover your path. Land your future.</strong>
+                        <p>Career clarity, internships, tracking, and outreach guidance.</p>
+                      </div>
+                      <div className="grndwork-metrics">
+                        {grndworkMetrics.map((metric) => (
+                          <div key={metric.label}>
+                            <span>{metric.label}</span>
+                            <strong>{metric.value}</strong>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="grndwork-role-list">
+                        {grndworkRoles.slice(0, 2).map(([role, company, location]) => (
+                          <div key={`${role}-${company}`}>
+                            <span>
+                              <strong>{role}</strong>
+                              <em>{company} / {location}</em>
+                            </span>
+                            <small>Track</small>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="additional-project-grid">
+            {additionalProjects.map((project) => (
               <a
                 className="featured-project-card"
                 href={project.href}
