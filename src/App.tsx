@@ -29,6 +29,11 @@ const links = {
   x: "https://x.com/mayajeangerdes",
 };
 
+const grndworkLinks = {
+  live: "https://grndwork.vercel.app",
+  repo: "https://github.com/mjmgerdes/grndwork",
+};
+
 type FeaturedProject = {
   name: string;
   tag: string;
@@ -122,12 +127,24 @@ const featuredProjects: FeaturedProject[] = [
   },
   {
     name: "grndwork",
-    tag: "Public build log",
+    tag: "Student career platform",
     body:
-      "A visible trail of product experiments, code, and founder learning from the current builder season.",
-    stack: ["Product", "GitHub", "Iteration"],
-    href: "https://github.com/mjmgerdes/grndwork",
+      "A live early-access app helping students move from vague ambition to career direction, internship tracking, and outreach systems.",
+    stack: ["React", "FastAPI", "Waitlist"],
+    href: grndworkLinks.live,
   },
+];
+
+const grndworkMetrics = [
+  { label: "Interests", value: "Product + Design" },
+  { label: "Match score", value: "92%" },
+  { label: "Opportunities", value: "48 open" },
+];
+
+const grndworkRoles = [
+  ["Associate PM", "Stripe", "Remote"],
+  ["Product Design Intern", "Linear", "NYC"],
+  ["SWE Intern", "Anthropic", "SF"],
 ];
 
 const focusAreas = [
@@ -623,6 +640,76 @@ function PortfolioHome() {
             <p className="eyebrow dark">Projects</p>
             <h2>Current proof of build, taste, and distribution muscle.</h2>
           </div>
+          <article className="grndwork-spotlight">
+            <div className="grndwork-copy">
+              <span className="spotlight-kicker">Featured build</span>
+              <h3>grndwork</h3>
+              <p>
+                A student career clarity platform with a polished early-access
+                interface, opportunity matching, application tracking, and
+                networking guidance. The repo is public, the deployment is live,
+                and the product thesis is crisp: help students go from not
+                knowing what to pursue to landing real opportunities.
+              </p>
+              <div className="tag-row">
+                <em>React</em>
+                <em>FastAPI</em>
+                <em>Postgres-ready waitlist</em>
+                <em>Career discovery</em>
+              </div>
+              <div className="grndwork-actions">
+                <a
+                  className="button primary"
+                  href={grndworkLinks.live}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <ExternalLink size={18} />
+                  View live interface
+                </a>
+                <a
+                  className="button secondary"
+                  href={grndworkLinks.repo}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Github size={18} />
+                  GitHub repo
+                </a>
+              </div>
+            </div>
+            <div className="grndwork-interface" aria-label="grndwork interface preview">
+              <div className="grndwork-window-bar" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+              </div>
+              <div className="grndwork-interface-header">
+                <span>grndwork</span>
+                <strong>Discover your path. Land your future.</strong>
+                <p>Career clarity, internships, tracking, and outreach guidance for students.</p>
+              </div>
+              <div className="grndwork-metrics">
+                {grndworkMetrics.map((metric) => (
+                  <div key={metric.label}>
+                    <span>{metric.label}</span>
+                    <strong>{metric.value}</strong>
+                  </div>
+                ))}
+              </div>
+              <div className="grndwork-role-list">
+                {grndworkRoles.map(([role, company, location]) => (
+                  <div key={`${role}-${company}`}>
+                    <span>
+                      <strong>{role}</strong>
+                      <em>{company} / {location}</em>
+                    </span>
+                    <small>Track</small>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </article>
           <div className="featured-project-grid">
             {featuredProjects.map((project) => (
               <a
