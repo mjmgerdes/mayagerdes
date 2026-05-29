@@ -1,12 +1,13 @@
 import {
   Activity,
+  ArrowLeft,
   BadgeCheck,
   BookOpen,
   Brain,
   BriefcaseBusiness,
   Code2,
+  Disc3,
   ExternalLink,
-  FlaskConical,
   Github,
   GraduationCap,
   HeartPulse,
@@ -15,7 +16,6 @@ import {
   Music,
   Rocket,
   Sparkles,
-  Users,
   X,
   Zap,
   type LucideIcon,
@@ -29,17 +29,25 @@ const links = {
   x: "https://x.com/mayajeangerdes",
 };
 
-type ProofPoint = {
-  value: string;
-  label: string;
+type FeaturedProject = {
+  name: string;
+  tag: string;
+  body: string;
+  stack: string[];
+  href: string;
 };
 
-type WorkCard = {
-  icon: LucideIcon;
-  eyebrow: string;
+type ExperienceCategory = "Work" | "Clubs" | "Other";
+
+type ExperienceItem = {
+  category: ExperienceCategory;
+  logo: string;
   title: string;
-  body: string;
-  proof: string;
+  org: string;
+  date: string;
+  summary: string;
+  tags: string[];
+  href?: string;
 };
 
 type Project = {
@@ -59,11 +67,67 @@ type GitHubRepo = {
   updated_at: string;
 };
 
-const proofPoints: ProofPoint[] = [
-  { value: "4.00", label: "GPA in Neuroscience at Michigan" },
-  { value: "4", label: "SMB clients led through blockchain strategy" },
-  { value: "50+", label: "clinical neuropsychiatry cases supported" },
-  { value: "$15k+", label: "professional programming budget managed" },
+type TimelineItem = {
+  icon: LucideIcon;
+  label: string;
+  detail: string;
+};
+
+type MemoryCard = {
+  id: string;
+  title: string;
+  year: string;
+  body: string;
+  tone: "blue" | "aqua" | "navy" | "coral";
+  icon: LucideIcon;
+};
+
+type Passion = {
+  icon: LucideIcon;
+  title: string;
+  body: string;
+};
+
+type PlaylistSlot = {
+  title: string;
+  note: string;
+  href: string;
+  tone: "blue" | "aqua" | "navy" | "coral";
+};
+
+const featuredProjects: FeaturedProject[] = [
+  {
+    name: "Praxigen",
+    tag: "Founder build",
+    body:
+      "AI prior authorization infrastructure for turning messy payer policy into usable clinical workflow context.",
+    stack: ["Healthtech", "AI workflows", "Payer ops"],
+    href: "https://praxigen.dev",
+  },
+  {
+    name: "Startup CRM",
+    tag: "Operator tool",
+    body:
+      "A startup-oriented CRM for tracking founders, conversations, and relationship momentum across an early community.",
+    stack: ["CRM", "Community", "Startup ops"],
+    href: "https://ustartleague.lovable.app/login",
+  },
+  {
+    name: "ForeverData",
+    tag: "GTM support",
+    body:
+      "Helped shape go-to-market thinking for a data persistence product at the edge of storage and Web3 infrastructure.",
+    stack: ["GTM", "Data", "Infrastructure"],
+    href: "https://foreverdata.live/",
+  },
+  {
+    name: "grndwork",
+    tag: "Public build log",
+    body:
+      "A visible trail of product experiments, code, and founder learning from the current builder season.",
+    stack: ["Product", "GitHub", "Iteration"],
+    href: "https://github.com/mjmgerdes/grndwork",
+  },
 ];
 
 const focusAreas = [
@@ -71,36 +135,101 @@ const focusAreas = [
   "Biohacking",
   "Human-computer interaction",
   "Cognitive science",
-  "Music systems",
+  "Behavior design",
 ];
 
-const workCards: WorkCard[] = [
+const experienceTabs: ExperienceCategory[] = ["Work", "Clubs", "Other"];
+
+const experiences: ExperienceItem[] = [
   {
-    icon: FlaskConical,
-    eyebrow: "Michigan Medicine",
-    title: "Programmable DNA sensing and translational research",
-    body:
-      "Researching CRISPR-based sensing systems for cancer-specific genomic alterations, plus vascular imaging and cardiac surgery datasets across Michigan Medicine and Engineering.",
-    proof:
-      "Hands-on lab workflows, SnapGene analysis, Epic and Excel datasets, and construct-level troubleshooting.",
+    category: "Work",
+    logo: "MBC",
+    title: "Project Manager / Business Analyst",
+    org: "Michigan Blockchain Consulting",
+    date: "Aug 2025 - Present",
+    summary:
+      "Lead client-facing blockchain strategy work for SMBs, translating technical infrastructure, storage, L2, rollup, and middleware choices into GTM and product recommendations.",
+    tags: ["Blockchain", "GTM", "Client strategy", "Product"],
   },
   {
-    icon: BriefcaseBusiness,
-    eyebrow: "Michigan Blockchain Consulting",
-    title: "Frontier tech strategy for real clients",
-    body:
-      "Project-managed blockchain consulting work for SMB clients, translating technical storage infrastructure, L2, rollup, and middleware insights into GTM recommendations.",
-    proof:
-      "Led client-facing demos, integration strategy, market analysis, scalability review, and cost-structure evaluation.",
+    category: "Work",
+    logo: "DNA",
+    title: "Research Assistant",
+    org: "Michigan Medicine, Department of Human Genetics",
+    date: "Aug 2025 - Present",
+    summary:
+      "Research CRISPR-based sensing systems for cancer-specific genomic alterations, with hands-on construct design, SnapGene analysis, and wet-lab troubleshooting.",
+    tags: ["CRISPR", "Genetics", "Cancer sensing", "Wet lab"],
   },
   {
-    icon: Users,
-    eyebrow: "Campus leadership",
-    title: "Community-building with operating discipline",
-    body:
-      "Founded a University of Michigan chapter for Cancer Screening Advocates and led programming across professional and medical fraternities.",
-    proof:
-      "Built partnerships, hosted speaker events for 120+ members, and organized professional workshops for 160+ members.",
+    category: "Work",
+    logo: "MM",
+    title: "Research Assistant",
+    org: "Michigan Medicine + College of Engineering",
+    date: "Nov 2024 - Sep 2025",
+    summary:
+      "Worked across computational biomechanics, cardiovascular imaging, and clinical datasets to support patient outcome and translational research workflows.",
+    tags: ["Biomechanics", "Clinical data", "Imaging", "Cardiac"],
+  },
+  {
+    category: "Work",
+    logo: "NP",
+    title: "Neuropsychiatry Intern",
+    org: "Private neuropsychiatry and forensic neurology practice",
+    date: "May 2025 - Aug 2025",
+    summary:
+      "Supported clinical workflows across neuropsychiatry and forensic neurology, building context around patient cases, diagnostics, and care coordination.",
+    tags: ["Neuropsychiatry", "Clinical workflows", "Patient context"],
+  },
+  {
+    category: "Clubs",
+    logo: "CSA",
+    title: "President and Founding Campus Lead",
+    org: "Cancer Screening Advocates",
+    date: "Nov 2025 - Present",
+    summary:
+      "Founded the University of Michigan chapter and built early programming around cancer screening awareness, campus partnerships, and health advocacy.",
+    tags: ["Health advocacy", "Chapter building", "Partnerships"],
+  },
+  {
+    category: "Clubs",
+    logo: "PSE",
+    title: "DEI Director and Council Member",
+    org: "Pi Sigma Epsilon",
+    date: "Sep 2024 - Present",
+    summary:
+      "Helped organize professional programming, recruiting, and member-facing systems for a large business and professional development community.",
+    tags: ["Professional development", "Programming", "Leadership"],
+  },
+  {
+    category: "Clubs",
+    logo: "PDE",
+    title: "Marketing and Public Relations Chair",
+    org: "Phi Delta Epsilon",
+    date: "Nov 2024 - Present",
+    summary:
+      "Create member communications, event visibility, and brand systems for a pre-medical community with a strong service and mentorship culture.",
+    tags: ["Marketing", "Community", "Events"],
+  },
+  {
+    category: "Other",
+    logo: "MUS",
+    title: "Music and performance loops",
+    org: "Guitar, piano, DJing, and playlist curation",
+    date: "Ongoing",
+    summary:
+      "Music is one of the places where taste, repetition, emotional patterning, and attention all become visible.",
+    tags: ["Music", "Taste", "Rituals"],
+  },
+  {
+    category: "Other",
+    logo: "PB",
+    title: "Pickleball and fast feedback",
+    org: "Recreation, competition, and movement",
+    date: "Now",
+    summary:
+      "A favorite low-friction way to move, compete, reset, and get immediate feedback outside the laptop.",
+    tags: ["Pickleball", "Movement", "Energy"],
   },
 ];
 
@@ -142,7 +271,7 @@ const fallbackProjects: Project[] = Object.entries(projectOverrides).map(
   }),
 );
 
-const timeline = [
+const timeline: TimelineItem[] = [
   {
     icon: GraduationCap,
     label: "University of Michigan",
@@ -160,6 +289,114 @@ const timeline = [
     label: "Clinical and research exposure",
     detail:
       "Neuropsychiatry, human genetics, cardiac surgery, computational biomechanics, and patient-outcome datasets.",
+  },
+];
+
+const dossierPoints = [
+  {
+    icon: Zap,
+    text: "Fast translation from research context to product or GTM thinking.",
+  },
+  {
+    icon: Brain,
+    text: "Comfortable operating between biology, behavior, data, and interface design.",
+  },
+  {
+    icon: BriefcaseBusiness,
+    text: "Grounded in real clinical, lab, client, and operator environments.",
+  },
+];
+
+const memoryCards: MemoryCard[] = [
+  {
+    id: "guitar",
+    title: "Tiny guitar era",
+    year: "Age 5",
+    body:
+      "The first version of the music loop: small hands, serious focus, and a lifelong obsession with sound starting to form.",
+    tone: "blue",
+    icon: Music,
+  },
+  {
+    id: "pickleball",
+    title: "Pickleball mode",
+    year: "Now",
+    body:
+      "Fast rallies, quick decisions, and the sport I can talk almost anyone into trying after one game.",
+    tone: "aqua",
+    icon: Activity,
+  },
+  {
+    id: "brain",
+    title: "Neuroscience thread",
+    year: "Michigan",
+    body:
+      "The question under a lot of my work: what makes people heal, adapt, perform, and change?",
+    tone: "navy",
+    icon: Brain,
+  },
+  {
+    id: "builder",
+    title: "Builder season",
+    year: "2026",
+    body:
+      "Messy prototypes, sharper questions, and learning how to turn conviction into shipped work.",
+    tone: "coral",
+    icon: Rocket,
+  },
+];
+
+const passions: Passion[] = [
+  {
+    icon: Music,
+    title: "Music",
+    body:
+      "Guitar, piano, DJing, and playlist-making as another way of thinking about taste and timing.",
+  },
+  {
+    icon: Brain,
+    title: "Neuroscience",
+    body:
+      "Brains, behavior change, cognition, and what makes people feel more awake in their own lives.",
+  },
+  {
+    icon: Activity,
+    title: "Pickleball",
+    body:
+      "Fast feedback, friendly competition, and a very satisfying reset button.",
+  },
+  {
+    icon: BookOpen,
+    title: "Biohacking",
+    body:
+      "Sleep, nutrition, training, and tiny rituals that compound into better days.",
+  },
+];
+
+const playlistSlots: PlaylistSlot[] = [
+  {
+    title: "Current rotation",
+    note: "The songs getting replayed while I build.",
+    href: "https://open.spotify.com/",
+    tone: "blue",
+  },
+  {
+    title: "Piano / guitar brain",
+    note: "For when I want sound to feel tactile.",
+    href: "https://open.spotify.com/",
+    tone: "aqua",
+  },
+  {
+    title: "Founder focus",
+    note: "A work mode playlist slot for deep build sessions.",
+    href: "https://open.spotify.com/",
+    tone: "navy",
+  },
+  {
+    title: "Long walk songs",
+    note: "Music for processing ideas before they become plans.",
+    href: "https://open.spotify.com/",
+    tone: "coral",
   },
 ];
 
@@ -198,6 +435,29 @@ function IconLink({
   );
 }
 
+function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
+  const isPersonal = page === "personal";
+
+  return (
+    <nav className="site-nav" aria-label="Primary navigation">
+      <a
+        className="brand"
+        href={isPersonal ? "/" : "#top"}
+        aria-label="Maya Gerdes home"
+      >
+        <span>MG</span>
+        Maya Gerdes
+      </a>
+      <div className="nav-links">
+        <a href={isPersonal ? "/#projects" : "#projects"}>Projects</a>
+        <a href={isPersonal ? "/#work" : "#work"}>Work</a>
+        <a href="/me">Me</a>
+        <a href={isPersonal ? "/#contact" : "#contact"}>Contact</a>
+      </div>
+    </nav>
+  );
+}
+
 function formatRepoDate(value?: string) {
   if (!value) {
     return "Live GitHub repo";
@@ -210,8 +470,50 @@ function formatRepoDate(value?: string) {
   }).format(new Date(value));
 }
 
-function App() {
+function MemoryGallery({ compact = false }: { compact?: boolean }) {
+  const [flippedId, setFlippedId] = useState<string | null>(null);
+  const cards = compact ? memoryCards.slice(0, 3) : memoryCards;
+
+  return (
+    <div className={compact ? "memory-grid memory-grid-compact" : "memory-grid"}>
+      {cards.map((card) => {
+        const Icon = card.icon;
+        const isFlipped = flippedId === card.id;
+
+        return (
+          <button
+            className={`memory-card tone-${card.tone} ${isFlipped ? "is-flipped" : ""}`}
+            key={card.id}
+            type="button"
+            aria-pressed={isFlipped}
+            onClick={() => setFlippedId(isFlipped ? null : card.id)}
+          >
+            <span className="memory-card-inner">
+              <span className="memory-face memory-front">
+                <span className="memory-visual" aria-hidden="true" />
+                <span className="memory-front-content">
+                  <Icon size={23} />
+                  <span>{card.year}</span>
+                  <strong>{card.title}</strong>
+                </span>
+              </span>
+              <span className="memory-face memory-back">
+                <span>{card.year}</span>
+                <strong>{card.title}</strong>
+                <em>{card.body}</em>
+              </span>
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function PortfolioHome() {
   const [liveProjects, setLiveProjects] = useState<Project[]>(fallbackProjects);
+  const [activeExperienceTab, setActiveExperienceTab] =
+    useState<ExperienceCategory>("Work");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -229,7 +531,7 @@ function App() {
 
         const repos = (await response.json()) as GitHubRepo[];
         const projects = repos
-          .filter((repo) => !repo.name.includes("personal portfolio website"))
+          .filter((repo) => !repo.name.includes("mayagerdes"))
           .slice(0, 6)
           .map((repo) => {
             const override = projectOverrides[repo.name];
@@ -269,23 +571,22 @@ function App() {
       .sort();
     const newest = sortedUpdates[sortedUpdates.length - 1];
 
-    return newest ? `Live GitHub sync, newest update ${formatRepoDate(newest)}` : "Live GitHub sync";
+    return newest
+      ? `Live GitHub sync, newest update ${formatRepoDate(newest)}`
+      : "Live GitHub sync";
   }, [liveProjects]);
+
+  const activeExperiences = useMemo(
+    () =>
+      experiences.filter(
+        (experience) => experience.category === activeExperienceTab,
+      ),
+    [activeExperienceTab],
+  );
 
   return (
     <main>
-      <nav className="site-nav" aria-label="Primary navigation">
-        <a className="brand" href="#top" aria-label="Maya Gerdes home">
-          <span>MG</span>
-          Maya Gerdes
-        </a>
-        <div className="nav-links">
-          <a href="#work">Work</a>
-          <a href="#builds">Builds</a>
-          <a href="#dossier">Dossier</a>
-          <a href="#contact">Contact</a>
-        </div>
-      </nav>
+      <SiteNav />
 
       <header className="hero" id="top">
         <div className="hero-content">
@@ -303,7 +604,7 @@ function App() {
               <Mail size={18} />
               Start a conversation
             </a>
-            <a className="button secondary" href="#work">
+            <a className="button secondary" href="#projects">
               <Sparkles size={18} />
               View the signal
             </a>
@@ -316,13 +617,36 @@ function App() {
         </div>
       </header>
 
-      <section className="proof-rail" aria-label="Highlights">
-        {proofPoints.map((point) => (
-          <div key={point.label}>
-            <strong>{point.value}</strong>
-            <span>{point.label}</span>
+      <section className="featured-projects" id="projects" aria-label="Featured projects">
+        <div className="featured-projects-inner">
+          <div className="featured-projects-heading">
+            <p className="eyebrow dark">Projects</p>
+            <h2>Current proof of build, taste, and distribution muscle.</h2>
           </div>
-        ))}
+          <div className="featured-project-grid">
+            {featuredProjects.map((project) => (
+              <a
+                className="featured-project-card"
+                href={project.href}
+                target="_blank"
+                rel="noreferrer"
+                key={project.name}
+              >
+                <span className="project-card-topline">
+                  <small>{project.tag}</small>
+                  <ExternalLink size={17} />
+                </span>
+                <h3>{project.name}</h3>
+                <p>{project.body}</p>
+                <span className="tag-row">
+                  {project.stack.map((tag) => (
+                    <em key={tag}>{tag}</em>
+                  ))}
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="section thesis-section">
@@ -346,25 +670,52 @@ function App() {
         </div>
       </section>
 
-      <section className="section" id="work">
-        <SectionHeading
-          eyebrow="Work"
-          title="Science depth, operator range, and early builder velocity."
-          body="The through-line is translating complexity into useful systems, whether the system is biological, technical, commercial, or social."
-        />
-        <div className="work-grid">
-          {workCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <article className="work-card" key={card.title}>
-                <Icon className="card-icon" size={24} />
-                <p>{card.eyebrow}</p>
-                <h3>{card.title}</h3>
-                <span>{card.body}</span>
-                <strong>{card.proof}</strong>
-              </article>
-            );
-          })}
+      <section className="section experience-section" id="work">
+        <div className="experience-heading-row">
+          <SectionHeading
+            eyebrow="Experience"
+            title="Research depth, operator range, and early builder velocity."
+            body="The through-line is translating complexity into useful systems, whether the system is biological, technical, commercial, or social."
+          />
+          <div className="experience-tabs" aria-label="Experience filters">
+            {experienceTabs.map((tab) => (
+              <button
+                className={tab === activeExperienceTab ? "active" : ""}
+                type="button"
+                key={tab}
+                onClick={() => setActiveExperienceTab(tab)}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="experience-list">
+          {activeExperiences.map((experience) => (
+            <article className="experience-item" key={`${experience.org}-${experience.title}`}>
+              <div className="experience-logo" aria-hidden="true">
+                {experience.logo}
+              </div>
+              <div className="experience-body">
+                <div className="experience-title-row">
+                  <div>
+                    <h3>
+                      {experience.title}
+                      {experience.href ? <ExternalLink size={15} /> : null}
+                    </h3>
+                    <p>{experience.org}</p>
+                  </div>
+                  <time>{experience.date}</time>
+                </div>
+                <p className="experience-summary">{experience.summary}</p>
+                <div className="tag-row">
+                  {experience.tags.map((tag) => (
+                    <em key={tag}>{tag}</em>
+                  ))}
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 
@@ -376,18 +727,16 @@ function App() {
             body="A tighter public surface than a resume: enough context to evaluate direction, credibility, and momentum."
           />
           <div className="dossier-points">
-            <div>
-              <Zap size={20} />
-              <span>Fast translation from research context to product or GTM thinking.</span>
-            </div>
-            <div>
-              <Brain size={20} />
-              <span>Comfortable operating between biology, behavior, data, and interface design.</span>
-            </div>
-            <div>
-              <Activity size={20} />
-              <span>Grounded in real clinical and lab environments, not just abstractions.</span>
-            </div>
+            {dossierPoints.map((point) => {
+              const Icon = point.icon;
+
+              return (
+                <div key={point.text}>
+                  <Icon size={20} />
+                  <span>{point.text}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
         <aside className="profile-panel" aria-label="Education and signal">
@@ -408,7 +757,7 @@ function App() {
         <SectionHeading
           eyebrow="Builds"
           title="Public GitHub work and product experiments."
-          body="A few visible artifacts from the current builder phase. This section pulls from public GitHub data, then layers in curated context for the most relevant work."
+          body="A few visible artifacts from the current builder phase. This section pulls from public GitHub data when the page loads, then layers in curated context for the most relevant work."
         />
         <div className="sync-pill" aria-label={githubUpdatedLabel}>
           <Github size={16} />
@@ -439,32 +788,47 @@ function App() {
         </div>
       </section>
 
-      <section className="section founder-section">
-        <div className="founder-image" aria-hidden="true" />
-        <div className="founder-copy">
-          <p className="eyebrow dark">Human layer</p>
-          <h2>Music, systems, health, and the search for better loops.</h2>
+      <section className="section personal-bridge">
+        <div className="personal-bridge-copy">
+          <p className="eyebrow dark">Beyond the resume</p>
+          <h2>Music, neuroscience, pickleball, and the loops behind the work.</h2>
           <p>
-            Outside the formal work, I am drawn to piano, guitar, DJing,
-            biohacking, and the design of routines that make people feel more
-            awake in their own lives. That curiosity is not separate from the
-            startup work. It is the taste engine.
+            The founder page should still feel like a whole person made it.
+            This is the lighter side of the site: what I listen to, what I am
+            curious about, and the non-resume threads that shape my taste.
           </p>
-          <div className="interest-row">
-            <span>
-              <Music size={17} />
-              Piano / guitar / DJing
-            </span>
-            <span>
-              <BookOpen size={17} />
-              Cognitive science
-            </span>
-            <span>
-              <Rocket size={17} />
-              Entrepreneurship
-            </span>
-          </div>
+          <a className="button blue" href="/me">
+            <Sparkles size={18} />
+            Explore the personal page
+          </a>
         </div>
+        <div className="personal-bridge-panel" aria-label="Personal interests">
+          <span>
+            <Music size={17} />
+            Piano / guitar / DJing
+          </span>
+          <span>
+            <Brain size={17} />
+            Neuroscience
+          </span>
+          <span>
+            <Activity size={17} />
+            Pickleball
+          </span>
+          <span>
+            <Rocket size={17} />
+            Entrepreneurship
+          </span>
+        </div>
+      </section>
+
+      <section className="section memory-section" id="snapshots">
+        <SectionHeading
+          eyebrow="Snapshots"
+          title="A few cards with personality, ready for real photos."
+          body="Tap a card to flip it. The exact pictures and years can be swapped in when you have the files, but the interaction and layout are already here."
+        />
+        <MemoryGallery compact />
       </section>
 
       <section className="contact-section" id="contact">
@@ -495,6 +859,120 @@ function App() {
       </section>
     </main>
   );
+}
+
+function PersonalPage() {
+  return (
+    <main className="personal-page">
+      <SiteNav page="personal" />
+
+      <header className="personal-hero">
+        <div className="personal-hero-content">
+          <a className="back-link" href="/">
+            <ArrowLeft size={17} />
+            Back to main page
+          </a>
+          <p className="eyebrow">Maya / outside the resume</p>
+          <h1>Music, brains, movement, and better loops.</h1>
+          <p>
+            This page is for the things that make the work sharper: music,
+            neuroscience, pickleball, biohacking, and the little rituals that
+            turn curiosity into taste.
+          </p>
+        </div>
+      </header>
+
+      <section className="section passion-section">
+        <SectionHeading
+          eyebrow="Passions"
+          title="The patterns I keep coming back to."
+          body="Different surfaces, same underlying obsession: how people feel, learn, perform, and change."
+        />
+        <div className="passion-grid">
+          {passions.map((passion) => {
+            const Icon = passion.icon;
+
+            return (
+              <article className="passion-card" key={passion.title}>
+                <Icon size={22} />
+                <h3>{passion.title}</h3>
+                <p>{passion.body}</p>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="section playlist-section" id="music">
+        <div className="playlist-copy">
+          <p className="eyebrow dark">Spotify</p>
+          <h2>What I have been listening to lately.</h2>
+          <p>
+            The playlist cards are placed here because the personal page is
+            where music can have room without distracting from grants,
+            accelerators, and founder signal on the homepage.
+          </p>
+        </div>
+        <div className="playlist-grid">
+          {playlistSlots.map((playlist) => (
+            <a
+              className={`playlist-card tone-${playlist.tone}`}
+              href={playlist.href}
+              target="_blank"
+              rel="noreferrer"
+              key={playlist.title}
+            >
+              <span className="playlist-cover" aria-hidden="true">
+                <Disc3 size={36} />
+              </span>
+              <span>
+                <strong>{playlist.title}</strong>
+                <em>{playlist.note}</em>
+              </span>
+              <ExternalLink size={17} />
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="section memory-section personal-memory-section" id="memories">
+        <SectionHeading
+          eyebrow="Photo notes"
+          title="Clickable cards for the pictures that explain the person."
+          body="These are structured for guitar-at-five, pickleball, music, and founder-life moments. Once the photos are added, each front can become the actual image."
+        />
+        <MemoryGallery />
+      </section>
+
+      <section className="contact-section personal-contact">
+        <p className="eyebrow">Back to the work</p>
+        <h2>Founder signal on the main page, human context here.</h2>
+        <div className="contact-actions">
+          <a className="button primary" href="/">
+            <ArrowLeft size={18} />
+            Main portfolio
+          </a>
+          <a className="button secondary" href={links.x} target="_blank" rel="noreferrer">
+            <X size={18} />
+            X / Twitter
+          </a>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function App() {
+  const normalizedPath =
+    typeof window === "undefined"
+      ? "/"
+      : window.location.pathname.replace(/\/$/, "") || "/";
+
+  if (normalizedPath === "/me") {
+    return <PersonalPage />;
+  }
+
+  return <PortfolioHome />;
 }
 
 export default App;
