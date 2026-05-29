@@ -2,6 +2,10 @@
 
 Personal portfolio site for LinkedIn, grant applications, accelerator applications, and founder outreach.
 
+Live site: [mayagerdes.com](https://mayagerdes.com)
+
+GitHub repo: [mjmgerdes/mayagerdes](https://github.com/mjmgerdes/mayagerdes)
+
 ## Run Locally
 
 ```bash
