@@ -2,7 +2,6 @@ import {
   Activity,
   ArrowLeft,
   BadgeCheck,
-  BookOpen,
   Brain,
   BriefcaseBusiness,
   ExternalLink,
@@ -12,13 +11,11 @@ import {
   Linkedin,
   Mail,
   Music,
-  Rocket,
-  Sparkles,
   X,
-  Zap,
   type LucideIcon,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { useMemo, useState, type ReactNode } from "react";
 
 const links = {
   email: "mailto:mjgerdes@umich.edu",
@@ -35,20 +32,6 @@ const projectLinks = {
   foreverData: "https://foreverdata.live/",
 };
 
-type FeaturedProject = {
-  name: string;
-  tag: string;
-  body: string;
-  stack: string[];
-  href: string;
-};
-
-type HonorableMention = FeaturedProject & {
-  cta: string;
-  preview: "crm" | "grndwork";
-  repo?: string;
-};
-
 type ExperienceCategory = "Work" | "Clubs" | "Other";
 
 type ExperienceItem = {
@@ -57,105 +40,30 @@ type ExperienceItem = {
     alt: string;
     image?: string;
     text: string;
-    variant: string;
   };
   title: string;
   org: string;
   date: string;
   summary: string;
   tags: string[];
-  href?: string;
 };
 
-type TimelineItem = {
-  icon: LucideIcon;
+type Project = {
+  name: string;
   label: string;
-  detail: string;
-};
-
-type MemoryCard = {
-  id: string;
-  title: string;
-  year: string;
+  href: string;
   body: string;
-  tone: "blue" | "aqua" | "navy" | "coral";
-  icon: LucideIcon;
+  tags: string[];
+  cta: string;
+  repo?: string;
+  preview?: "crm" | "grndwork";
 };
 
-type Passion = {
+type PersonalCard = {
   icon: LucideIcon;
   title: string;
   body: string;
 };
-
-const praxigenSignals = [
-  { label: "Clinical Note", value: "3 missing criteria found" },
-  { label: "Payer Rule", value: "UHC · CPT 27447" },
-  { label: "Follow Up", value: "Adjuster due in 3 days" },
-  { label: "Status", value: "Ready to submit" },
-];
-
-const praxigenSteps = [
-  "01 Read note",
-  "02 Match requirements",
-  "03 Prepare packet",
-  "04 Track outcome",
-];
-
-const honorableMentions: HonorableMention[] = [
-  {
-    name: "Startup CRM",
-    tag: "Operator tool",
-    body:
-      "A lightweight CRM for a startup league team. It keeps Google Sheets as the source of truth, then adds a cleaner login and operating layer on top.",
-    stack: ["CRM", "Google Sheets", "Ops"],
-    href: projectLinks.startupCrm,
-    cta: "Open CRM",
-    preview: "crm",
-  },
-  {
-    name: "grndwork",
-    tag: "Student career platform",
-    body:
-      "A public early-access career product for students trying to turn broad interests into a clearer path, roles to track, and outreach to manage.",
-    stack: ["React", "Product", "Waitlist"],
-    href: projectLinks.grndworkLive,
-    cta: "View interface",
-    preview: "grndwork",
-    repo: projectLinks.grndworkRepo,
-  },
-];
-
-const additionalProjects: FeaturedProject[] = [
-  {
-    name: "ForeverData",
-    tag: "GTM support",
-    body:
-      "Go-to-market support for a data persistence product in storage and Web3 infrastructure.",
-    stack: ["GTM", "Data", "Storage"],
-    href: projectLinks.foreverData,
-  },
-];
-
-const grndworkMetrics = [
-  { label: "Interests", value: "Product + Design" },
-  { label: "Match score", value: "92%" },
-  { label: "Opportunities", value: "48 open" },
-];
-
-const grndworkRoles = [
-  ["Career direction", "Product + design", "92% match"],
-  ["Internship tracker", "Applications", "48 open"],
-  ["Outreach queue", "Alumni + founders", "12 drafts"],
-];
-
-const focusAreas = [
-  "Prior authorization",
-  "Clinical workflows",
-  "Neuroscience",
-  "Human-computer interaction",
-  "Go-to-market",
-];
 
 const experienceTabs: ExperienceCategory[] = ["Work", "Clubs", "Other"];
 
@@ -164,22 +72,22 @@ const experiences: ExperienceItem[] = [
     category: "Work",
     logo: {
       alt: "Michigan Blockchain Consulting",
+      image: "/logos/michigan-blockchain.png",
       text: "MBC",
-      variant: "logo-mbc",
     },
     title: "Project Manager / Business Analyst",
     org: "Michigan Blockchain Consulting",
     date: "Aug 2025 - Present",
     summary:
-      "Lead client-facing strategy work for SMBs in blockchain, translating infrastructure tradeoffs into product and GTM recommendations.",
+      "Lead client-facing blockchain strategy work for SMBs, translating infrastructure tradeoffs into product and GTM recommendations.",
     tags: ["Blockchain", "GTM", "Client work", "Product"],
   },
   {
     category: "Work",
     logo: {
       alt: "Michigan Medicine",
+      image: "/logos/michigan-medicine.svg",
       text: "MM",
-      variant: "logo-medicine",
     },
     title: "Research Assistant",
     org: "Michigan Medicine, Department of Human Genetics",
@@ -192,22 +100,21 @@ const experiences: ExperienceItem[] = [
     category: "Work",
     logo: {
       alt: "University of Michigan",
+      image: "/logos/university-of-michigan.svg",
       text: "M",
-      variant: "logo-michigan",
     },
     title: "Research Assistant",
     org: "Michigan Medicine + College of Engineering",
     date: "Nov 2024 - Sep 2025",
     summary:
       "Worked across computational biomechanics, cardiovascular imaging, and clinical datasets for patient-outcome and translational research.",
-    tags: ["Biomechanics", "Clinical data", "Imaging", "Cardiac"],
+    tags: ["Biomechanics", "Clinical data", "Imaging"],
   },
   {
     category: "Work",
     logo: {
       alt: "Neuropsychiatry and forensic neurology practice",
       text: "NF",
-      variant: "logo-neuro",
     },
     title: "Neuropsychiatry Intern",
     org: "Private neuropsychiatry and forensic neurology practice",
@@ -220,8 +127,8 @@ const experiences: ExperienceItem[] = [
     category: "Clubs",
     logo: {
       alt: "Cancer Screening Advocates",
+      image: "/logos/csa-favicon.png",
       text: "CSA",
-      variant: "logo-csa",
     },
     title: "President and Founding Campus Lead",
     org: "Cancer Screening Advocates",
@@ -235,21 +142,19 @@ const experiences: ExperienceItem[] = [
     logo: {
       alt: "Pi Sigma Epsilon",
       text: "PSE",
-      variant: "logo-pse",
     },
     title: "DEI Director and Council Member",
     org: "Pi Sigma Epsilon",
     date: "Sep 2024 - Present",
     summary:
       "Help organize programming, recruiting, and member-facing systems for a business and professional development community.",
-    tags: ["Professional development", "Programming", "Leadership"],
+    tags: ["Programming", "Recruiting", "Leadership"],
   },
   {
     category: "Clubs",
     logo: {
       alt: "Phi Delta Epsilon",
       text: "PhiDE",
-      variant: "logo-phide",
     },
     title: "Marketing and Public Relations Chair",
     org: "Phi Delta Epsilon",
@@ -263,13 +168,12 @@ const experiences: ExperienceItem[] = [
     logo: {
       alt: "Music",
       text: "MUS",
-      variant: "logo-music",
     },
     title: "Music",
     org: "Guitar, piano, DJing, and playlist curation",
     date: "Ongoing",
     summary:
-      "Guitar, piano, DJing, and the playlists that tend to follow me through work sessions.",
+      "Guitar, piano, DJing, and playlists that tend to follow me through work sessions.",
     tags: ["Music", "Taste", "Rituals"],
   },
   {
@@ -277,9 +181,8 @@ const experiences: ExperienceItem[] = [
     logo: {
       alt: "Pickleball",
       text: "PB",
-      variant: "logo-pickleball",
     },
-    title: "Pickleball and fast feedback",
+    title: "Pickleball",
     org: "Recreation, competition, and movement",
     date: "Now",
     summary:
@@ -288,82 +191,40 @@ const experiences: ExperienceItem[] = [
   },
 ];
 
-const timeline: TimelineItem[] = [
+const projects: Project[] = [
   {
-    icon: GraduationCap,
-    label: "University of Michigan",
-    detail:
-      "B.S. in Neuroscience, Entrepreneurship minor, Honors Program. Expected May 2028.",
+    name: "Startup CRM",
+    label: "Operator tool",
+    href: projectLinks.startupCrm,
+    body:
+      "A lightweight CRM for a startup league team. It keeps Google Sheets as the source of truth, then adds a cleaner login and operating layer on top.",
+    tags: ["CRM", "Google Sheets", "Ops"],
+    cta: "Open CRM",
+    preview: "crm",
   },
   {
-    icon: BadgeCheck,
-    label: "Academic recognition",
-    detail:
-      "William J. Branstrom Award, James B. Angell Scholar, Phi Kappa Phi, and neuroscience honors recognition.",
+    name: "grndwork",
+    label: "Career platform",
+    href: projectLinks.grndworkLive,
+    repo: projectLinks.grndworkRepo,
+    body:
+      "A public early-access product for students trying to turn broad interests into a clearer career path, roles to track, and outreach to manage.",
+    tags: ["React", "Product", "Waitlist"],
+    cta: "View site",
+    preview: "grndwork",
   },
   {
-    icon: HeartPulse,
-    label: "Clinical and research exposure",
-    detail:
-      "Human genetics, neuropsychiatry, cardiovascular surgery, computational biomechanics, and patient-outcome datasets.",
+    name: "ForeverData",
+    label: "GTM support",
+    href: projectLinks.foreverData,
+    body:
+      "Go-to-market support for a data persistence product in storage and Web3 infrastructure.",
+    tags: ["GTM", "Data", "Storage"],
+    cta: "View site",
   },
 ];
 
-const dossierPoints = [
-  {
-    icon: Zap,
-    text: "I like messy domains where the buyer, user, and workflow are not the same person.",
-  },
-  {
-    icon: Brain,
-    text: "My research background makes me patient with technical detail; building makes me impatient with bad workflows.",
-  },
-  {
-    icon: BriefcaseBusiness,
-    text: "The common thread is translating complex systems into something a team can actually use.",
-  },
-];
-
-const memoryCards: MemoryCard[] = [
-  {
-    id: "guitar",
-    title: "Music",
-    year: "Age 5",
-    body:
-      "I started with guitar and piano, and now music is still one of the fastest ways I understand attention.",
-    tone: "blue",
-    icon: Music,
-  },
-  {
-    id: "pickleball",
-    title: "Pickleball",
-    year: "Now",
-    body:
-      "Fast rallies, quick decisions, and the rare hobby that makes my brain quiet down immediately.",
-    tone: "aqua",
-    icon: Activity,
-  },
-  {
-    id: "brain",
-    title: "Neuroscience",
-    year: "Michigan",
-    body:
-      "The question under a lot of my work: what makes people heal, adapt, perform, and change?",
-    tone: "navy",
-    icon: Brain,
-  },
-  {
-    id: "builder",
-    title: "Building",
-    year: "2026",
-    body:
-      "Prototypes, customer calls, awkward first versions, and the slow conversion of a hunch into something real.",
-    tone: "coral",
-    icon: Rocket,
-  },
-];
-
-const passions: Passion[] = [
+const personalCards: PersonalCard[] = [
   {
     icon: Music,
     title: "Music",
@@ -383,28 +244,55 @@ const passions: Passion[] = [
       "Fast feedback, friendly competition, and a very satisfying reset button.",
   },
   {
-    icon: BookOpen,
+    icon: HeartPulse,
     title: "Biohacking",
     body:
       "Sleep, training, food, and small habits that are either useful or nonsense. I like figuring out which.",
   },
 ];
 
-function SectionHeading({
-  eyebrow,
-  title,
-  body,
+const backgroundItems = [
+  {
+    icon: GraduationCap,
+    title: "University of Michigan",
+    body:
+      "B.S. in Neuroscience, Entrepreneurship minor, Honors Program. Expected May 2028.",
+  },
+  {
+    icon: BadgeCheck,
+    title: "Academic recognition",
+    body:
+      "William J. Branstrom Award, James B. Angell Scholar, Phi Kappa Phi, and neuroscience honors recognition.",
+  },
+  {
+    icon: BriefcaseBusiness,
+    title: "Current through-line",
+    body:
+      "Research detail, clinical workflow exposure, product taste, and go-to-market work.",
+  },
+];
+
+function Reveal({
+  children,
+  className,
+  delay = 0,
 }: {
-  eyebrow: string;
-  title: string;
-  body: string;
+  children: ReactNode;
+  className?: string;
+  delay?: number;
 }) {
+  const reduceMotion = useReducedMotion();
+
   return (
-    <div className="section-heading">
-      <p>{eyebrow}</p>
-      <h2>{title}</h2>
-      <span>{body}</span>
-    </div>
+    <motion.div
+      className={className}
+      initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.42, delay, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {children}
+    </motion.div>
   );
 }
 
@@ -412,18 +300,22 @@ function IconLink({
   href,
   label,
   icon: Icon,
-  iconOnly = false,
 }: {
   href: string;
   label: string;
   icon: LucideIcon;
-  iconOnly?: boolean;
 }) {
   return (
-    <a href={href} target="_blank" rel="noreferrer" aria-label={label}>
-      <Icon size={18} strokeWidth={1.9} />
-      <span className={iconOnly ? "sr-only" : undefined}>{label}</span>
-    </a>
+    <motion.a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={label}
+      whileHover={{ y: -2 }}
+      transition={{ type: "spring", stiffness: 420, damping: 28 }}
+    >
+      <Icon size={17} strokeWidth={1.9} />
+    </motion.a>
   );
 }
 
@@ -442,51 +334,177 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
       </a>
       <div className="nav-links">
         <a href={isPersonal ? "/#projects" : "#projects"}>Projects</a>
-        <a href={isPersonal ? "/#work" : "#work"}>Work</a>
-        <a href="/me">Me</a>
+        <a href={isPersonal ? "/#experience" : "#experience"}>Experience</a>
+        <a href="/me">Personal</a>
         <a href={isPersonal ? "/#contact" : "#contact"}>Contact</a>
       </div>
     </nav>
   );
 }
 
-function MemoryGallery({ compact = false }: { compact?: boolean }) {
-  const [flippedId, setFlippedId] = useState<string | null>(null);
-  const cards = compact ? memoryCards.slice(0, 3) : memoryCards;
+function SectionHeader({
+  eyebrow,
+  title,
+  body,
+}: {
+  eyebrow: string;
+  title: string;
+  body?: string;
+}) {
+  return (
+    <div className="section-header">
+      <p>{eyebrow}</p>
+      <h2>{title}</h2>
+      {body ? <span>{body}</span> : null}
+    </div>
+  );
+}
+
+function LogoMark({ logo }: { logo: ExperienceItem["logo"] }) {
+  return (
+    <div className="logo-mark" aria-label={logo.alt}>
+      {logo.image ? <img src={logo.image} alt="" loading="lazy" /> : <span>{logo.text}</span>}
+    </div>
+  );
+}
+
+function ProjectCard({ project }: { project: Project }) {
+  return (
+    <motion.article
+      className="project-card"
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 360, damping: 30 }}
+    >
+      <div className="card-topline">
+        <span>{project.label}</span>
+        <ExternalLink size={16} />
+      </div>
+      {project.preview ? <ProjectPreview kind={project.preview} /> : null}
+      <h3>{project.name}</h3>
+      <p>{project.body}</p>
+      <div className="tag-row">
+        {project.tags.map((tag) => (
+          <em key={tag}>{tag}</em>
+        ))}
+      </div>
+      <div className="project-actions">
+        <a href={project.href} target="_blank" rel="noreferrer">
+          {project.cta}
+        </a>
+        {project.repo ? (
+          <a href={project.repo} target="_blank" rel="noreferrer">
+            Repo
+          </a>
+        ) : null}
+      </div>
+    </motion.article>
+  );
+}
+
+function ProjectPreview({ kind }: { kind: "crm" | "grndwork" }) {
+  if (kind === "crm") {
+    return (
+      <div className="mini-preview mini-preview-crm" aria-hidden="true">
+        <div className="mini-preview-line">
+          <span>UStart League</span>
+          <em>Season 04</em>
+        </div>
+        <strong>Team workspace</strong>
+        <p>Sheets source of truth, cleaner operating layer.</p>
+        <div className="google-button">Continue with Google</div>
+        <div className="validation-chip">// Validation Engine</div>
+      </div>
+    );
+  }
 
   return (
-    <div className={compact ? "memory-grid memory-grid-compact" : "memory-grid"}>
-      {cards.map((card) => {
-        const Icon = card.icon;
-        const isFlipped = flippedId === card.id;
-
-        return (
-          <button
-            className={`memory-card tone-${card.tone} ${isFlipped ? "is-flipped" : ""}`}
-            key={card.id}
-            type="button"
-            aria-pressed={isFlipped}
-            onClick={() => setFlippedId(isFlipped ? null : card.id)}
-          >
-            <span className="memory-card-inner">
-              <span className="memory-face memory-front">
-                <span className="memory-visual" aria-hidden="true" />
-                <span className="memory-front-content">
-                  <Icon size={23} />
-                  <span>{card.year}</span>
-                  <strong>{card.title}</strong>
-                </span>
-              </span>
-              <span className="memory-face memory-back">
-                <span>{card.year}</span>
-                <strong>{card.title}</strong>
-                <em>{card.body}</em>
-              </span>
-            </span>
-          </button>
-        );
-      })}
+    <div className="mini-preview mini-preview-grndwork" aria-hidden="true">
+      <div className="mini-preview-line">
+        <span>grndwork</span>
+        <em>Early access</em>
+      </div>
+      <strong>Discover your path.</strong>
+      <div className="mini-metrics">
+        <span>
+          <small>Interests</small>
+          Product + Design
+        </span>
+        <span>
+          <small>Match</small>
+          92%
+        </span>
+        <span>
+          <small>Open</small>
+          48
+        </span>
+      </div>
+      <div className="role-line">Associate PM - tracked</div>
     </div>
+  );
+}
+
+function PraxigenPreview() {
+  return (
+    <motion.div
+      className="product-preview"
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <div className="preview-shell">
+        <aside>
+          <strong>Praxigen</strong>
+          <span>Cases</span>
+          <span>PA Lookup</span>
+          <span>Note Checker</span>
+          <span>Appeals</span>
+        </aside>
+        <div className="preview-workspace">
+          <div className="preview-toolbar">
+            <span>Case Queue</span>
+            <em>+ New Case</em>
+          </div>
+          <div className="case-tabs">
+            <span>All 27</span>
+            <span>Urgent 13</span>
+            <span>Due Today 5</span>
+            <span>On Track 4</span>
+          </div>
+          {[
+            ["Hayes, Robert", "Total Knee Arthroplasty - 27447", "UHC", "Submitted"],
+            ["Nguyen, Linda", "Shoulder Arthroscopy - 29827", "Cigna", "Past due"],
+            ["Patel, Amir", "Cervical MRI - 72141", "Aetna", "On track"],
+          ].map(([patient, procedure, payer, status]) => (
+            <div className="case-row" key={patient}>
+              <div>
+                <strong>{patient}</strong>
+                <span>{procedure}</span>
+              </div>
+              <em>{payer}</em>
+              <b>{status}</b>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="preview-grid">
+        <div>
+          <span>Requirement lookup</span>
+          <strong>20 major payers</strong>
+        </div>
+        <div>
+          <span>Note checker</span>
+          <strong>84/100 ready</strong>
+        </div>
+        <div>
+          <span>Appeal letters</span>
+          <strong>Cited evidence</strong>
+        </div>
+        <div>
+          <span>Case tracking</span>
+          <strong>Due dates visible</strong>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -507,400 +525,219 @@ function PortfolioHome() {
       <SiteNav />
 
       <header className="hero" id="top">
-        <div className="hero-content">
-          <p className="eyebrow">Neuroscience student / healthtech founder</p>
-          <h1>Maya Gerdes</h1>
-          <p className="hero-copy">
-            I am a University of Michigan neuroscience student building
-            Praxigen, a prior authorization workflow product for healthcare
-            teams. My work sits between clinical research, product, and
-            go-to-market.
-          </p>
-          <div className="hero-actions" aria-label="Contact and profile links">
-            <a className="button primary" href={links.email}>
-              <Mail size={18} />
-              Email me
-            </a>
-            <a className="button secondary" href="#projects">
-              <ExternalLink size={18} />
-              Selected work
-            </a>
-          </div>
-          <div className="social-strip" aria-label="External profiles">
-            <IconLink href={links.linkedin} label="LinkedIn" icon={Linkedin} iconOnly />
-            <IconLink href={links.github} label="GitHub" icon={Github} iconOnly />
-            <IconLink href={links.x} label="X / Twitter" icon={X} iconOnly />
-          </div>
+        <div className="hero-copy">
+          <Reveal>
+            <p className="eyebrow">University of Michigan · Praxigen</p>
+            <h1>Maya Gerdes</h1>
+            <p className="hero-subtitle">
+              Neuroscience student building healthcare workflow software.
+            </p>
+            <p>
+              I am at the University of Michigan studying neuroscience and
+              building Praxigen, a prior authorization product for healthcare
+              teams. My background crosses clinical research, product, and
+              go-to-market work.
+            </p>
+            <div className="hero-actions">
+              <a className="button primary" href={links.email}>
+                <Mail size={17} />
+                Email me
+              </a>
+              <a className="button secondary" href="#projects">
+                Selected work
+              </a>
+            </div>
+            <div className="social-strip" aria-label="External profiles">
+              <IconLink href={links.linkedin} label="LinkedIn" icon={Linkedin} />
+              <IconLink href={links.github} label="GitHub" icon={Github} />
+              <IconLink href={links.x} label="X / Twitter" icon={X} />
+            </div>
+          </Reveal>
         </div>
+
+        <Reveal className="hero-card" delay={0.08}>
+          <div className="now-card">
+            <span>Current build</span>
+            <h2>Praxigen</h2>
+            <p>
+              Prior authorization is still too much searching, copying, and
+              waiting. I am working on the system I wish existed inside that
+              workflow.
+            </p>
+            <div className="signal-list">
+              <div>
+                <small>Workflow</small>
+                <strong>Prior authorization</strong>
+              </div>
+              <div>
+                <small>Wedge</small>
+                <strong>Payer policy + note gaps</strong>
+              </div>
+              <div>
+                <small>Buyer context</small>
+                <strong>Practices losing time to denials</strong>
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </header>
 
-      <section className="featured-projects" id="projects" aria-label="Featured projects">
-        <div className="featured-projects-inner">
-          <div className="featured-projects-heading">
-            <p className="eyebrow dark">Selected work</p>
-            <h2>Projects with a specific workflow behind them.</h2>
-          </div>
-          <article className="project-spotlight">
-            <div className="spotlight-copy">
-              <span className="spotlight-kicker">Main project</span>
-              <h3>Praxigen</h3>
-              <p>
-                Praxigen is a prior authorization workspace for healthcare
-                teams. The goal is simple: make payer requirements, clinical
-                documentation, forms, and case status easier to find and act on
-                before a denial happens.
-              </p>
-              <div className="tag-row">
-                <em>Healthtech</em>
-                <em>Prior authorization</em>
-                <em>Agent infrastructure</em>
-                <em>Payer workflows</em>
-              </div>
-              <div className="spotlight-actions">
-                <a
-                  className="button primary"
-                  href={projectLinks.praxigen}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <ExternalLink size={18} />
-                  View Praxigen
-                </a>
-              </div>
-            </div>
-            <div className="spotlight-interface praxigen-interface" aria-label="Praxigen interface preview">
-              <div className="spotlight-window-bar" aria-hidden="true">
-                <span />
-                <span />
-                <span />
-              </div>
-              <div className="praxigen-preview-nav">
-                <strong>Praxigen</strong>
-                <span>PA Lookup</span>
-                <span>Note Checker</span>
-                <span>Cases</span>
-              </div>
-              <div className="spotlight-interface-header">
-                <span>Praxigen / workflow</span>
-                <strong>Find the rule. Fix the packet. Track the case.</strong>
-                <p>Check the payer rule, compare it to the note, prepare the packet, and keep the case moving.</p>
-              </div>
-              <div className="praxigen-signal-grid">
-                {praxigenSignals.map((signal) => (
-                  <div key={signal.label}>
-                    <span>{signal.label}</span>
-                    <strong>{signal.value}</strong>
-                  </div>
-                ))}
-              </div>
-              <div className="praxigen-step-list">
-                {praxigenSteps.map((step) => (
-                  <span key={step}>{step}</span>
-                ))}
-              </div>
-              <div className="praxigen-request-row">
-                <span>Toolkit</span>
-                <strong>Lookup · document · track · appeal</strong>
-              </div>
-            </div>
-          </article>
-
-          <div className="honorable-heading">
-            <span>Other projects</span>
-            <p>Smaller builds and GTM work that round out the product story.</p>
-          </div>
-          <div className="honorable-grid">
-            {honorableMentions.map((project) => (
-              <article className="honorable-card" key={project.name}>
-                <div className="honorable-copy">
-                  <span className="project-card-topline">
-                    <small>{project.tag}</small>
-                    <ExternalLink size={17} />
-                  </span>
-                  <h3>{project.name}</h3>
-                  <p>{project.body}</p>
-                  <span className="tag-row">
-                    {project.stack.map((tag) => (
-                      <em key={tag}>{tag}</em>
-                    ))}
-                  </span>
-                  <div className="honorable-actions">
-                    <a
-                      className="button primary"
-                      href={project.href}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <ExternalLink size={17} />
-                      {project.cta}
-                    </a>
-                    {project.repo ? (
-                      <a
-                        className="button secondary"
-                        href={project.repo}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        <Github size={17} />
-                        Repo
-                      </a>
-                    ) : null}
-                  </div>
-                </div>
-                <div className={`mini-interface mini-interface-${project.preview}`}>
-                  <div className="spotlight-window-bar" aria-hidden="true">
-                    <span />
-                    <span />
-                    <span />
-                  </div>
-                  {project.preview === "crm" ? (
-                    <>
-                      <div className="mini-back-link">Back home</div>
-                      <div className="mini-interface-header">
-                        <span>UStart League / Season 04</span>
-                        <strong>Sign in to your team workspace.</strong>
-                        <p>Use your Google account. The team's sheet stays the source of truth; the CRM makes it easier to operate.</p>
-                      </div>
-                      <div className="mini-login-button">Continue with Google</div>
-                      <div className="mini-access-note">Sheets and Drive access stay tied to the league workspace.</div>
-                      <div className="mini-quote">
-                        <span>Validation view</span>
-                        <p>Track founders, interviews, notes, and follow-ups without rebuilding the system every week.</p>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="grndwork-mini-nav">
-                        <strong><span /> grndwork</strong>
-                        <em>Join Early Access</em>
-                      </div>
-                      <div className="mini-pill">Now in early access</div>
-                      <div className="mini-interface-header">
-                        <span>grndwork</span>
-                        <strong>Discover your path. Land your future.</strong>
-                        <p>Helping students go from not knowing what to pursue to landing real opportunities.</p>
-                      </div>
-                      <div className="grndwork-mini-actions">
-                        <span>Join Early Access</span>
-                        <span>Learn More</span>
-                      </div>
-                      <div className="grndwork-metrics">
-                        {grndworkMetrics.map((metric) => (
-                          <div key={metric.label}>
-                            <span>{metric.label}</span>
-                            <strong>{metric.value}</strong>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="grndwork-role-list">
-                        {grndworkRoles.slice(0, 2).map(([role, company, location]) => (
-                          <div key={`${role}-${company}`}>
-                            <span>
-                              <strong>{role}</strong>
-                              <em>{company} / {location}</em>
-                            </span>
-                            <small>Track</small>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <div className="additional-project-grid">
-            {additionalProjects.map((project) => (
-              <a
-                className="featured-project-card"
-                href={project.href}
-                target="_blank"
-                rel="noreferrer"
-                key={project.name}
-              >
-                <span className="project-card-topline">
-                  <small>{project.tag}</small>
-                  <ExternalLink size={17} />
-                </span>
-                <h3>{project.name}</h3>
-                <p>{project.body}</p>
-                <span className="tag-row">
-                  {project.stack.map((tag) => (
-                    <em key={tag}>{tag}</em>
-                  ))}
-                </span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section thesis-section">
-        <div className="thesis-copy">
-          <p className="eyebrow dark">Current focus</p>
-          <h2>Healthcare software has to respect the workflow it enters.</h2>
-        </div>
-        <div className="thesis-body">
-          <p>
-            I am most interested in products where scientific detail, human
-            behavior, and operations all matter. That is what drew me toward
-            healthtech: the problem is rarely just the model or the interface.
-            It is the workflow around it.
-          </p>
-          <div className="focus-grid" aria-label="Focus areas">
-            {focusAreas.map((focus) => (
-              <span key={focus}>{focus}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section experience-section" id="work">
-        <div className="experience-heading-row">
-          <SectionHeading
-            eyebrow="Experience"
-            title="Research, clinical exposure, and GTM work."
-            body="The through-line is translating complicated systems into something a team can understand and use."
+      <section className="section projects-section" id="projects">
+        <Reveal>
+          <SectionHeader
+            eyebrow="Selected work"
+            title="A few things with a real user and workflow behind them."
+            body="Less project museum, more evidence of how I think: find the messy workflow, understand the user, then build the smallest useful surface."
           />
-          <div className="experience-tabs" aria-label="Experience filters">
-            {experienceTabs.map((tab) => (
-              <button
-                className={tab === activeExperienceTab ? "active" : ""}
-                type="button"
-                key={tab}
-                onClick={() => setActiveExperienceTab(tab)}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
+        </Reveal>
+
+        <div className="featured-project">
+          <Reveal className="featured-copy">
+            <span className="kicker">Main project</span>
+            <h3>Praxigen</h3>
+            <p>
+              A prior authorization workspace for healthcare teams. The goal is
+              to make payer requirements, clinical documentation, forms, and
+              case status easier to find and act on before a denial happens.
+            </p>
+            <div className="tag-row">
+              <em>Healthtech</em>
+              <em>Prior authorization</em>
+              <em>Agent workflows</em>
+              <em>Clinical ops</em>
+            </div>
+            <a className="button primary" href={projectLinks.praxigen} target="_blank" rel="noreferrer">
+              <ExternalLink size={17} />
+              View Praxigen
+            </a>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <PraxigenPreview />
+          </Reveal>
         </div>
-        <div className="experience-list">
+
+        <Reveal className="project-grid">
+          {projects.map((project) => (
+            <ProjectCard project={project} key={project.name} />
+          ))}
+        </Reveal>
+      </section>
+
+      <section className="section experience-section" id="experience">
+        <Reveal>
+          <div className="experience-heading">
+            <SectionHeader
+              eyebrow="Experience"
+              title="Research, clinical exposure, and operator work."
+              body="I like domains where technical detail and human workflow are tangled together."
+            />
+            <div className="experience-tabs" aria-label="Experience filters">
+              {experienceTabs.map((tab) => (
+                <button
+                  className={tab === activeExperienceTab ? "active" : ""}
+                  type="button"
+                  key={tab}
+                  onClick={() => setActiveExperienceTab(tab)}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
+        <motion.div className="experience-list" layout>
           {activeExperiences.map((experience) => (
-            <article className="experience-item" key={`${experience.org}-${experience.title}`}>
-              <div className={`experience-logo ${experience.logo.variant}`} aria-label={experience.logo.alt}>
-                {experience.logo.image ? (
-                  <img src={experience.logo.image} alt="" loading="lazy" />
-                ) : (
-                  <span>{experience.logo.text}</span>
-                )}
-              </div>
+            <motion.article
+              className="experience-item"
+              layout
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25 }}
+              key={`${experience.org}-${experience.title}`}
+            >
+              <LogoMark logo={experience.logo} />
               <div className="experience-body">
                 <div className="experience-title-row">
                   <div>
-                    <h3>
-                      {experience.title}
-                      {experience.href ? <ExternalLink size={15} /> : null}
-                    </h3>
+                    <h3>{experience.title}</h3>
                     <p>{experience.org}</p>
                   </div>
                   <time>{experience.date}</time>
                 </div>
                 <p className="experience-summary">{experience.summary}</p>
-                <div className="tag-row">
+                <div className="tag-row compact">
                   {experience.tags.map((tag) => (
                     <em key={tag}>{tag}</em>
                   ))}
                 </div>
               </div>
-            </article>
+            </motion.article>
           ))}
-        </div>
+        </motion.div>
       </section>
 
-      <section className="section split-section" id="dossier">
-        <div>
-          <SectionHeading
+      <section className="section background-section">
+        <Reveal>
+          <SectionHeader
             eyebrow="Background"
-            title="The context behind the work."
-            body="A compact version of the academic, research, and operator context that shapes how I build."
+            title="Why this direction makes sense."
+            body="The resume version is straightforward: neuroscience, research, clinical exposure, consulting, and product work. The personal version is that I keep coming back to systems where small delays and confusing handoffs make people's lives worse."
           />
-          <div className="dossier-points">
-            {dossierPoints.map((point) => {
-              const Icon = point.icon;
+        </Reveal>
 
-              return (
-                <div key={point.text}>
-                  <Icon size={20} />
-                  <span>{point.text}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-        <aside className="profile-panel" aria-label="Education and background">
-          {timeline.map((item) => {
+        <div className="background-grid">
+          {backgroundItems.map((item) => {
             const Icon = item.icon;
+
             return (
-              <div key={item.label}>
+              <Reveal className="background-card" key={item.title}>
                 <Icon size={20} />
-                <p>{item.label}</p>
-                <span>{item.detail}</span>
-              </div>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </Reveal>
             );
           })}
-        </aside>
+        </div>
       </section>
 
-      <section className="section personal-bridge">
-        <div className="personal-bridge-copy">
-          <p className="eyebrow dark">Outside work</p>
-          <h2>Music, pickleball, neuroscience, and a few useful obsessions.</h2>
+      <section className="section personal-note">
+        <Reveal className="personal-note-copy">
+          <p className="eyebrow">Personal note</p>
+          <h2>Music, pickleball, biohacking, and a real interest in how people change.</h2>
           <p>
-            I wanted one page that is not trying to be a resume. This is where
-            the personal threads live.
+            Outside of work, I am usually somewhere between guitar, piano,
+            DJing, pickleball, and obsessing over sleep/training/nutrition
+            experiments. It is not a separate personality from the work; it is
+            the same curiosity about attention, behavior, and feedback loops.
           </p>
-          <a className="button blue" href="/me">
-            <Sparkles size={18} />
-            About me
+          <a className="button secondary" href="/me">
+            Read the personal page
           </a>
-        </div>
-        <div className="personal-bridge-panel" aria-label="Personal interests">
-          <span>
-            <Music size={17} />
-            Piano / guitar / DJing
-          </span>
-          <span>
-            <Brain size={17} />
-            Neuroscience
-          </span>
-          <span>
-            <Activity size={17} />
-            Pickleball
-          </span>
-          <span>
-            <Rocket size={17} />
-            Entrepreneurship
-          </span>
-        </div>
+        </Reveal>
       </section>
 
       <section className="contact-section" id="contact">
-        <p className="eyebrow">Contact</p>
-        <h2>For Praxigen, healthcare workflow questions, grants, accelerators, or research-product conversations.</h2>
-        <p>
-          Email is best. LinkedIn and GitHub are here too if you want the
-          public version of what I am working on.
-        </p>
-        <div className="contact-actions">
-          <a className="button primary" href={links.email}>
-            <Mail size={18} />
-            mjgerdes@umich.edu
-          </a>
-          <a className="button secondary" href={links.linkedin} target="_blank" rel="noreferrer">
-            <Linkedin size={18} />
-            LinkedIn
-          </a>
-          <a className="button secondary" href={links.github} target="_blank" rel="noreferrer">
-            <Github size={18} />
-            GitHub
-          </a>
-          <a className="button secondary" href={links.x} target="_blank" rel="noreferrer">
-            <X size={18} />
-            X / Twitter
-          </a>
-        </div>
+        <Reveal>
+          <p className="eyebrow">Contact</p>
+          <h2>Best reached by email.</h2>
+          <p>
+            For Praxigen, healthcare workflow questions, grants, accelerators,
+            or research-product conversations.
+          </p>
+          <div className="contact-actions">
+            <a className="button primary" href={links.email}>
+              <Mail size={17} />
+              mjgerdes@umich.edu
+            </a>
+            <a className="button secondary" href={links.linkedin} target="_blank" rel="noreferrer">
+              LinkedIn
+            </a>
+            <a className="button secondary" href={links.github} target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+          </div>
+        </Reveal>
       </section>
     </main>
   );
@@ -908,67 +745,44 @@ function PortfolioHome() {
 
 function PersonalPage() {
   return (
-    <main className="personal-page">
+    <main>
       <SiteNav page="personal" />
-
       <header className="personal-hero">
-        <div className="personal-hero-content">
+        <Reveal>
           <a className="back-link" href="/">
-            <ArrowLeft size={17} />
+            <ArrowLeft size={16} />
             Back to main page
           </a>
           <p className="eyebrow">Outside the resume</p>
-          <h1>Music, movement, brains, and habits.</h1>
+          <h1>A few things that shape how I think.</h1>
           <p>
-            A less formal page for the parts of me that do not fit neatly into
-            a project card: music, neuroscience, pickleball, biohacking, and
-            the small routines that make life feel better.
+            I wanted one place for the parts that do not belong in a grant
+            answer or resume bullet but do explain me a little better.
           </p>
-        </div>
+        </Reveal>
       </header>
 
-      <section className="section passion-section">
-        <SectionHeading
-          eyebrow="Passions"
-          title="The things I keep coming back to."
-          body="Different surfaces, same questions: how people feel, learn, perform, and change."
-        />
-        <div className="passion-grid">
-          {passions.map((passion) => {
-            const Icon = passion.icon;
+      <section className="section">
+        <Reveal>
+          <SectionHeader
+            eyebrow="Personal"
+            title="Music, movement, brains, and small experiments."
+            body="Different surfaces, same question: how do people feel, learn, perform, and change?"
+          />
+        </Reveal>
+
+        <div className="personal-grid">
+          {personalCards.map((card) => {
+            const Icon = card.icon;
 
             return (
-              <article className="passion-card" key={passion.title}>
-                <Icon size={22} />
-                <h3>{passion.title}</h3>
-                <p>{passion.body}</p>
-              </article>
+              <Reveal className="personal-card" key={card.title}>
+                <Icon size={21} />
+                <h3>{card.title}</h3>
+                <p>{card.body}</p>
+              </Reveal>
             );
           })}
-        </div>
-      </section>
-
-      <section className="section memory-section personal-memory-section" id="memories">
-        <SectionHeading
-          eyebrow="Notes"
-          title="A few non-work threads."
-          body="Tap a card if you want the longer version."
-        />
-        <MemoryGallery />
-      </section>
-
-      <section className="contact-section personal-contact">
-        <p className="eyebrow">Back to the work</p>
-        <h2>The main page has the projects and experience.</h2>
-        <div className="contact-actions">
-          <a className="button primary" href="/">
-            <ArrowLeft size={18} />
-            Main portfolio
-          </a>
-          <a className="button secondary" href={links.x} target="_blank" rel="noreferrer">
-            <X size={18} />
-            X / Twitter
-          </a>
         </div>
       </section>
     </main>
