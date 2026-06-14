@@ -65,6 +65,13 @@ type PersonalCard = {
   body: string;
 };
 
+type PraxigenScreen = {
+  title: string;
+  body: string;
+  image: string;
+  alt: string;
+};
+
 const experienceTabs: ExperienceCategory[] = ["Work", "Clubs", "Other"];
 
 const experiences: ExperienceItem[] = [
@@ -221,6 +228,51 @@ const projects: Project[] = [
       "Go-to-market support for a data persistence product in storage and Web3 infrastructure.",
     tags: ["GTM", "Data", "Storage"],
     cta: "View site",
+  },
+];
+
+const praxigenScreens: PraxigenScreen[] = [
+  {
+    title: "Case queue",
+    body: "A shared workspace for submitted, urgent, overdue, and denied authorizations.",
+    image: "/praxigen/workspace.webp",
+    alt: "Praxigen case queue showing prior authorization cases, payer status, due dates, and next actions.",
+  },
+  {
+    title: "PA lookup",
+    body: "Search a procedure once and compare payer criteria, required documentation, and next actions.",
+    image: "/praxigen/pa-lookup.webp",
+    alt: "Praxigen prior authorization lookup showing payer criteria for rotator cuff repair.",
+  },
+  {
+    title: "Note checker",
+    body: "Score a clinical note against payer policy and surface documentation gaps before submission.",
+    image: "/praxigen/note-checker.webp",
+    alt: "Praxigen note checker showing a strong note score and clinical policy checks.",
+  },
+  {
+    title: "Appeal generator",
+    body: "Collect case context, payer, plan, procedure, and appeal level before generating a letter.",
+    image: "/praxigen/appeal-generator.webp",
+    alt: "Praxigen appeal letter generator form with payer and case type inputs.",
+  },
+  {
+    title: "Appeal letter",
+    body: "Produce a formal letter that can be copied or exported to .docx and .pdf.",
+    image: "/praxigen/appeal-letter.webp",
+    alt: "Praxigen generated appeal letter preview with copy and export controls.",
+  },
+  {
+    title: "Pre-claim check",
+    body: "Compare authorization details against claim details before the claim drops.",
+    image: "/praxigen/preclaim-check.webp",
+    alt: "Praxigen pre-claim check comparing authorized and billed details with blocking issues.",
+  },
+  {
+    title: "Denial intelligence",
+    body: "Track usage, common procedures, payer activity, and denial patterns.",
+    image: "/praxigen/denial-insights.webp",
+    alt: "Praxigen denial intelligence dashboard with metrics and procedure activity.",
   },
 ];
 
@@ -444,65 +496,34 @@ function ProjectPreview({ kind }: { kind: "crm" | "grndwork" }) {
 }
 
 function PraxigenPreview() {
+  const [featured, ...supporting] = praxigenScreens;
+
   return (
     <motion.div
-      className="product-preview"
+      className="product-preview product-preview-real"
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="preview-shell">
-        <aside>
-          <strong>Praxigen</strong>
-          <span>Cases</span>
-          <span>PA Lookup</span>
-          <span>Note Checker</span>
-          <span>Appeals</span>
-        </aside>
-        <div className="preview-workspace">
-          <div className="preview-toolbar">
-            <span>Case Queue</span>
-            <em>+ New Case</em>
-          </div>
-          <div className="case-tabs">
-            <span>All 27</span>
-            <span>Urgent 13</span>
-            <span>Due Today 5</span>
-            <span>On Track 4</span>
-          </div>
-          {[
-            ["Hayes, Robert", "Total Knee Arthroplasty - 27447", "UHC", "Submitted"],
-            ["Nguyen, Linda", "Shoulder Arthroscopy - 29827", "Cigna", "Past due"],
-            ["Patel, Amir", "Cervical MRI - 72141", "Aetna", "On track"],
-          ].map(([patient, procedure, payer, status]) => (
-            <div className="case-row" key={patient}>
-              <div>
-                <strong>{patient}</strong>
-                <span>{procedure}</span>
-              </div>
-              <em>{payer}</em>
-              <b>{status}</b>
-            </div>
-          ))}
+      <div className="product-shot-main">
+        <img src={featured.image} alt={featured.alt} />
+        <div>
+          <span>Actual Praxigen interface</span>
+          <strong>{featured.title}</strong>
+          <p>{featured.body}</p>
         </div>
       </div>
-      <div className="preview-grid">
-        <div>
-          <span>Requirement lookup</span>
-          <strong>20 major payers</strong>
-        </div>
-        <div>
-          <span>Note checker</span>
-          <strong>84/100 ready</strong>
-        </div>
-        <div>
-          <span>Appeal letters</span>
-          <strong>Cited evidence</strong>
-        </div>
-        <div>
-          <span>Case tracking</span>
-          <strong>Due dates visible</strong>
-        </div>
+
+      <div className="product-shot-grid" aria-label="Praxigen product screens">
+        {supporting.map((screen) => (
+          <article className="product-shot" key={screen.title}>
+            <img src={screen.image} alt={screen.alt} />
+            <div>
+              <strong>{screen.title}</strong>
+              <p>{screen.body}</p>
+            </div>
+          </article>
+        ))}
       </div>
     </motion.div>
   );
@@ -596,14 +617,15 @@ function PortfolioHome() {
             <span className="kicker">Main project</span>
             <h3>Praxigen</h3>
             <p>
-              A prior authorization workspace for healthcare teams. The goal is
-              to make payer requirements, clinical documentation, forms, and
-              case status easier to find and act on before a denial happens.
+              A prior authorization workspace for healthcare teams. It brings
+              payer requirement lookup, note checking, appeal drafting,
+              pre-claim mismatch checks, denial intelligence, and case tracking
+              into one operating surface.
             </p>
             <div className="tag-row">
               <em>Healthtech</em>
               <em>Prior authorization</em>
-              <em>Agent workflows</em>
+              <em>Policy-grounded workflows</em>
               <em>Clinical ops</em>
             </div>
             <a className="button primary" href={projectLinks.praxigen} target="_blank" rel="noreferrer">
