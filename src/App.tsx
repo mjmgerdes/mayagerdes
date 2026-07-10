@@ -415,8 +415,52 @@ function SectionHeader({
 function LogoMark({ logo }: { logo: ExperienceItem["logo"] }) {
   return (
     <div className="logo-mark" aria-label={logo.alt}>
-      {logo.image ? <img src={logo.image} alt="" loading="lazy" /> : <span>{logo.text}</span>}
+      {logo.image ? <img src={logo.image} alt="" /> : <span>{logo.text}</span>}
     </div>
+  );
+}
+
+function HeroProductCard() {
+  return (
+    <motion.aside
+      className="hero-product-card"
+      initial={{ opacity: 0, y: 14, rotate: 0.4 }}
+      animate={{ opacity: 1, y: 0, rotate: 0 }}
+      transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1] }}
+      aria-label="Current Praxigen build"
+    >
+      <div className="hero-product-top">
+        <span>Current Build</span>
+        <a href={projectLinks.praxigen} target="_blank" rel="noreferrer">
+          praxigen.dev
+        </a>
+      </div>
+      <img
+        src="/praxigen/workspace.webp"
+        alt="Praxigen workspace showing the prior authorization case queue."
+      />
+      <div className="hero-product-copy">
+        <strong>Praxigen</strong>
+        <p>
+          A workflow layer for payer rules, note checks, appeals, claim mismatches,
+          and case follow-up.
+        </p>
+      </div>
+      <div className="hero-product-metrics">
+        <span>
+          <small>Use case</small>
+          Prior auth
+        </span>
+        <span>
+          <small>Surface</small>
+          Workflow ops
+        </span>
+        <span>
+          <small>Wedge</small>
+          Denial prevention
+        </span>
+      </div>
+    </motion.aside>
   );
 }
 
@@ -576,39 +620,15 @@ function PortfolioHome() {
           </Reveal>
         </div>
 
-        <Reveal className="hero-card" delay={0.08}>
-          <div className="now-card">
-            <span>Current build</span>
-            <h2>Praxigen</h2>
-            <p>
-              Prior authorization is still too much searching, copying, and
-              waiting. I am working on the system I wish existed inside that
-              workflow.
-            </p>
-            <div className="signal-list">
-              <div>
-                <small>Workflow</small>
-                <strong>Prior authorization</strong>
-              </div>
-              <div>
-                <small>Wedge</small>
-                <strong>Payer policy + note gaps</strong>
-              </div>
-              <div>
-                <small>Buyer context</small>
-                <strong>Practices losing time to denials</strong>
-              </div>
-            </div>
-          </div>
-        </Reveal>
+        <HeroProductCard />
       </header>
 
       <section className="section projects-section" id="projects">
         <Reveal>
           <SectionHeader
             eyebrow="Selected work"
-            title="A few things with a real user and workflow behind them."
-            body="Less project museum, more evidence of how I think: find the messy workflow, understand the user, then build the smallest useful surface."
+            title="Products and projects with actual workflow behind them."
+            body="The through-line is simple: find the messy handoff, understand the person stuck inside it, then build the smallest useful operating surface."
           />
         </Reveal>
 
