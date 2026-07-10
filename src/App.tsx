@@ -45,13 +45,15 @@ const links = {
 
 const projectLinks = {
   praxigen: "https://praxigen.dev",
+  buildAndPitch:
+    "https://www.linkedin.com/posts/raylu-ai_thats-a-wrap-on-build-pitch-wraylu-activity-7468661807285637120-wi-k",
   startupCrm: "https://ustartleague.lovable.app/login",
   grndworkLive: "https://grndwork.vercel.app",
   grndworkRepo: "https://github.com/mjmgerdes/grndwork",
   foreverData: "https://foreverdata.live/",
 };
 
-type ExperienceCategory = "Work" | "Clubs" | "Other";
+type ExperienceCategory = "Work" | "Research" | "Clubs";
 
 type ExperienceItem = {
   category: ExperienceCategory;
@@ -75,7 +77,15 @@ type Project = {
   body: string;
   tags: string[];
   repo?: string;
-  preview: "crm" | "grndwork";
+  image: string;
+  imageAlt: string;
+};
+
+type ProjectIndexItem = {
+  name: string;
+  descriptor: string;
+  href: string;
+  image: string;
 };
 
 type PersonalCard = {
@@ -86,9 +96,23 @@ type PersonalCard = {
 
 type LenisWindow = Window & { mayaLenis?: Lenis };
 
-const experienceTabs: ExperienceCategory[] = ["Work", "Clubs", "Other"];
+const experienceTabs: ExperienceCategory[] = ["Work", "Research", "Clubs"];
 
 const experiences: ExperienceItem[] = [
+  {
+    category: "Work",
+    logo: {
+      alt: "Praxigen",
+      image: "/logos/praxigen.png",
+      text: "P",
+    },
+    title: "Founder & Technical Builder",
+    org: "Praxigen",
+    date: "Apr 2026 - Present",
+    summary:
+      "Building healthcare workflow infrastructure for specialty practices; led 30+ discovery interviews, product pilots, and a five-person team.",
+    tags: ["Founder", "Product", "HealthTech"],
+  },
   {
     category: "Work",
     logo: {
@@ -96,53 +120,82 @@ const experiences: ExperienceItem[] = [
       image: "/logos/michigan-blockchain.png",
       text: "MBC",
     },
-    title: "Project Manager / Business Analyst",
+    title: "Forward Deployed Engineer / Project Manager",
     org: "Michigan Blockchain Consulting",
     date: "Aug 2025 - Present",
     summary:
-      "Lead client-facing blockchain strategy work for SMBs, translating infrastructure tradeoffs into product and go-to-market recommendations.",
-    tags: ["Blockchain", "GTM", "Client work", "Product"],
+      "Led client-facing product and go-to-market work across blockchain infrastructure, translating technical tradeoffs into usable strategy for four SMB clients.",
+    tags: ["Product", "GTM", "Blockchain"],
   },
   {
     category: "Work",
+    logo: {
+      alt: "NYC Health and Hospitals",
+      image: "/logos/nyc-health-hospitals.png",
+      text: "NYC",
+    },
+    title: "Clinical & Forensic Neuropsychiatry Intern",
+    org: "NYC Health + Hospitals / Bellevue",
+    date: "May 2025 - Aug 2025",
+    summary:
+      "Supported neuropsychiatry and forensic neurology work across patient cases, diagnostics, and clinical care coordination.",
+    tags: ["Neuropsychiatry", "Clinical"],
+  },
+  {
+    category: "Work",
+    logo: {
+      alt: "Orthopaedic and Spine Surgeons of New Jersey",
+      image: "/logos/ossnj.png",
+      text: "OSSNJ",
+    },
+    title: "Orthopaedic Surgery Intern",
+    org: "Orthopaedic & Spine Surgeons of New Jersey",
+    date: "May 2022 - Feb 2025",
+    summary:
+      "Observed longitudinal surgical workflows and supported patient-facing practice operations across a multi-year clinical internship.",
+    tags: ["Orthopaedics", "Clinical operations"],
+  },
+  {
+    category: "Research",
     logo: {
       alt: "Michigan Medicine",
       image: "/logos/michigan-medicine.svg",
       text: "MM",
     },
-    title: "Research Assistant",
+    title: "CRISPR Research Assistant",
     org: "Michigan Medicine, Department of Human Genetics",
-    date: "Aug 2025 - Present",
+    date: "Jul 2025 - May 2026",
     summary:
-      "Research CRISPR-based sensing systems for cancer-specific genomic alterations, including construct design, SnapGene analysis, and wet-lab troubleshooting.",
-    tags: ["CRISPR", "Genetics", "Cancer sensing", "Wet lab"],
+      "Researched CRISPR-based sensing systems for cancer-specific genomic alterations through construct design, SnapGene analysis, and wet-lab troubleshooting.",
+    tags: ["CRISPR", "Genetics", "Cancer sensing"],
   },
   {
-    category: "Work",
+    category: "Research",
+    logo: {
+      alt: "Michigan Medicine",
+      image: "/logos/michigan-medicine.svg",
+      text: "MM",
+    },
+    title: "Clinical Research Assistant",
+    org: "Michigan Medicine, Cardiovascular Surgery",
+    date: "Jan 2025 - Sep 2025",
+    summary:
+      "Worked with cardiovascular imaging and clinical datasets to support patient-outcome and translational research.",
+    tags: ["Clinical data", "Imaging", "Outcomes"],
+  },
+  {
+    category: "Research",
     logo: {
       alt: "University of Michigan",
       image: "/logos/university-of-michigan.svg",
       text: "M",
     },
-    title: "Research Assistant",
-    org: "Michigan Medicine + College of Engineering",
-    date: "Nov 2024 - Sep 2025",
+    title: "Biomedical Engineering Research Assistant",
+    org: "University of Michigan College of Engineering",
+    date: "Nov 2024 - May 2025",
     summary:
-      "Worked across computational biomechanics, cardiovascular imaging, and clinical datasets for patient-outcome and translational research.",
-    tags: ["Biomechanics", "Clinical data", "Imaging"],
-  },
-  {
-    category: "Work",
-    logo: {
-      alt: "Neuropsychiatry and forensic neurology practice",
-      text: "NF",
-    },
-    title: "Neuropsychiatry Intern",
-    org: "Private neuropsychiatry and forensic neurology practice",
-    date: "May 2025 - Aug 2025",
-    summary:
-      "Supported neuropsychiatry and forensic neurology workflows across patient cases, diagnostics, and care coordination.",
-    tags: ["Neuropsychiatry", "Clinical workflows", "Patient context"],
+      "Contributed to computational biomechanics research connecting engineering methods with clinically meaningful questions.",
+    tags: ["Biomechanics", "BME", "Research"],
   },
   {
     category: "Clubs",
@@ -160,43 +213,31 @@ const experiences: ExperienceItem[] = [
   },
   {
     category: "Clubs",
-    logo: { alt: "Pi Sigma Epsilon", text: "PSE" },
-    title: "DEI Director and Council Member",
+    logo: {
+      alt: "Pi Sigma Epsilon",
+      image: "/logos/pi-sigma-epsilon.png",
+      text: "PSE",
+    },
+    title: "Speaker Chair",
     org: "Pi Sigma Epsilon",
-    date: "Sep 2024 - Present",
+    date: "Jan 2025 - May 2026",
     summary:
-      "Help organize programming, recruiting, and member-facing systems for a business and professional development community.",
-    tags: ["Programming", "Recruiting", "Leadership"],
+      "Led speaker programming and external outreach for a business and professional development organization.",
+    tags: ["Programming", "Outreach", "Leadership"],
   },
   {
     category: "Clubs",
-    logo: { alt: "Phi Delta Epsilon", text: "PhiDE" },
-    title: "Marketing and Public Relations Chair",
+    logo: {
+      alt: "Phi Delta Epsilon",
+      image: "/logos/phi-delta-epsilon.png",
+      text: "PhiDE",
+    },
+    title: "Finance & Professional Development Chair",
     org: "Phi Delta Epsilon",
-    date: "Nov 2024 - Present",
+    date: "Sep 2025 - Present",
     summary:
-      "Create member communications, event visibility, and brand systems for a pre-medical community.",
-    tags: ["Marketing", "Community", "Events"],
-  },
-  {
-    category: "Other",
-    logo: { alt: "Music", text: "MUS" },
-    title: "Music",
-    org: "Guitar, piano, DJing, and playlist curation",
-    date: "Ongoing",
-    summary:
-      "Guitar, piano, DJing, and playlists that tend to follow me through work sessions.",
-    tags: ["Music", "Taste", "Rituals"],
-  },
-  {
-    category: "Other",
-    logo: { alt: "Pickleball", text: "PB" },
-    title: "Pickleball",
-    org: "Recreation, competition, and movement",
-    date: "Now",
-    summary:
-      "A favorite way to move, compete, reset, and get immediate feedback outside the laptop.",
-    tags: ["Pickleball", "Movement", "Energy"],
+      "Managed chapter finances and built professional-development programming for a pre-medical community.",
+    tags: ["Finance", "Professional development"],
   },
 ];
 
@@ -209,7 +250,8 @@ const supportingProjects: Project[] = [
     body:
       "A lightweight operating layer for a startup league team, with Google Sheets kept as the source of truth.",
     tags: ["CRM", "Google Sheets", "Operations"],
-    preview: "crm",
+    image: "/projects/startup-crm-interface.png",
+    imageAlt: "Startup CRM dashboard with member records, workspace metrics, and operating views.",
   },
   {
     number: "03",
@@ -220,7 +262,52 @@ const supportingProjects: Project[] = [
     body:
       "An early-access product that helps students turn broad interests into clearer roles, targets, and outreach.",
     tags: ["React", "Product", "Career discovery"],
-    preview: "grndwork",
+    image: "/projects/grndwork-interface.png",
+    imageAlt: "grndwork career discovery interface with role matches and career signals.",
+  },
+  {
+    number: "04",
+    name: "ForeverData",
+    label: "GTM / infrastructure",
+    href: projectLinks.foreverData,
+    body:
+      "Go-to-market support for a data persistence product working across decentralized storage and Web3 infrastructure.",
+    tags: ["GTM", "Data infrastructure", "Web3"],
+    image: "/projects/foreverdata-interface.png",
+    imageAlt: "ForeverData product website showing permanent data storage infrastructure.",
+  },
+];
+
+const projectIndex: ProjectIndexItem[] = [
+  {
+    name: "Praxigen",
+    descriptor: "HealthTech startup",
+    href: projectLinks.praxigen,
+    image: "/praxigen/pa-lookup.webp",
+  },
+  {
+    name: "Build & Pitch Winner",
+    descriptor: "a16z NY Tech Week / Raylu",
+    href: projectLinks.buildAndPitch,
+    image: "/praxigen/appeal-generator.webp",
+  },
+  {
+    name: "Startup CRM",
+    descriptor: "Product & operations",
+    href: projectLinks.startupCrm,
+    image: "/projects/startup-crm-interface.png",
+  },
+  {
+    name: "grndwork",
+    descriptor: "Career discovery product",
+    href: projectLinks.grndworkLive,
+    image: "/projects/grndwork-interface.png",
+  },
+  {
+    name: "ForeverData",
+    descriptor: "Go-to-market collaboration",
+    href: projectLinks.foreverData,
+    image: "/projects/foreverdata-interface.png",
   },
 ];
 
@@ -251,17 +338,17 @@ const backgroundItems = [
   {
     icon: GraduationCap,
     title: "University of Michigan",
-    body: "B.S. in Neuroscience, Entrepreneurship minor, Honors Program. Expected May 2028.",
+    body: "B.S. in Neuroscience Honors, with minors in Business and Entrepreneurship. Expected May 2028.",
   },
   {
     icon: BadgeCheck,
     title: "Academic recognition",
-    body: "William J. Branstrom Award, James B. Angell Scholar, Phi Kappa Phi, and neuroscience honors recognition.",
+    body: "3.96 GPA, William J. Branstrom Award, James B. Angell Scholar, and Phi Kappa Phi.",
   },
   {
     icon: BriefcaseBusiness,
-    title: "Current through-line",
-    body: "Research detail, clinical workflow exposure, product judgment, and go-to-market work.",
+    title: "What I work on",
+    body: "Clinical workflows, healthcare products, research, and go-to-market.",
   },
 ];
 
@@ -375,22 +462,26 @@ function IconLink({
   href,
   label,
   icon: Icon,
+  size = 17,
 }: {
   href: string;
   label: string;
   icon: LucideIcon;
+  size?: number;
 }) {
+  const external = href.startsWith("http");
+
   return (
     <motion.a
       href={href}
-      target="_blank"
-      rel="noreferrer"
+      target={external ? "_blank" : undefined}
+      rel={external ? "noreferrer" : undefined}
       aria-label={label}
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.96 }}
       transition={{ type: "spring", stiffness: 420, damping: 28 }}
     >
-      <Icon size={17} strokeWidth={1.9} />
+      <Icon size={size} strokeWidth={1.9} />
     </motion.a>
   );
 }
@@ -438,6 +529,7 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
     { label: "Work", id: "work" },
     { label: "Experience", id: "experience" },
     { label: "About", id: "about" },
+    { label: "Resume", href: "/Maya-Gerdes-Resume.pdf" },
     { label: "Personal", href: "/me" },
   ];
   const mobileItems = [...items, { label: "Email", href: links.email }];
@@ -536,60 +628,53 @@ function SectionHeading({
   );
 }
 
-function ProjectPreview({ kind }: { kind: Project["preview"] }) {
-  if (kind === "crm") {
-    return (
-      <div className="project-art crm-art" aria-hidden="true">
-        <div className="art-toolbar">
-          <strong>UStart League</strong>
-          <span>Season 04</span>
-        </div>
-        <div className="crm-art-body">
-          <div>
-            <small>TEAM WORKSPACE</small>
-            <b>Run the season from one place.</b>
-            <p>Google Sheets stays the source of truth.</p>
-          </div>
-          <div className="crm-art-data">
-            <span>Founder pipeline <b>24 active</b></span>
-            <span>Partner outreach <b>9 due</b></span>
-            <span>Upcoming reviews <b>6</b></span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+function ProjectMarquee() {
   return (
-    <div className="project-art grndwork-art" aria-hidden="true">
-      <div className="art-toolbar">
-        <strong>grndwork</strong>
-        <span>Early access</span>
-      </div>
-      <div className="grndwork-art-copy">
-        <small>YOUR CAREER, WITH SIGNAL</small>
-        <b>Discover your path.</b>
-      </div>
-      <div className="grndwork-art-data">
-        <span><small>MATCH</small>92%</span>
-        <span><small>ROLES</small>48</span>
-        <span><small>TRACKED</small>12</span>
+    <div className="project-marquee" aria-label="Project index">
+      <div className="project-marquee-track">
+        {[0, 1].map((copy) => (
+          <div className="project-marquee-set" aria-hidden={copy === 1} key={copy}>
+            {projectIndex.map((project) => (
+              <a
+                className="project-marquee-card"
+                href={project.href}
+                target="_blank"
+                rel="noreferrer"
+                tabIndex={copy === 1 ? -1 : undefined}
+                key={`${copy}-${project.name}`}
+              >
+                <span className="project-marquee-image">
+                  <img src={project.image} alt="" />
+                </span>
+                <span className="project-marquee-copy">
+                  <strong>{project.name}</strong>
+                  <small>{project.descriptor}</small>
+                </span>
+                <ArrowUpRight size={15} />
+              </a>
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <motion.article
       className="project-card"
-      initial={{ opacity: 0, y: 22 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 22 }}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-70px" }}
       transition={{ duration: 0.58, delay: index * 0.08, ease: EASE }}
     >
       <a href={project.href} target="_blank" rel="noreferrer" className="project-art-link">
-        <ProjectPreview kind={project.preview} />
+        <span className="project-interface">
+          <img src={project.image} alt={project.imageAlt} />
+        </span>
       </a>
       <div className="project-card-copy">
         <div className="project-card-meta">
@@ -702,30 +787,44 @@ function PortfolioHome() {
           initial="hidden"
           animate="show"
         >
-          <motion.div className="hero-name" variants={heroItem}>
-            <p>Founder / researcher / builder</p>
+          <motion.div className="hero-copy" variants={heroItem}>
+            <p className="hero-kicker">student / builder / founder</p>
             <h1>Maya Gerdes</h1>
-          </motion.div>
-          <motion.div className="hero-intro" variants={heroItem}>
-            <p className="hero-lead">
-              I am building Praxigen, a prior authorization workspace for
-              specialty medical practices.
-            </p>
-            <p>
-              I study neuroscience at the University of Michigan and work
-              across product, clinical research, and go-to-market. I am most
-              interested in systems where small workflow failures create very
-              human consequences.
+            <div className="hero-socials" aria-label="Maya Gerdes profiles">
+              <IconLink href={links.linkedin} label="LinkedIn" icon={Linkedin} size={20} />
+              <IconLink href={links.github} label="GitHub" icon={Github} size={20} />
+              <IconLink href={links.x} label="X / Twitter" icon={X} size={20} />
+              <IconLink href={links.email} label="Email Maya" icon={Mail} size={20} />
+            </div>
+            <p className="hero-bio">
+              Hi, I&apos;m Maya! I study neuroscience, business, and
+              entrepreneurship at the University of Michigan. I&apos;m deeply
+              curious about how people, technology, and complex systems work,
+              with particular interests in genetics, human consciousness, and
+              the future of healthcare.
             </p>
             <div className="hero-links">
               <a href="#work" onClick={(event) => scrollToSection(event, "work")}>
                 Selected work <ArrowDown size={15} />
               </a>
-              <a href={links.email}>
-                Email <ArrowUpRight size={15} />
+              <a href="/Maya-Gerdes-Resume.pdf" target="_blank" rel="noreferrer">
+                Resume <ArrowUpRight size={15} />
+              </a>
+              <a href="/me">
+                Outside work <ArrowUpRight size={15} />
               </a>
             </div>
           </motion.div>
+          <motion.figure className="hero-portrait" variants={heroItem}>
+            <img
+              src="/profile/maya-gerdes-headshot.jpg"
+              alt="Maya Gerdes"
+            />
+            <figcaption>
+              <span>Ann Arbor, MI</span>
+              <span>2026</span>
+            </figcaption>
+          </motion.figure>
         </motion.div>
 
         <motion.div
@@ -734,14 +833,9 @@ function PortfolioHome() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.58, delay: 0.42, ease: EASE }}
         >
-          <div><span>Currently</span><strong>Founder at Praxigen</strong></div>
-          <div><span>Studying</span><strong>Neuroscience + entrepreneurship</strong></div>
-          <div><span>Working across</span><strong>Clinical operations, product, GTM</strong></div>
-          <div className="hero-note-socials" aria-label="External profiles">
-            <IconLink href={links.linkedin} label="LinkedIn" icon={Linkedin} />
-            <IconLink href={links.github} label="GitHub" icon={Github} />
-            <IconLink href={links.x} label="X / Twitter" icon={X} />
-          </div>
+          <div><span>Currently</span><strong>Building Praxigen</strong></div>
+          <div><span>Studying</span><strong>Neuroscience, business, entrepreneurship</strong></div>
+          <div><span>Curious about</span><strong>Genetics, consciousness, healthcare</strong></div>
         </motion.div>
       </header>
 
@@ -750,9 +844,17 @@ function PortfolioHome() {
           <SectionHeading
             number="01"
             eyebrow="Selected work"
-            title="Things I have built, tested, and helped move forward."
-            body="Praxigen is the main build. The rest are smaller products and go-to-market work that sharpened how I think about users, systems, and momentum."
+            title="Selected builds and collaborations."
+            body="Praxigen is the main build. The others came from roles where I needed a tool, a clearer workflow, or a sharper route to market."
           />
+        </Reveal>
+
+        <Reveal className="project-index-block">
+          <div className="project-index-label">
+            <span>Project index</span>
+            <span>Open any project to explore</span>
+          </div>
+          <ProjectMarquee />
         </Reveal>
 
         <article className="featured-case">
@@ -761,14 +863,14 @@ function PortfolioHome() {
               <div className="case-meta"><span>01</span><span>Founder / product / GTM</span></div>
               <h3>Praxigen</h3>
               <p>
-                A source-grounded prior authorization workspace for specialty
-                medical practices. It connects payer requirements, clinical-note
-                checks, appeals, pre-claim mismatches, and follow-up in one workflow.
+                Healthcare workflow infrastructure for specialty practices. It
+                connects payer requirements, clinical-note checks, appeals,
+                pre-claim mismatches, and follow-up in one workspace.
               </p>
               <dl className="case-facts">
-                <div><dt>Role</dt><dd>Founder</dd></div>
-                <div><dt>Focus</dt><dd>Healthcare workflow</dd></div>
-                <div><dt>Stage</dt><dd>Building + piloting</dd></div>
+                <div><dt>Role</dt><dd>Founder & technical builder</dd></div>
+                <div><dt>Discovery</dt><dd>30+ interviews</dd></div>
+                <div><dt>Stage</dt><dd>Product pilots</dd></div>
               </dl>
               <a className="case-link" href={projectLinks.praxigen} target="_blank" rel="noreferrer">
                 Visit praxigen.dev <ArrowUpRight size={15} />
@@ -783,12 +885,26 @@ function PortfolioHome() {
                 alt="Praxigen case workspace showing payer status, due dates, and next actions."
               />
             </ParallaxMedia>
-            <ParallaxMedia className="case-image case-image-secondary">
-              <img
-                src="/praxigen/note-checker.webp"
-                alt="Praxigen note checker showing a clinical documentation score and policy checks."
-              />
-            </ParallaxMedia>
+            <div className="case-interface-strip">
+              <div className="case-image case-image-secondary">
+                <img
+                  src="/praxigen/pa-lookup.webp"
+                  alt="Praxigen prior authorization lookup showing payer requirements."
+                />
+              </div>
+              <div className="case-image case-image-secondary">
+                <img
+                  src="/praxigen/note-checker.webp"
+                  alt="Praxigen note checker showing a clinical documentation score and policy checks."
+                />
+              </div>
+              <div className="case-image case-image-secondary">
+                <img
+                  src="/praxigen/preclaim-check.webp"
+                  alt="Praxigen pre-claim checker comparing an authorization and a claim."
+                />
+              </div>
+            </div>
             <span className="case-caption">Selected Praxigen product surfaces</span>
           </div>
         </article>
@@ -799,14 +915,14 @@ function PortfolioHome() {
           ))}
         </div>
 
-        <Reveal className="collaboration-row">
+        <Reveal className="collaboration-row achievement-row">
           <div>
-            <span>04</span>
-            <span>Go-to-market collaboration</span>
+            <span>05</span>
+            <span>Milestone</span>
           </div>
-          <h3>ForeverData</h3>
-          <p>GTM support for a data persistence product in storage and Web3 infrastructure.</p>
-          <a href={projectLinks.foreverData} target="_blank" rel="noreferrer" aria-label="Open ForeverData">
+          <h3>Build & Pitch Winner</h3>
+          <p>Won Raylu&apos;s Build & Pitch hackathon during a16z New York Tech Week with Praxigen.</p>
+          <a href={projectLinks.buildAndPitch} target="_blank" rel="noreferrer" aria-label="Open Build and Pitch announcement">
             <ArrowUpRight size={18} />
           </a>
         </Reveal>
@@ -829,8 +945,8 @@ function PortfolioHome() {
           <SectionHeading
             number="02"
             eyebrow="Experience"
-            title="Research, clinical exposure, and operator work."
-            body="Different environments, but a consistent preference for technical detail, real users, and ambiguous problems."
+            title="Where I have worked, researched, and led."
+            body="Roles across clinical research, product, client work, and campus organizations."
           />
         </Reveal>
         <ExperienceLedger />
@@ -848,14 +964,14 @@ function PortfolioHome() {
         <div className="about-layout">
           <Reveal className="about-copy">
             <p>
-              The resume version is neuroscience, research, clinical exposure,
-              consulting, and product. The more useful version is that each has
-              taught me how to see a different part of the same system.
+              I study neuroscience because I like problems that demand rigor
+              and humility. Building products gives me a way to turn that
+              curiosity into something people can use.
             </p>
             <p>
-              Outside work, I care a lot about music, behavior, movement, and the
-              little experiments people run on themselves. Those interests live on
-              a separate page because they deserve more than a resume footnote.
+              Outside work, I play guitar and piano, DJ, play pickleball, and
+              keep a running list of questions about sleep, behavior, and the
+              brain. That side of me lives on its own page.
             </p>
             <a href="/me">Personal page <ArrowUpRight size={15} /></a>
           </Reveal>
@@ -916,8 +1032,8 @@ function PersonalPage() {
             <h1>A few things that shape how I think.</h1>
           </div>
           <p>
-            This is the less application-shaped side of the site: music,
-            movement, brains, and the small experiments that become part of how I work.
+            This page is for music, movement, brains, and the small experiments
+            I keep coming back to when I am not working.
           </p>
         </motion.div>
       </header>
