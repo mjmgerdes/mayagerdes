@@ -1,5 +1,6 @@
 import {
   Activity,
+  ArrowDown,
   ArrowLeft,
   ArrowUpRight,
   BadgeCheck,
@@ -18,8 +19,6 @@ import {
 import {
   AnimatePresence,
   motion,
-  useInView,
-  useMotionValue,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -36,7 +35,6 @@ import {
 } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-const INTRO_KEY = "maya-portfolio:intro-seen";
 
 const links = {
   email: "mailto:mjgerdes@umich.edu",
@@ -69,28 +67,21 @@ type ExperienceItem = {
   tags: string[];
 };
 
-type SupportingProject = {
+type Project = {
+  number: string;
   name: string;
   label: string;
   href: string;
   body: string;
   tags: string[];
   repo?: string;
-  preview: "crm" | "grndwork" | "forever";
+  preview: "crm" | "grndwork";
 };
 
 type PersonalCard = {
   icon: LucideIcon;
   title: string;
   body: string;
-};
-
-type PraxigenScreen = {
-  title: string;
-  body: string;
-  image: string;
-  alt: string;
-  route: string;
 };
 
 type LenisWindow = Window & { mayaLenis?: Lenis };
@@ -169,10 +160,7 @@ const experiences: ExperienceItem[] = [
   },
   {
     category: "Clubs",
-    logo: {
-      alt: "Pi Sigma Epsilon",
-      text: "PSE",
-    },
+    logo: { alt: "Pi Sigma Epsilon", text: "PSE" },
     title: "DEI Director and Council Member",
     org: "Pi Sigma Epsilon",
     date: "Sep 2024 - Present",
@@ -182,10 +170,7 @@ const experiences: ExperienceItem[] = [
   },
   {
     category: "Clubs",
-    logo: {
-      alt: "Phi Delta Epsilon",
-      text: "PhiDE",
-    },
+    logo: { alt: "Phi Delta Epsilon", text: "PhiDE" },
     title: "Marketing and Public Relations Chair",
     org: "Phi Delta Epsilon",
     date: "Nov 2024 - Present",
@@ -215,10 +200,11 @@ const experiences: ExperienceItem[] = [
   },
 ];
 
-const supportingProjects: SupportingProject[] = [
+const supportingProjects: Project[] = [
   {
+    number: "02",
     name: "Startup CRM",
-    label: "Operator tool",
+    label: "Product / operations",
     href: projectLinks.startupCrm,
     body:
       "A lightweight operating layer for a startup league team, with Google Sheets kept as the source of truth.",
@@ -226,68 +212,15 @@ const supportingProjects: SupportingProject[] = [
     preview: "crm",
   },
   {
+    number: "03",
     name: "grndwork",
-    label: "Career platform",
+    label: "Product / career discovery",
     href: projectLinks.grndworkLive,
     repo: projectLinks.grndworkRepo,
     body:
       "An early-access product that helps students turn broad interests into clearer roles, targets, and outreach.",
     tags: ["React", "Product", "Career discovery"],
     preview: "grndwork",
-  },
-  {
-    name: "ForeverData",
-    label: "Go-to-market",
-    href: projectLinks.foreverData,
-    body:
-      "Go-to-market work for a data persistence product operating across storage and Web3 infrastructure.",
-    tags: ["GTM", "Data infrastructure", "Web3"],
-    preview: "forever",
-  },
-];
-
-const praxigenScreens: PraxigenScreen[] = [
-  {
-    title: "Case queue",
-    body: "One operating view for submitted, urgent, overdue, and denied authorizations.",
-    image: "/praxigen/workspace.webp",
-    alt: "Praxigen case queue showing prior authorization cases, payer status, due dates, and next actions.",
-    route: "praxigen.dev/app/cases",
-  },
-  {
-    title: "PA lookup",
-    body: "Compare payer criteria and required documentation before a case is submitted.",
-    image: "/praxigen/pa-lookup.webp",
-    alt: "Praxigen prior authorization lookup showing payer criteria for rotator cuff repair.",
-    route: "praxigen.dev/search",
-  },
-  {
-    title: "Note checker",
-    body: "Score a clinical note against payer policy and surface the missing evidence.",
-    image: "/praxigen/note-checker.webp",
-    alt: "Praxigen note checker showing a strong note score and clinical policy checks.",
-    route: "praxigen.dev/check",
-  },
-  {
-    title: "Appeal generator",
-    body: "Turn case context, payer policy, and appeal level into a grounded first draft.",
-    image: "/praxigen/appeal-generator.webp",
-    alt: "Praxigen appeal letter generator form with payer and case type inputs.",
-    route: "praxigen.dev/appeal",
-  },
-  {
-    title: "Pre-claim check",
-    body: "Catch authorization and claim mismatches before the claim drops.",
-    image: "/praxigen/preclaim-check.webp",
-    alt: "Praxigen pre-claim check comparing authorized and billed details with blocking issues.",
-    route: "praxigen.dev/digital-auth",
-  },
-  {
-    title: "Denial intelligence",
-    body: "See recurring procedures, payer activity, and the patterns driving denials.",
-    image: "/praxigen/denial-insights.webp",
-    alt: "Praxigen denial intelligence dashboard with metrics and procedure activity.",
-    route: "praxigen.dev/insights",
   },
 ];
 
@@ -327,7 +260,7 @@ const backgroundItems = [
   },
   {
     icon: BriefcaseBusiness,
-    title: "The through-line",
+    title: "Current through-line",
     body: "Research detail, clinical workflow exposure, product judgment, and go-to-market work.",
   },
 ];
@@ -360,63 +293,6 @@ function SmoothScroll() {
   }, []);
 
   return null;
-}
-
-function SiteIntro() {
-  const [visible, setVisible] = useState(() => {
-    try {
-      return window.sessionStorage.getItem(INTRO_KEY) !== "1";
-    } catch {
-      return false;
-    }
-  });
-
-  useEffect(() => {
-    if (!visible) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const timer = window.setTimeout(() => {
-      try {
-        window.sessionStorage.setItem(INTRO_KEY, "1");
-      } catch {
-        // The intro still completes when storage is unavailable.
-      }
-      setVisible(false);
-      document.body.style.overflow = previousOverflow;
-    }, 1850);
-
-    return () => {
-      window.clearTimeout(timer);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [visible]);
-
-  return (
-    <AnimatePresence>
-      {visible ? (
-        <motion.div
-          className="site-intro"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.7, ease: EASE } }}
-          aria-hidden="true"
-        >
-          <motion.div
-            className="intro-lockup"
-            initial={{ opacity: 0, y: 12, filter: "blur(6px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-            transition={{ duration: 0.62, ease: EASE, delay: 0.1 }}
-          >
-            <span className="intro-mark">MG</span>
-            <strong>Maya Gerdes</strong>
-            <small>Founder / researcher / builder</small>
-            <i />
-          </motion.div>
-        </motion.div>
-      ) : null}
-    </AnimatePresence>
-  );
 }
 
 function Reveal({
@@ -455,11 +331,11 @@ function RevealWords({ text }: { text: string }) {
           initial={
             reduceMotion
               ? false
-              : { opacity: 0, y: 13, filter: "blur(5px)" }
+              : { opacity: 0, y: 12, filter: "blur(5px)" }
           }
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.52, delay: index * 0.045, ease: EASE }}
+          transition={{ duration: 0.5, delay: index * 0.04, ease: EASE }}
         >
           {word}
           {index < words.length - 1 ? " " : ""}
@@ -469,14 +345,12 @@ function RevealWords({ text }: { text: string }) {
   );
 }
 
-function Drift({
+function ParallaxMedia({
   children,
   className,
-  range = [24, -24],
 }: {
   children: ReactNode;
   className?: string;
-  range?: [number, number];
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
@@ -484,7 +358,7 @@ function Drift({
     target: ref,
     offset: ["start end", "end start"],
   });
-  const y = useTransform(scrollYProgress, [0, 1], range);
+  const y = useTransform(scrollYProgress, [0, 1], [18, -18]);
 
   return (
     <motion.div
@@ -521,48 +395,6 @@ function IconLink({
   );
 }
 
-function MagneticLink({
-  href,
-  children,
-  className,
-}: {
-  href: string;
-  children: ReactNode;
-  className: string;
-}) {
-  const reduceMotion = useReducedMotion();
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 260, damping: 22 });
-  const springY = useSpring(y, { stiffness: 260, damping: 22 });
-
-  const onMove = (event: ReactMouseEvent<HTMLAnchorElement>) => {
-    if (reduceMotion) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    x.set((event.clientX - rect.left - rect.width / 2) * 0.13);
-    y.set((event.clientY - rect.top - rect.height / 2) * 0.16);
-  };
-
-  const reset = () => {
-    x.set(0);
-    y.set(0);
-  };
-
-  return (
-    <motion.a
-      className={className}
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      onMouseMove={onMove}
-      onMouseLeave={reset}
-      style={{ x: springX, y: springY }}
-    >
-      {children}
-    </motion.a>
-  );
-}
-
 function scrollToSection(
   event: ReactMouseEvent<HTMLAnchorElement>,
   id: string,
@@ -575,7 +407,7 @@ function scrollToSection(
   closeMenu?.();
 
   const lenis = (window as LenisWindow).mayaLenis;
-  if (lenis) lenis.scrollTo(target, { offset: -74, duration: 1.05 });
+  if (lenis) lenis.scrollTo(target, { offset: -72, duration: 1.05 });
   else target.scrollIntoView({ behavior: "smooth" });
 }
 
@@ -585,7 +417,7 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
   const isPersonal = page === "personal";
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 36);
+    const onScroll = () => setScrolled(window.scrollY > 34);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
@@ -600,15 +432,15 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [menuOpen]);
 
-  const anchorHref = (id: string) => (isPersonal ? `/#${id}` : `#${id}`);
   const close = () => setMenuOpen(false);
-
-  const navItems = [
+  const anchorHref = (id: string) => (isPersonal ? `/#${id}` : `#${id}`);
+  const items = [
     { label: "Work", id: "work" },
     { label: "Experience", id: "experience" },
+    { label: "About", id: "about" },
     { label: "Personal", href: "/me" },
-    { label: "Contact", id: "contact" },
   ];
+  const mobileItems = [...items, { label: "Email", href: links.email }];
 
   return (
     <>
@@ -617,16 +449,12 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
         aria-label="Primary navigation"
       >
         <a className="brand" href={isPersonal ? "/" : "#top"}>
-          <span className="brand-mark" aria-hidden="true">MG</span>
-          <span>Maya Gerdes</span>
+          Maya Gerdes
         </a>
-
         <div className="nav-links">
-          {navItems.map((item) =>
+          {items.map((item) =>
             item.href ? (
-              <a key={item.label} href={item.href}>
-                {item.label}
-              </a>
+              <a key={item.label} href={item.href}>{item.label}</a>
             ) : (
               <a
                 key={item.label}
@@ -638,11 +466,9 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
             ),
           )}
         </div>
-
-        <a className="nav-contact arrow-shift" href={links.email}>
-          Say hello <span className="arr">↗</span>
+        <a className="nav-email" href={links.email}>
+          Email <ArrowUpRight size={14} />
         </a>
-
         <button
           className="menu-button"
           type="button"
@@ -663,11 +489,10 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.24, ease: EASE }}
           >
-            {navItems.map((item) =>
+            {mobileItems.map((item) =>
               item.href ? (
                 <a key={item.label} href={item.href} onClick={close}>
-                  {item.label}
-                  <ArrowUpRight size={16} />
+                  {item.label}<ArrowUpRight size={16} />
                 </a>
               ) : (
                 <a
@@ -675,8 +500,7 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
                   href={anchorHref(item.id!)}
                   onClick={(event) => scrollToSection(event, item.id!, close)}
                 >
-                  {item.label}
-                  <ArrowUpRight size={16} />
+                  {item.label}<ArrowDown size={16} />
                 </a>
               ),
             )}
@@ -688,209 +512,98 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
 }
 
 function SectionHeading({
+  number,
   eyebrow,
   title,
   body,
-  align = "left",
 }: {
+  number: string;
   eyebrow: string;
   title: string;
   body?: string;
-  align?: "left" | "center";
 }) {
   return (
-    <div className={`section-heading ${align}`}>
-      <p className="section-kicker">{eyebrow}</p>
-      <h2 aria-label={title}>
-        <RevealWords text={title} />
-      </h2>
-      {body ? <p className="section-body">{body}</p> : null}
-    </div>
-  );
-}
-
-function BrowserFrame({
-  route,
-  children,
-  className = "",
-}: {
-  route: string;
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={`browser-frame ${className}`}>
-      <div className="browser-chrome" aria-hidden="true">
-        <span className="chrome-dot red" />
-        <span className="chrome-dot yellow" />
-        <span className="chrome-dot green" />
-        <span className="browser-url">{route}</span>
+    <div className="section-heading">
+      <div className="section-index">
+        <span>{number}</span>
+        <span>{eyebrow}</span>
       </div>
-      {children}
-    </div>
-  );
-}
-
-function PraxigenTour() {
-  const [active, setActive] = useState(0);
-  const touched = useRef(false);
-  const tourRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(tourRef, { margin: "-15% 0px -15% 0px" });
-  const reduceMotion = useReducedMotion();
-  const screen = praxigenScreens[active];
-
-  useEffect(() => {
-    if (reduceMotion || !inView) return;
-    const timer = window.setInterval(() => {
-      if (!touched.current) {
-        setActive((current) => (current + 1) % praxigenScreens.length);
-      }
-    }, 5200);
-    return () => window.clearInterval(timer);
-  }, [inView, reduceMotion]);
-
-  const choose = (index: number) => {
-    touched.current = true;
-    setActive(index);
-  };
-
-  return (
-    <div className="praxigen-tour" ref={tourRef}>
-      <div className="tour-tabs" role="tablist" aria-label="Praxigen product screens">
-        {praxigenScreens.map((item, index) => (
-          <button
-            type="button"
-            role="tab"
-            aria-selected={active === index}
-            aria-controls="praxigen-tour-panel"
-            className={active === index ? "active" : ""}
-            key={item.title}
-            onClick={() => choose(index)}
-          >
-            {item.title}
-          </button>
-        ))}
-      </div>
-
-      <div className="tour-beam">
-        <BrowserFrame route={screen.route} className="tour-window">
-          <div id="praxigen-tour-panel" role="tabpanel" className="tour-panel">
-            <AnimatePresence mode="wait">
-              <motion.img
-                key={screen.image}
-                src={screen.image}
-                alt={screen.alt}
-                initial={reduceMotion ? false : { opacity: 0, x: 18 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={reduceMotion ? undefined : { opacity: 0, x: -14 }}
-                transition={{ duration: 0.36, ease: EASE }}
-              />
-            </AnimatePresence>
-          </div>
-          <div className="tour-caption">
-            <div>
-              <span>Actual product interface</span>
-              <strong>{screen.title}</strong>
-            </div>
-            <p>{screen.body}</p>
-          </div>
-        </BrowserFrame>
+      <div>
+        <h2 aria-label={title}><RevealWords text={title} /></h2>
+        {body ? <p>{body}</p> : null}
       </div>
     </div>
   );
 }
 
-function ProjectPreview({ kind }: { kind: SupportingProject["preview"] }) {
+function ProjectPreview({ kind }: { kind: Project["preview"] }) {
   if (kind === "crm") {
     return (
-      <div className="mini-product crm-preview" aria-hidden="true">
-        <div className="mini-product-bar">
+      <div className="project-art crm-art" aria-hidden="true">
+        <div className="art-toolbar">
           <strong>UStart League</strong>
           <span>Season 04</span>
         </div>
-        <div className="crm-layout">
+        <div className="crm-art-body">
           <div>
             <small>TEAM WORKSPACE</small>
             <b>Run the season from one place.</b>
-            <i>Google Sheets stays the source of truth.</i>
+            <p>Google Sheets stays the source of truth.</p>
           </div>
-          <div className="crm-panel">
-            <span>Founder pipeline</span>
-            <em>24 active</em>
-            <span>Partner outreach</span>
-            <em>9 due</em>
+          <div className="crm-art-data">
+            <span>Founder pipeline <b>24 active</b></span>
+            <span>Partner outreach <b>9 due</b></span>
+            <span>Upcoming reviews <b>6</b></span>
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (kind === "grndwork") {
-    return (
-      <div className="mini-product grndwork-preview" aria-hidden="true">
-        <div className="mini-product-bar">
-          <strong>grndwork</strong>
-          <span>EARLY ACCESS</span>
-        </div>
-        <div className="grndwork-copy">
-          <small>YOUR CAREER, WITH SIGNAL</small>
-          <b>Discover your path.</b>
-        </div>
-        <div className="grndwork-metrics">
-          <span><small>MATCH</small>92%</span>
-          <span><small>ROLES</small>48</span>
-          <span><small>TRACKED</small>12</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mini-product forever-preview" aria-hidden="true">
-      <div className="mini-product-bar">
-        <strong>ForeverData</strong>
-        <span>DATA PERSISTENCE</span>
+    <div className="project-art grndwork-art" aria-hidden="true">
+      <div className="art-toolbar">
+        <strong>grndwork</strong>
+        <span>Early access</span>
       </div>
-      <div className="forever-orbit">
-        <span>Archive</span>
-        <span>Verify</span>
-        <span>Retrieve</span>
-        <i />
+      <div className="grndwork-art-copy">
+        <small>YOUR CAREER, WITH SIGNAL</small>
+        <b>Discover your path.</b>
       </div>
-      <div className="forever-status">
-        <span>Storage network</span>
-        <strong>Persistent</strong>
+      <div className="grndwork-art-data">
+        <span><small>MATCH</small>92%</span>
+        <span><small>ROLES</small>48</span>
+        <span><small>TRACKED</small>12</span>
       </div>
     </div>
   );
 }
 
-function ProjectRow({
-  project,
-  index,
-}: {
-  project: SupportingProject;
-  index: number;
-}) {
+function ProjectCard({ project, index }: { project: Project; index: number }) {
   return (
     <motion.article
-      className="project-row"
-      initial={{ opacity: 0, y: 18 }}
+      className="project-card"
+      initial={{ opacity: 0, y: 22 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-70px" }}
-      transition={{ duration: 0.52, delay: index * 0.06, ease: EASE }}
+      transition={{ duration: 0.58, delay: index * 0.08, ease: EASE }}
     >
-      <span className="project-index">0{index + 1}</span>
-      <div className="project-row-copy">
-        <p className="project-label">{project.label}</p>
+      <a href={project.href} target="_blank" rel="noreferrer" className="project-art-link">
+        <ProjectPreview kind={project.preview} />
+      </a>
+      <div className="project-card-copy">
+        <div className="project-card-meta">
+          <span>{project.number}</span>
+          <span>{project.label}</span>
+        </div>
         <h3>{project.name}</h3>
         <p>{project.body}</p>
         <div className="tag-row">
           {project.tags.map((tag) => <span key={tag}>{tag}</span>)}
         </div>
         <div className="project-links">
-          <a className="arrow-shift" href={project.href} target="_blank" rel="noreferrer">
-            Open project <ArrowUpRight className="arr" size={15} />
+          <a href={project.href} target="_blank" rel="noreferrer">
+            View project <ArrowUpRight size={15} />
           </a>
           {project.repo ? (
             <a href={project.repo} target="_blank" rel="noreferrer">
@@ -899,7 +612,6 @@ function ProjectRow({
           ) : null}
         </div>
       </div>
-      <ProjectPreview kind={project.preview} />
     </motion.article>
   );
 }
@@ -921,26 +633,19 @@ function ExperienceLedger() {
 
   return (
     <>
-      <div className="experience-heading">
-        <SectionHeading
-          eyebrow="Experience"
-          title="Research, clinical exposure, and operator work."
-          body="I tend to end up where technical detail and human workflow are tangled together."
-        />
-        <div className="experience-tabs" role="tablist" aria-label="Experience filters">
-          {experienceTabs.map((tab) => (
-            <button
-              type="button"
-              role="tab"
-              aria-selected={tab === activeTab}
-              className={tab === activeTab ? "active" : ""}
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+      <div className="experience-controls" role="tablist" aria-label="Experience filters">
+        {experienceTabs.map((tab) => (
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === activeTab}
+            className={tab === activeTab ? "active" : ""}
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
 
       <motion.div className="experience-list" layout>
@@ -956,7 +661,7 @@ function ExperienceLedger() {
               key={`${experience.org}-${experience.title}`}
             >
               <LogoMark logo={experience.logo} />
-              <div className="experience-primary">
+              <div className="experience-role">
                 <h3>{experience.title}</h3>
                 <p>{experience.org}</p>
               </div>
@@ -975,43 +680,10 @@ function ExperienceLedger() {
   );
 }
 
-function ThesisBand() {
-  const ref = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "center center"],
-  });
-  const scale = useTransform(scrollYProgress, [0, 1], [0.965, 1]);
-  const radius = useTransform(scrollYProgress, [0, 1], [26, 0]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [34, 0]);
-
-  return (
-    <motion.section
-      ref={ref}
-      className="thesis-band"
-      style={{
-        scale: reduceMotion ? 1 : scale,
-        borderRadius: reduceMotion ? 0 : radius,
-      }}
-    >
-      <div className="thesis-grid" aria-hidden="true" />
-      <motion.div className="thesis-copy" style={{ y: reduceMotion ? 0 : contentY }}>
-        <p>Working thesis</p>
-        <h2>
-          The hardest problems are often stuck between
-          <span> policy, people, and the next action.</span>
-        </h2>
-        <small>That is the kind of system I keep choosing to work on.</small>
-      </motion.div>
-    </motion.section>
-  );
-}
-
 function PortfolioHome() {
   const heroVariants = {
     hidden: {},
-    show: { transition: { staggerChildren: 0.09, delayChildren: 0.12 } },
+    show: { transition: { staggerChildren: 0.09, delayChildren: 0.08 } },
   };
   const heroItem = {
     hidden: { opacity: 0, y: 16 },
@@ -1020,197 +692,208 @@ function PortfolioHome() {
 
   return (
     <main>
-      <SiteIntro />
+      <a className="skip-link" href="#work">Skip to selected work</a>
       <SiteNav />
 
-      <header className="home-hero" id="top">
-        <Drift className="hero-copy" range={[0, 32]}>
-          <motion.div variants={heroVariants} initial="hidden" animate="show">
-            <motion.p className="status-pill" variants={heroItem}>
-              <span /> Founder, Praxigen · University of Michigan
-            </motion.p>
-            <motion.h1 variants={heroItem}>Maya Gerdes</motion.h1>
-            <motion.p className="hero-role" variants={heroItem}>
-              I build software for work that falls between systems.
-            </motion.p>
-            <motion.p className="hero-body" variants={heroItem}>
-              Right now, that is Praxigen: a prior authorization workspace for
-              specialty medical practices. I study neuroscience at Michigan and
-              work across product, clinical research, and go-to-market.
-            </motion.p>
-            <motion.div className="hero-actions" variants={heroItem}>
-              <MagneticLink className="button primary arrow-shift" href={projectLinks.praxigen}>
-                See Praxigen <ArrowUpRight className="arr" size={17} />
-              </MagneticLink>
-              <a className="button secondary" href={links.email}>
-                <Mail size={17} /> Email me
-              </a>
-            </motion.div>
-            <motion.div className="social-strip" variants={heroItem} aria-label="External profiles">
-              <IconLink href={links.linkedin} label="LinkedIn" icon={Linkedin} />
-              <IconLink href={links.github} label="GitHub" icon={Github} />
-              <IconLink href={links.x} label="X / Twitter" icon={X} />
-            </motion.div>
-          </motion.div>
-        </Drift>
-
-        <motion.a
-          className="hero-product"
-          href={projectLinks.praxigen}
-          target="_blank"
-          rel="noreferrer"
-          initial={{ opacity: 0, y: 30, scale: 0.985 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.78, delay: 0.46, ease: EASE }}
-        >
-          <BrowserFrame route="praxigen.dev/app/cases">
-            <img
-              src="/praxigen/workspace.webp"
-              alt="Praxigen case workspace with authorization status, payer, due date, and next action."
-            />
-            <div className="hero-product-caption">
-              <span><small>Current build</small>Praxigen</span>
-              <p>One workflow from payer requirement to next action.</p>
-              <b>Open product <ArrowUpRight size={15} /></b>
-            </div>
-          </BrowserFrame>
-        </motion.a>
-      </header>
-
-      <div className="focus-rail" aria-label="Areas of focus">
-        {["Founder", "Healthcare workflow", "Neuroscience", "Clinical research", "Product", "Go-to-market"].map((item) => (
-          <span key={item}>{item}</span>
-        ))}
-      </div>
-
-      <section className="section praxigen-section" id="work">
-        <Reveal>
-          <SectionHeading
-            eyebrow="The startup"
-            title="Praxigen is the thing I am building now."
-            body="A source-grounded workflow for the administrative work around prior authorization: requirements, clinical-note checks, appeals, pre-claim mismatches, and follow-up."
-            align="center"
-          />
-        </Reveal>
-
-        <Reveal className="praxigen-brief">
-          <div>
-            <span>My role</span>
-            <strong>Founder</strong>
-          </div>
-          <div>
-            <span>Problem</span>
-            <strong>Prior authorization</strong>
-          </div>
-          <div>
-            <span>Built across</span>
-            <strong>Product, workflow, and GTM</strong>
-          </div>
-          <a className="arrow-shift" href={projectLinks.praxigen} target="_blank" rel="noreferrer">
-            Visit Praxigen <ArrowUpRight className="arr" size={15} />
-          </a>
-        </Reveal>
-
-        <Reveal delay={0.08}>
-          <PraxigenTour />
-        </Reveal>
-      </section>
-
-      <section className="section supporting-section">
-        <Reveal>
-          <SectionHeading
-            eyebrow="Other builds"
-            title="Smaller products, real operating problems."
-            body="Side projects are where I test product ideas quickly: a clearer workflow, a cleaner interface, or a sharper way to get signal."
-          />
-        </Reveal>
-
-        <div className="project-list">
-          {supportingProjects.map((project, index) => (
-            <ProjectRow project={project} index={index} key={project.name} />
-          ))}
-        </div>
-      </section>
-
-      <ThesisBand />
-
-      <section className="experience-section" id="experience">
-        <div className="section experience-inner">
-          <ExperienceLedger />
-        </div>
-      </section>
-
-      <section className="section background-section">
-        <Reveal>
-          <SectionHeading
-            eyebrow="Background"
-            title="A little context behind the work."
-            body="The resume version is neuroscience, research, clinical exposure, consulting, and product. The useful version is that each has taught me how to see a different part of the same system."
-          />
-        </Reveal>
-
-        <div className="background-ledger">
-          {backgroundItems.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <Reveal className="background-item" delay={index * 0.06} key={item.title}>
-                <Icon size={21} />
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </Reveal>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="personal-bridge">
-        <Drift className="personal-bridge-inner" range={[18, -18]}>
-          <div>
-            <p className="section-kicker">Beyond the resume</p>
-            <h2>Music, neuroscience, pickleball, and the experiments in between.</h2>
-            <p>
-              The personal page is where the less application-shaped parts live:
-              what I listen to, how I reset, and the questions I keep returning to.
-            </p>
-          </div>
-          <div className="interest-index" aria-label="Personal interests">
-            {["Guitar + piano", "DJing", "Pickleball", "Biohacking", "Behavior change"].map((interest) => (
-              <span key={interest}>{interest}</span>
-            ))}
-          </div>
-          <a className="button secondary arrow-shift" href="/me">
-            Go to the personal page <span className="arr">→</span>
-          </a>
-        </Drift>
-      </section>
-
-      <section className="closing-section" id="contact">
+      <header className="portfolio-hero" id="top">
         <motion.div
-          className="closing-card"
-          initial={{ opacity: 0, y: 30, scale: 0.985 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.72, ease: EASE }}
+          className="hero-layout"
+          variants={heroVariants}
+          initial="hidden"
+          animate="show"
         >
-          <div className="closing-grid" aria-hidden="true" />
-          <p>Contact</p>
-          <h2>Building, researching, or thinking about a hard workflow?</h2>
-          <span>For Praxigen, grants, accelerators, healthcare operations, or research-product conversations.</span>
-          <div className="closing-actions">
-            <a className="button light" href={links.email}>
-              <Mail size={17} /> mjgerdes@umich.edu
-            </a>
+          <motion.div className="hero-name" variants={heroItem}>
+            <p>Founder / researcher / builder</p>
+            <h1>Maya Gerdes</h1>
+          </motion.div>
+          <motion.div className="hero-intro" variants={heroItem}>
+            <p className="hero-lead">
+              I am building Praxigen, a prior authorization workspace for
+              specialty medical practices.
+            </p>
+            <p>
+              I study neuroscience at the University of Michigan and work
+              across product, clinical research, and go-to-market. I am most
+              interested in systems where small workflow failures create very
+              human consequences.
+            </p>
+            <div className="hero-links">
+              <a href="#work" onClick={(event) => scrollToSection(event, "work")}>
+                Selected work <ArrowDown size={15} />
+              </a>
+              <a href={links.email}>
+                Email <ArrowUpRight size={15} />
+              </a>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          className="hero-notes"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.58, delay: 0.42, ease: EASE }}
+        >
+          <div><span>Currently</span><strong>Founder at Praxigen</strong></div>
+          <div><span>Studying</span><strong>Neuroscience + entrepreneurship</strong></div>
+          <div><span>Working across</span><strong>Clinical operations, product, GTM</strong></div>
+          <div className="hero-note-socials" aria-label="External profiles">
             <IconLink href={links.linkedin} label="LinkedIn" icon={Linkedin} />
             <IconLink href={links.github} label="GitHub" icon={Github} />
             <IconLink href={links.x} label="X / Twitter" icon={X} />
           </div>
         </motion.div>
+      </header>
+
+      <section className="portfolio-section work-section" id="work">
+        <Reveal>
+          <SectionHeading
+            number="01"
+            eyebrow="Selected work"
+            title="Things I have built, tested, and helped move forward."
+            body="Praxigen is the main build. The rest are smaller products and go-to-market work that sharpened how I think about users, systems, and momentum."
+          />
+        </Reveal>
+
+        <article className="featured-case">
+          <div className="featured-case-copy">
+            <Reveal>
+              <div className="case-meta"><span>01</span><span>Founder / product / GTM</span></div>
+              <h3>Praxigen</h3>
+              <p>
+                A source-grounded prior authorization workspace for specialty
+                medical practices. It connects payer requirements, clinical-note
+                checks, appeals, pre-claim mismatches, and follow-up in one workflow.
+              </p>
+              <dl className="case-facts">
+                <div><dt>Role</dt><dd>Founder</dd></div>
+                <div><dt>Focus</dt><dd>Healthcare workflow</dd></div>
+                <div><dt>Stage</dt><dd>Building + piloting</dd></div>
+              </dl>
+              <a className="case-link" href={projectLinks.praxigen} target="_blank" rel="noreferrer">
+                Visit praxigen.dev <ArrowUpRight size={15} />
+              </a>
+            </Reveal>
+          </div>
+
+          <div className="featured-case-media">
+            <ParallaxMedia className="case-image case-image-main">
+              <img
+                src="/praxigen/workspace.webp"
+                alt="Praxigen case workspace showing payer status, due dates, and next actions."
+              />
+            </ParallaxMedia>
+            <ParallaxMedia className="case-image case-image-secondary">
+              <img
+                src="/praxigen/note-checker.webp"
+                alt="Praxigen note checker showing a clinical documentation score and policy checks."
+              />
+            </ParallaxMedia>
+            <span className="case-caption">Selected Praxigen product surfaces</span>
+          </div>
+        </article>
+
+        <div className="project-grid">
+          {supportingProjects.map((project, index) => (
+            <ProjectCard project={project} index={index} key={project.name} />
+          ))}
+        </div>
+
+        <Reveal className="collaboration-row">
+          <div>
+            <span>04</span>
+            <span>Go-to-market collaboration</span>
+          </div>
+          <h3>ForeverData</h3>
+          <p>GTM support for a data persistence product in storage and Web3 infrastructure.</p>
+          <a href={projectLinks.foreverData} target="_blank" rel="noreferrer" aria-label="Open ForeverData">
+            <ArrowUpRight size={18} />
+          </a>
+        </Reveal>
       </section>
 
-      <footer className="site-footer">
-        <span>Maya Gerdes</span>
-        <span>Founder, Praxigen</span>
-        <a href="#top" onClick={(event) => scrollToSection(event, "top")}>Back to top ↑</a>
+      <section className="point-of-view">
+        <Reveal className="point-of-view-inner">
+          <p>Working thesis</p>
+          <blockquote>
+            I am drawn to the point where a complex system becomes an ordinary human task.
+          </blockquote>
+          <span>
+            That is where design, judgment, and the quality of the next action matter most.
+          </span>
+        </Reveal>
+      </section>
+
+      <section className="portfolio-section experience-section" id="experience">
+        <Reveal>
+          <SectionHeading
+            number="02"
+            eyebrow="Experience"
+            title="Research, clinical exposure, and operator work."
+            body="Different environments, but a consistent preference for technical detail, real users, and ambiguous problems."
+          />
+        </Reveal>
+        <ExperienceLedger />
+      </section>
+
+      <section className="portfolio-section about-section" id="about">
+        <Reveal>
+          <SectionHeading
+            number="03"
+            eyebrow="About"
+            title="The context behind the work."
+          />
+        </Reveal>
+
+        <div className="about-layout">
+          <Reveal className="about-copy">
+            <p>
+              The resume version is neuroscience, research, clinical exposure,
+              consulting, and product. The more useful version is that each has
+              taught me how to see a different part of the same system.
+            </p>
+            <p>
+              Outside work, I care a lot about music, behavior, movement, and the
+              little experiments people run on themselves. Those interests live on
+              a separate page because they deserve more than a resume footnote.
+            </p>
+            <a href="/me">Personal page <ArrowUpRight size={15} /></a>
+          </Reveal>
+
+          <div className="background-list">
+            {backgroundItems.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <Reveal className="background-item" delay={index * 0.06} key={item.title}>
+                  <Icon size={20} />
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <footer className="contact-footer" id="contact">
+        <div className="contact-footer-main">
+          <span>04 / Contact</span>
+          <h2>Let&apos;s talk.</h2>
+          <a href={links.email}>mjgerdes@umich.edu <ArrowUpRight size={20} /></a>
+        </div>
+        <div className="contact-footer-bottom">
+          <span>Maya Gerdes</span>
+          <div>
+            <IconLink href={links.linkedin} label="LinkedIn" icon={Linkedin} />
+            <IconLink href={links.github} label="GitHub" icon={Github} />
+            <IconLink href={links.x} label="X / Twitter" icon={X} />
+          </div>
+          <a href="#top" onClick={(event) => scrollToSection(event, "top")}>
+            Back to top <ArrowUpRight size={14} />
+          </a>
+        </div>
       </footer>
     </main>
   );
@@ -1222,30 +905,32 @@ function PersonalPage() {
       <SiteNav page="personal" />
       <header className="personal-hero">
         <motion.div
+          className="personal-hero-layout"
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.62, ease: EASE }}
         >
-          <a className="back-link arrow-shift" href="/">
-            <ArrowLeft className="arr" size={16} /> Back to the main page
-          </a>
-          <p className="status-pill"><span /> Outside the resume</p>
-          <h1>A few things that shape how I think.</h1>
+          <div>
+            <a className="back-link" href="/"><ArrowLeft size={16} /> Main portfolio</a>
+            <p>Personal index / Maya Gerdes</p>
+            <h1>A few things that shape how I think.</h1>
+          </div>
           <p>
-            This is the less polished, more personal side of the site: music,
+            This is the less application-shaped side of the site: music,
             movement, brains, and the small experiments that become part of how I work.
           </p>
         </motion.div>
       </header>
 
-      <section className="personal-statement">
+      <section className="personal-quote">
         <p>Same curiosity, different surfaces.</p>
-        <h2>How do people feel, learn, perform, and change?</h2>
+        <blockquote>How do people feel, learn, perform, and change?</blockquote>
       </section>
 
-      <section className="section personal-section">
+      <section className="portfolio-section personal-section">
         <SectionHeading
-          eyebrow="Personal index"
+          number="01"
+          eyebrow="Personal"
           title="The things I make time for."
           body="Not a second professional identity. Just the parts that explain the first one a little better."
         />
@@ -1255,7 +940,7 @@ function PersonalPage() {
             return (
               <Reveal className="personal-row" delay={index * 0.055} key={card.title}>
                 <span>0{index + 1}</span>
-                <Icon size={22} />
+                <Icon size={21} />
                 <h3>{card.title}</h3>
                 <p>{card.body}</p>
               </Reveal>
@@ -1264,12 +949,10 @@ function PersonalPage() {
         </div>
       </section>
 
-      <section className="personal-return">
-        <p>The founder version is back on the main page.</p>
-        <a className="button primary arrow-shift" href="/">
-          Return home <span className="arr">→</span>
-        </a>
-      </section>
+      <footer className="personal-footer">
+        <p>Back to the founder, researcher, and builder version.</p>
+        <a href="/">Return to portfolio <ArrowUpRight size={15} /></a>
+      </footer>
     </main>
   );
 }
