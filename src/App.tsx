@@ -21,6 +21,8 @@ import {
   motion,
   useReducedMotion,
   useScroll,
+  useMotionValue,
+  useMotionValueEvent,
   useSpring,
   useTransform,
 } from "framer-motion";
@@ -69,7 +71,7 @@ type ExperienceItem = {
   tags: string[];
 };
 
-type Project = {
+type RailProject = {
   number: string;
   name: string;
   label: string;
@@ -79,13 +81,9 @@ type Project = {
   repo?: string;
   image: string;
   imageAlt: string;
-};
-
-type ProjectIndexItem = {
-  name: string;
-  descriptor: string;
-  href: string;
-  image: string;
+  role: string;
+  year: string;
+  tone: "ice" | "carbon" | "sky" | "violet";
 };
 
 type PersonalCard = {
@@ -241,7 +239,21 @@ const experiences: ExperienceItem[] = [
   },
 ];
 
-const supportingProjects: Project[] = [
+const railProjects: RailProject[] = [
+  {
+    number: "01",
+    name: "Praxigen",
+    label: "Featured build / HealthTech",
+    href: projectLinks.praxigen,
+    body:
+      "Healthcare workflow infrastructure for specialty practices, connecting payer requirements, clinical-note checks, appeals, pre-claim mismatches, and follow-up.",
+    tags: ["30+ interviews", "Product pilots", "Five-person team"],
+    image: "/praxigen/workspace.webp",
+    imageAlt: "Praxigen case workspace showing payer status, due dates, and next actions.",
+    role: "Founder & technical builder",
+    year: "2026 - now",
+    tone: "ice",
+  },
   {
     number: "02",
     name: "Startup CRM",
@@ -250,8 +262,11 @@ const supportingProjects: Project[] = [
     body:
       "A lightweight operating layer for a startup league team, with Google Sheets kept as the source of truth.",
     tags: ["CRM", "Google Sheets", "Operations"],
-    image: "/projects/startup-crm-interface.png",
+    image: "/projects/startup-crm-interface.webp",
     imageAlt: "Startup CRM dashboard with member records, workspace metrics, and operating views.",
+    role: "Product & engineering",
+    year: "2026",
+    tone: "carbon",
   },
   {
     number: "03",
@@ -262,8 +277,11 @@ const supportingProjects: Project[] = [
     body:
       "An early-access product that helps students turn broad interests into clearer roles, targets, and outreach.",
     tags: ["React", "Product", "Career discovery"],
-    image: "/projects/grndwork-interface.png",
+    image: "/projects/grndwork-interface.webp",
     imageAlt: "grndwork career discovery interface with role matches and career signals.",
+    role: "Product & engineering",
+    year: "2026",
+    tone: "sky",
   },
   {
     number: "04",
@@ -273,41 +291,11 @@ const supportingProjects: Project[] = [
     body:
       "Go-to-market support for a data persistence product working across decentralized storage and Web3 infrastructure.",
     tags: ["GTM", "Data infrastructure", "Web3"],
-    image: "/projects/foreverdata-interface.png",
+    image: "/projects/foreverdata-interface.webp",
     imageAlt: "ForeverData product website showing permanent data storage infrastructure.",
-  },
-];
-
-const projectIndex: ProjectIndexItem[] = [
-  {
-    name: "Praxigen",
-    descriptor: "HealthTech startup",
-    href: projectLinks.praxigen,
-    image: "/praxigen/pa-lookup.webp",
-  },
-  {
-    name: "Build & Pitch Winner",
-    descriptor: "a16z NY Tech Week / Raylu",
-    href: projectLinks.buildAndPitch,
-    image: "/praxigen/appeal-generator.webp",
-  },
-  {
-    name: "Startup CRM",
-    descriptor: "Product & operations",
-    href: projectLinks.startupCrm,
-    image: "/projects/startup-crm-interface.png",
-  },
-  {
-    name: "grndwork",
-    descriptor: "Career discovery product",
-    href: projectLinks.grndworkLive,
-    image: "/projects/grndwork-interface.png",
-  },
-  {
-    name: "ForeverData",
-    descriptor: "Go-to-market collaboration",
-    href: projectLinks.foreverData,
-    image: "/projects/foreverdata-interface.png",
+    role: "Go-to-market",
+    year: "2025",
+    tone: "violet",
   },
 ];
 
@@ -382,6 +370,219 @@ function SmoothScroll() {
   return null;
 }
 
+function SignalField() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    let width = 0;
+    let height = 0;
+    let ratio = 1;
+    let frame = 0;
+    const pointer = { x: 0, y: 0, active: false };
+
+    const resize = () => {
+      const bounds = canvas.getBoundingClientRect();
+      width = bounds.width;
+      height = bounds.height;
+      ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.round(width * ratio));
+      canvas.height = Math.max(1, Math.round(height * ratio));
+      pointer.x = width * 0.7;
+      pointer.y = height * 0.42;
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      const bounds = canvas.getBoundingClientRect();
+      pointer.x = event.clientX - bounds.left;
+      pointer.y = event.clientY - bounds.top;
+      pointer.active =
+        pointer.x >= 0 && pointer.x <= bounds.width && pointer.y >= 0 && pointer.y <= bounds.height;
+    };
+
+    const draw = (time: number) => {
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      context.lineWidth = 0.7;
+
+      const rowGap = width < 700 ? 48 : 42;
+      const columnGap = width < 700 ? 58 : 70;
+      const rows = Math.ceil(height / rowGap) + 2;
+      const columns = Math.ceil(width / columnGap) + 2;
+
+      for (let row = -1; row < rows; row += 1) {
+        const baseY = row * rowGap;
+        context.beginPath();
+        for (let x = 0; x <= width + 16; x += 16) {
+          const distanceX = x - pointer.x;
+          const distanceY = baseY - pointer.y;
+          const influence = pointer.active
+            ? Math.exp(-(distanceX * distanceX) / 36000) * Math.exp(-(distanceY * distanceY) / 70000)
+            : 0;
+          const bend = (pointer.y - baseY) * influence * 0.16;
+          const wave = reduceMotion ? 0 : Math.sin(time * 0.00032 + x * 0.012 + row * 0.5) * 2.2;
+          const y = baseY + bend + wave;
+          if (x === 0) context.moveTo(x, y);
+          else context.lineTo(x, y);
+        }
+        context.strokeStyle = row % 5 === 0
+          ? "rgba(151, 211, 18, 0.34)"
+          : "rgba(33, 82, 255, 0.14)";
+        context.stroke();
+      }
+
+      for (let column = -1; column < columns; column += 1) {
+        const baseX = column * columnGap;
+        context.beginPath();
+        for (let y = 0; y <= height + 16; y += 16) {
+          const distanceX = baseX - pointer.x;
+          const distanceY = y - pointer.y;
+          const influence = pointer.active
+            ? Math.exp(-(distanceY * distanceY) / 36000) * Math.exp(-(distanceX * distanceX) / 62000)
+            : 0;
+          const bend = (pointer.x - baseX) * influence * 0.13;
+          const wave = reduceMotion ? 0 : Math.cos(time * 0.00027 + y * 0.01 + column * 0.42) * 1.7;
+          const x = baseX + bend + wave;
+          if (y === 0) context.moveTo(x, y);
+          else context.lineTo(x, y);
+        }
+        context.strokeStyle = "rgba(15, 22, 33, 0.07)";
+        context.stroke();
+      }
+
+      context.fillStyle = "rgba(33, 82, 255, 0.34)";
+      for (let row = 0; row < rows; row += 1) {
+        for (let column = 0; column < columns; column += 1) {
+          if ((row + column) % 3 !== 0) continue;
+          context.fillRect(column * columnGap - 0.75, row * rowGap - 0.75, 1.5, 1.5);
+        }
+      }
+
+      if (!reduceMotion) {
+        const scanY = (time * 0.035) % Math.max(height, 1);
+        context.beginPath();
+        context.moveTo(0, scanY);
+        context.lineTo(width, scanY);
+        context.strokeStyle = "rgba(151, 211, 18, 0.18)";
+        context.lineWidth = 1;
+        context.stroke();
+      }
+    };
+
+    const animate = (time: number) => {
+      draw(time);
+      frame = requestAnimationFrame(animate);
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    if (reduceMotion) draw(0);
+    else frame = requestAnimationFrame(animate);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("pointermove", onPointerMove);
+    };
+  }, [reduceMotion]);
+
+  return <canvas ref={canvasRef} className="signal-field" aria-hidden="true" />;
+}
+
+function DecodeText({ text, className }: { text: string; className?: string }) {
+  const reduceMotion = useReducedMotion();
+  const [output, setOutput] = useState(text);
+
+  useEffect(() => {
+    if (reduceMotion) {
+      setOutput(text);
+      return;
+    }
+
+    const glyphs = "01<>/[]{}+*";
+    const duration = 820;
+    const startedAt = performance.now();
+    let frame = 0;
+
+    const tick = (time: number) => {
+      const progress = Math.min(1, (time - startedAt) / duration);
+      const resolved = Math.floor(progress * text.length);
+      setOutput(
+        text
+          .split("")
+          .map((character, index) => {
+            if (character === " " || character === "/") return character;
+            if (index < resolved) return character;
+            return glyphs[Math.floor(Math.random() * glyphs.length)];
+          })
+          .join(""),
+      );
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [reduceMotion, text]);
+
+  return (
+    <span className={className} aria-label={text}>
+      <span aria-hidden="true">{output}</span>
+    </span>
+  );
+}
+
+function PortraitFigure() {
+  const reduceMotion = useReducedMotion();
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  const smoothX = useSpring(rotateX, { stiffness: 180, damping: 24 });
+  const smoothY = useSpring(rotateY, { stiffness: 180, damping: 24 });
+
+  const onPointerMove = (event: ReactMouseEvent<HTMLElement>) => {
+    if (reduceMotion) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+    const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+    rotateY.set(x * 3.5);
+    rotateX.set(y * -3.5);
+  };
+
+  const reset = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+  };
+
+  return (
+    <motion.figure
+      className="hero-portrait"
+      style={{ rotateX: smoothX, rotateY: smoothY, transformPerspective: 1000 }}
+      onPointerMove={onPointerMove}
+      onPointerLeave={reset}
+    >
+      <motion.div
+        className="hero-portrait-image"
+        initial={reduceMotion ? false : { clipPath: "inset(0 0 100% 0)" }}
+        animate={{ clipPath: "inset(0 0 0% 0)" }}
+        transition={{ duration: reduceMotion ? 0 : 1.05, delay: reduceMotion ? 0 : 0.18, ease: EASE }}
+      >
+        <img src="/profile/maya-gerdes-headshot.jpg" alt="Maya Gerdes" />
+        <span className="portrait-scan" aria-hidden="true" />
+      </motion.div>
+      <figcaption>
+        <span>Ann Arbor, MI</span>
+        <span>Founder file / 2026</span>
+      </figcaption>
+    </motion.figure>
+  );
+}
+
 function Reveal({
   children,
   className,
@@ -420,7 +621,7 @@ function RevealWords({ text }: { text: string }) {
               ? false
               : { opacity: 0, y: 12, filter: "blur(5px)" }
           }
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.5, delay: index * 0.04, ease: EASE }}
         >
@@ -429,32 +630,6 @@ function RevealWords({ text }: { text: string }) {
         </motion.span>
       ))}
     </span>
-  );
-}
-
-function ParallaxMedia({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], [18, -18]);
-
-  return (
-    <motion.div
-      ref={ref}
-      className={className}
-      style={{ y: reduceMotion ? 0 : y }}
-    >
-      {children}
-    </motion.div>
   );
 }
 
@@ -470,6 +645,23 @@ function IconLink({
   size?: number;
 }) {
   const external = href.startsWith("http");
+  const reduceMotion = useReducedMotion();
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { stiffness: 360, damping: 24 });
+  const springY = useSpring(y, { stiffness: 360, damping: 24 });
+
+  const onPointerMove = (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    if (reduceMotion) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    x.set((event.clientX - bounds.left - bounds.width / 2) * 0.2);
+    y.set((event.clientY - bounds.top - bounds.height / 2) * 0.2);
+  };
+
+  const reset = () => {
+    x.set(0);
+    y.set(0);
+  };
 
   return (
     <motion.a
@@ -477,8 +669,10 @@ function IconLink({
       target={external ? "_blank" : undefined}
       rel={external ? "noreferrer" : undefined}
       aria-label={label}
-      whileHover={{ y: -2 }}
-      whileTap={{ scale: 0.96 }}
+      style={{ x: springX, y: springY }}
+      onPointerMove={onPointerMove}
+      onPointerLeave={reset}
+      whileTap={reduceMotion ? undefined : { scale: 0.96 }}
       transition={{ type: "spring", stiffness: 420, damping: 28 }}
     >
       <Icon size={size} strokeWidth={1.9} />
@@ -503,6 +697,7 @@ function scrollToSection(
 }
 
 function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
+  const reduceMotion = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const isPersonal = page === "personal";
@@ -576,10 +771,10 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
         {menuOpen ? (
           <motion.div
             className="mobile-menu"
-            initial={{ opacity: 0, y: -8 }}
+            initial={reduceMotion ? false : { opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.24, ease: EASE }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
+            transition={{ duration: reduceMotion ? 0 : 0.24, ease: EASE }}
           >
             {mobileItems.map((item) =>
               item.href ? (
@@ -628,76 +823,109 @@ function SectionHeading({
   );
 }
 
-function ProjectMarquee() {
+function ProjectRail() {
+  const railRef = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+  const [activeProject, setActiveProject] = useState(0);
+  const { scrollYProgress } = useScroll({
+    target: railRef,
+    offset: ["start start", "end end"],
+  });
+  const x = useTransform(scrollYProgress, [0, 1], ["0vw", "-255vw"]);
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 28,
+    restDelta: 0.001,
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    setActiveProject(Math.min(railProjects.length - 1, Math.floor(latest * railProjects.length)));
+  });
+
   return (
-    <div className="project-marquee" aria-label="Project index">
-      <div className="project-marquee-track">
-        {[0, 1].map((copy) => (
-          <div className="project-marquee-set" aria-hidden={copy === 1} key={copy}>
-            {projectIndex.map((project) => (
+    <section className="project-rail-section" id="work" ref={railRef}>
+      <div className="project-rail-sticky">
+        <div className="project-rail-header">
+          <div>
+            <span>01 / Selected systems</span>
+            <strong>Products, experiments, and go-to-market work</strong>
+          </div>
+          <a href={projectLinks.buildAndPitch} target="_blank" rel="noreferrer">
+            <span>Build & Pitch winner</span>
+            <small>a16z NY Tech Week / Raylu</small>
+            <ArrowUpRight size={15} />
+          </a>
+        </div>
+
+        <motion.div
+          className="project-rail-track"
+          style={{ x: reduceMotion ? 0 : x }}
+        >
+          {railProjects.map((project, index) => (
+            <article className={`rail-panel tone-${project.tone}`} key={project.name}>
+              <div className="rail-panel-copy">
+                <div className="rail-panel-index">
+                  <span>{project.number}</span>
+                  <span>{project.label}</span>
+                </div>
+                <h3>{project.name}</h3>
+                <p>{project.body}</p>
+                <dl>
+                  <div><dt>Role</dt><dd>{project.role}</dd></div>
+                  <div><dt>Year</dt><dd>{project.year}</dd></div>
+                </dl>
+                <div className="rail-panel-links">
+                  <a href={project.href} target="_blank" rel="noreferrer">
+                    Open project <ArrowUpRight size={15} />
+                  </a>
+                  {project.repo ? (
+                    <a href={project.repo} target="_blank" rel="noreferrer">
+                      <Github size={14} /> Source
+                    </a>
+                  ) : null}
+                </div>
+              </div>
+
               <a
-                className="project-marquee-card"
+                className="rail-panel-media"
                 href={project.href}
                 target="_blank"
                 rel="noreferrer"
-                tabIndex={copy === 1 ? -1 : undefined}
-                key={`${copy}-${project.name}`}
+                aria-label={`Open ${project.name}`}
               >
-                <span className="project-marquee-image">
-                  <img src={project.image} alt="" />
+                <span className="interface-window-bar" aria-hidden="true">
+                  <i /><i /><i />
+                  <b>{project.name.toLowerCase()}.interface</b>
                 </span>
-                <span className="project-marquee-copy">
-                  <strong>{project.name}</strong>
-                  <small>{project.descriptor}</small>
+                <img
+                  src={project.image}
+                  alt={project.imageAlt}
+                  loading={index === 0 ? "eager" : "lazy"}
+                />
+                <span className="media-open-indicator" aria-hidden="true">
+                  View <ArrowUpRight size={14} />
                 </span>
-                <ArrowUpRight size={15} />
               </a>
-            ))}
+
+              <div className="rail-panel-tags" aria-label={`${project.name} highlights`}>
+                {project.tags.map((tag) => <span key={tag}>{tag}</span>)}
+              </div>
+            </article>
+          ))}
+        </motion.div>
+
+        <div className="project-rail-progress" aria-hidden="true">
+          <div className="rail-progress-label">
+            <span>{String(activeProject + 1).padStart(2, "0")}</span>
+            <span>/ {String(railProjects.length).padStart(2, "0")}</span>
           </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const reduceMotion = useReducedMotion();
-
-  return (
-    <motion.article
-      className="project-card"
-      initial={reduceMotion ? false : { opacity: 0, y: 22 }}
-      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-70px" }}
-      transition={{ duration: 0.58, delay: index * 0.08, ease: EASE }}
-    >
-      <a href={project.href} target="_blank" rel="noreferrer" className="project-art-link">
-        <span className="project-interface">
-          <img src={project.image} alt={project.imageAlt} />
-        </span>
-      </a>
-      <div className="project-card-copy">
-        <div className="project-card-meta">
-          <span>{project.number}</span>
-          <span>{project.label}</span>
-        </div>
-        <h3>{project.name}</h3>
-        <p>{project.body}</p>
-        <div className="tag-row">
-          {project.tags.map((tag) => <span key={tag}>{tag}</span>)}
-        </div>
-        <div className="project-links">
-          <a href={project.href} target="_blank" rel="noreferrer">
-            View project <ArrowUpRight size={15} />
-          </a>
-          {project.repo ? (
-            <a href={project.repo} target="_blank" rel="noreferrer">
-              <Github size={15} /> Repository
-            </a>
-          ) : null}
+          <span className="rail-progress-track">
+            <motion.span className="rail-progress-fill" style={{ scaleX: progress }} />
+          </span>
+          <span className="rail-progress-name">{railProjects[activeProject].name}</span>
         </div>
       </div>
-    </motion.article>
+    </section>
   );
 }
 
@@ -710,6 +938,7 @@ function LogoMark({ logo }: { logo: ExperienceItem["logo"] }) {
 }
 
 function ExperienceLedger() {
+  const reduceMotion = useReducedMotion();
   const [activeTab, setActiveTab] = useState<ExperienceCategory>("Work");
   const items = useMemo(
     () => experiences.filter((experience) => experience.category === activeTab),
@@ -728,23 +957,28 @@ function ExperienceLedger() {
             key={tab}
             onClick={() => setActiveTab(tab)}
           >
-            {tab}
+            {tab === activeTab ? (
+              <motion.span className="experience-tab-active" layoutId="experience-tab-active" />
+            ) : null}
+            <span>{tab}</span>
           </button>
         ))}
       </div>
 
       <motion.div className="experience-list" layout>
         <AnimatePresence mode="popLayout">
-          {items.map((experience) => (
+          {items.map((experience, index) => (
             <motion.article
               className="experience-item"
               layout
-              initial={{ opacity: 0, y: 10 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.3, ease: EASE }}
+              exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
+              whileHover={reduceMotion ? undefined : { x: 6 }}
+              transition={{ duration: reduceMotion ? 0 : 0.3, ease: EASE }}
               key={`${experience.org}-${experience.title}`}
             >
+              <span className="experience-count">{String(index + 1).padStart(2, "0")}</span>
               <LogoMark logo={experience.logo} />
               <div className="experience-role">
                 <h3>{experience.title}</h3>
@@ -766,6 +1000,7 @@ function ExperienceLedger() {
 }
 
 function PortfolioHome() {
+  const reduceMotion = useReducedMotion();
   const heroVariants = {
     hidden: {},
     show: { transition: { staggerChildren: 0.09, delayChildren: 0.08 } },
@@ -781,152 +1016,78 @@ function PortfolioHome() {
       <SiteNav />
 
       <header className="portfolio-hero" id="top">
+        <SignalField />
         <motion.div
           className="hero-layout"
           variants={heroVariants}
-          initial="hidden"
+          initial={reduceMotion ? false : "hidden"}
           animate="show"
         >
           <motion.div className="hero-copy" variants={heroItem}>
-            <p className="hero-kicker">student / builder / founder</p>
-            <h1>Maya Gerdes</h1>
-            <div className="hero-socials" aria-label="Maya Gerdes profiles">
-              <IconLink href={links.linkedin} label="LinkedIn" icon={Linkedin} size={20} />
-              <IconLink href={links.github} label="GitHub" icon={Github} size={20} />
-              <IconLink href={links.x} label="X / Twitter" icon={X} size={20} />
-              <IconLink href={links.email} label="Email Maya" icon={Mail} size={20} />
+            <div className="hero-presence">
+              <span><i /> Founder, Praxigen</span>
+              <span>Ann Arbor, MI</span>
             </div>
-            <p className="hero-bio">
-              Hi, I&apos;m Maya! I study neuroscience, business, and
-              entrepreneurship at the University of Michigan. I&apos;m deeply
-              curious about how people, technology, and complex systems work,
-              with particular interests in genetics, human consciousness, and
-              the future of healthcare.
+            <p className="hero-kicker">
+              <DecodeText text="student / builder / founder" />
             </p>
-            <div className="hero-links">
-              <a href="#work" onClick={(event) => scrollToSection(event, "work")}>
-                Selected work <ArrowDown size={15} />
+            <h1>
+              <span className="hero-name-line"><span>Maya</span></span>
+              <span className="hero-name-line"><span>Gerdes</span></span>
+            </h1>
+            <p className="hero-lead">
+              Building at the edge of healthcare, software, and human behavior.
+            </p>
+            <p className="hero-bio">
+              I study neuroscience, business, and entrepreneurship at the
+              University of Michigan. I&apos;m interested in genetics, human
+              consciousness, and the future of healthcare.
+            </p>
+            <div className="hero-actions">
+              <a className="primary-action" href="#work" onClick={(event) => scrollToSection(event, "work")}>
+                Enter selected work <ArrowDown size={15} />
               </a>
               <a href="/Maya-Gerdes-Resume.pdf" target="_blank" rel="noreferrer">
                 Resume <ArrowUpRight size={15} />
               </a>
               <a href="/me">
-                Outside work <ArrowUpRight size={15} />
+                Personal index <ArrowUpRight size={15} />
               </a>
             </div>
+            <div className="hero-socials" aria-label="Maya Gerdes profiles">
+              <IconLink href={links.linkedin} label="LinkedIn" icon={Linkedin} size={19} />
+              <IconLink href={links.github} label="GitHub" icon={Github} size={19} />
+              <IconLink href={links.x} label="X / Twitter" icon={X} size={19} />
+              <IconLink href={links.email} label="Email Maya" icon={Mail} size={19} />
+            </div>
           </motion.div>
-          <motion.figure className="hero-portrait" variants={heroItem}>
-            <img
-              src="/profile/maya-gerdes-headshot.jpg"
-              alt="Maya Gerdes"
-            />
-            <figcaption>
-              <span>Ann Arbor, MI</span>
-              <span>2026</span>
-            </figcaption>
-          </motion.figure>
+
+          <motion.div className="hero-visual" variants={heroItem}>
+            <PortraitFigure />
+            <div className="hero-visual-readout" aria-hidden="true">
+              <span>MG / 2026</span>
+              <span>NEURO + SYSTEMS</span>
+              <span>42.2808 N</span>
+            </div>
+          </motion.div>
         </motion.div>
 
         <motion.div
           className="hero-notes"
-          initial={{ opacity: 0, y: 12 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.58, delay: 0.42, ease: EASE }}
+          transition={{ duration: reduceMotion ? 0 : 0.62, delay: reduceMotion ? 0 : 0.56, ease: EASE }}
         >
-          <div><span>Currently</span><strong>Building Praxigen</strong></div>
-          <div><span>Studying</span><strong>Neuroscience, business, entrepreneurship</strong></div>
-          <div><span>Curious about</span><strong>Genetics, consciousness, healthcare</strong></div>
+          <div><span>01 / Current</span><strong>Building Praxigen</strong></div>
+          <div><span>02 / Study</span><strong>Neuroscience + business</strong></div>
+          <div><span>03 / Signal</span><strong>Genetics + consciousness</strong></div>
+          <a href={projectLinks.buildAndPitch} target="_blank" rel="noreferrer">
+            <span>04 / Recent</span><strong>Build & Pitch winner</strong><ArrowUpRight size={14} />
+          </a>
         </motion.div>
       </header>
 
-      <section className="portfolio-section work-section" id="work">
-        <Reveal>
-          <SectionHeading
-            number="01"
-            eyebrow="Selected work"
-            title="Selected builds and collaborations."
-            body="Praxigen is the main build. The others came from roles where I needed a tool, a clearer workflow, or a sharper route to market."
-          />
-        </Reveal>
-
-        <Reveal className="project-index-block">
-          <div className="project-index-label">
-            <span>Project index</span>
-            <span>Open any project to explore</span>
-          </div>
-          <ProjectMarquee />
-        </Reveal>
-
-        <article className="featured-case">
-          <div className="featured-case-copy">
-            <Reveal>
-              <div className="case-meta"><span>01</span><span>Founder / product / GTM</span></div>
-              <h3>Praxigen</h3>
-              <p>
-                Healthcare workflow infrastructure for specialty practices. It
-                connects payer requirements, clinical-note checks, appeals,
-                pre-claim mismatches, and follow-up in one workspace.
-              </p>
-              <dl className="case-facts">
-                <div><dt>Role</dt><dd>Founder & technical builder</dd></div>
-                <div><dt>Discovery</dt><dd>30+ interviews</dd></div>
-                <div><dt>Stage</dt><dd>Product pilots</dd></div>
-              </dl>
-              <a className="case-link" href={projectLinks.praxigen} target="_blank" rel="noreferrer">
-                Visit praxigen.dev <ArrowUpRight size={15} />
-              </a>
-            </Reveal>
-          </div>
-
-          <div className="featured-case-media">
-            <ParallaxMedia className="case-image case-image-main">
-              <img
-                src="/praxigen/workspace.webp"
-                alt="Praxigen case workspace showing payer status, due dates, and next actions."
-              />
-            </ParallaxMedia>
-            <div className="case-interface-strip">
-              <div className="case-image case-image-secondary">
-                <img
-                  src="/praxigen/pa-lookup.webp"
-                  alt="Praxigen prior authorization lookup showing payer requirements."
-                />
-              </div>
-              <div className="case-image case-image-secondary">
-                <img
-                  src="/praxigen/note-checker.webp"
-                  alt="Praxigen note checker showing a clinical documentation score and policy checks."
-                />
-              </div>
-              <div className="case-image case-image-secondary">
-                <img
-                  src="/praxigen/preclaim-check.webp"
-                  alt="Praxigen pre-claim checker comparing an authorization and a claim."
-                />
-              </div>
-            </div>
-            <span className="case-caption">Selected Praxigen product surfaces</span>
-          </div>
-        </article>
-
-        <div className="project-grid">
-          {supportingProjects.map((project, index) => (
-            <ProjectCard project={project} index={index} key={project.name} />
-          ))}
-        </div>
-
-        <Reveal className="collaboration-row achievement-row">
-          <div>
-            <span>05</span>
-            <span>Milestone</span>
-          </div>
-          <h3>Build & Pitch Winner</h3>
-          <p>Won Raylu&apos;s Build & Pitch hackathon during a16z New York Tech Week with Praxigen.</p>
-          <a href={projectLinks.buildAndPitch} target="_blank" rel="noreferrer" aria-label="Open Build and Pitch announcement">
-            <ArrowUpRight size={18} />
-          </a>
-        </Reveal>
-      </section>
+      <ProjectRail />
 
       <section className="point-of-view">
         <Reveal className="point-of-view-inner">
@@ -1016,15 +1177,17 @@ function PortfolioHome() {
 }
 
 function PersonalPage() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <main>
       <SiteNav page="personal" />
       <header className="personal-hero">
         <motion.div
           className="personal-hero-layout"
-          initial={{ opacity: 0, y: 18 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.62, ease: EASE }}
+          transition={{ duration: reduceMotion ? 0 : 0.62, ease: EASE }}
         >
           <div>
             <a className="back-link" href="/"><ArrowLeft size={16} /> Main portfolio</a>
@@ -1075,6 +1238,7 @@ function PersonalPage() {
 
 function App() {
   const normalizedPath = window.location.pathname.replace(/\/$/, "") || "/";
+  const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, {
     stiffness: 120,
@@ -1085,7 +1249,7 @@ function App() {
   return (
     <>
       <SmoothScroll />
-      <motion.div className="scroll-progress" style={{ scaleX: progress }} aria-hidden="true" />
+      <motion.div className="scroll-progress" style={{ scaleX: reduceMotion ? scrollYProgress : progress }} aria-hidden="true" />
       {normalizedPath === "/me" ? <PersonalPage /> : <PortfolioHome />}
     </>
   );
