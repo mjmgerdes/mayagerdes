@@ -432,7 +432,7 @@ function SignalField() {
           else context.lineTo(x, y);
         }
         context.strokeStyle = row % 5 === 0
-          ? "rgba(151, 211, 18, 0.34)"
+          ? "rgba(59, 166, 255, 0.34)"
           : "rgba(33, 82, 255, 0.14)";
         context.stroke();
       }
@@ -469,7 +469,7 @@ function SignalField() {
         context.beginPath();
         context.moveTo(0, scanY);
         context.lineTo(width, scanY);
-        context.strokeStyle = "rgba(151, 211, 18, 0.18)";
+        context.strokeStyle = "rgba(59, 166, 255, 0.18)";
         context.lineWidth = 1;
         context.stroke();
       }

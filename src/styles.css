@@ -15,7 +15,7 @@
   --faint: #99a1aa;
   --blue: #2152ff;
   --blue-dark: #123ad3;
-  --acid: #9fd412;
+  --acid: #3ba6ff;
   --orange: #ff5c35;
   --violet: #6b5cff;
   --paper: #fbfcf9;
@@ -438,13 +438,13 @@ p {
   height: 6px;
   background: var(--acid);
   border-radius: 50%;
-  box-shadow: 0 0 0 4px rgba(159, 212, 18, 0.13);
+  box-shadow: 0 0 0 4px rgba(59, 166, 255, 0.13);
   animation: status-pulse 2.6s ease-in-out infinite;
 }
 
 @keyframes status-pulse {
   50% {
-    box-shadow: 0 0 0 7px rgba(159, 212, 18, 0);
+    box-shadow: 0 0 0 7px rgba(59, 166, 255, 0);
   }
 }
 
@@ -778,7 +778,7 @@ p {
 
 .hero-notes > a {
   padding-right: 42px;
-  background: rgba(159, 212, 18, 0.1);
+  background: rgba(59, 166, 255, 0.1);
   transition: background 180ms ease;
 }
 
