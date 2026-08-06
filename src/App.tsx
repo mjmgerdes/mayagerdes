@@ -32,6 +32,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type MouseEvent as ReactMouseEvent,
   type ReactNode,
 } from "react";
@@ -53,6 +54,12 @@ const projectLinks = {
   grndworkLive: "https://grndwork.vercel.app",
   grndworkRepo: "https://github.com/mjmgerdes/grndwork",
   foreverData: "https://foreverdata.live/",
+  praxessLive: "https://praxess-production.up.railway.app",
+  praxessRepo: "https://github.com/mjmgerdes/praxess",
+  neurtalkRepo: "https://github.com/mjmgerdes/neurtalk",
+  relageLive: "https://mjmgerdes.github.io/relage/",
+  relageRepo: "https://github.com/mjmgerdes/relage",
+  gordonRepo: "https://github.com/mjmgerdes/gordon",
 };
 
 type ExperienceCategory = "Work" | "Research" | "Clubs";
@@ -83,7 +90,17 @@ type RailProject = {
   imageAlt: string;
   role: string;
   year: string;
+  linkLabel?: string;
   tone: "ice" | "carbon" | "sky" | "violet";
+};
+
+type ArchiveProject = {
+  number: string;
+  name: string;
+  body: string;
+  href: string;
+  repo?: string;
+  meta: string;
 };
 
 type PersonalCard = {
@@ -247,7 +264,7 @@ const railProjects: RailProject[] = [
     href: projectLinks.praxigen,
     body:
       "Healthcare workflow infrastructure for specialty practices, connecting payer requirements, clinical-note checks, appeals, pre-claim mismatches, and follow-up.",
-    tags: ["30+ interviews", "Product pilots", "Five-person team"],
+    tags: ["Founder build", "Product pilots", "Healthcare AI"],
     image: "/praxigen/workspace.webp",
     imageAlt: "Praxigen case workspace showing payer status, due dates, and next actions.",
     role: "Founder & technical builder",
@@ -256,46 +273,88 @@ const railProjects: RailProject[] = [
   },
   {
     number: "02",
-    name: "Startup CRM",
-    label: "Product / operations",
-    href: projectLinks.startupCrm,
+    name: "Praxess",
+    label: "Hackathon / prior authorization",
+    href: projectLinks.praxessLive,
+    repo: projectLinks.praxessRepo,
     body:
-      "A lightweight operating layer for a startup league team, with Google Sheets kept as the source of truth.",
-    tags: ["CRM", "Google Sheets", "Operations"],
-    image: "/projects/startup-crm-interface.webp",
-    imageAlt: "Startup CRM dashboard with member records, workspace metrics, and operating views.",
-    role: "Product & engineering",
-    year: "2026",
+      "A closed-loop prior authorization agent that recovers medical-necessity evidence from clinical conversations, verifies every claim, and keeps working after denial.",
+    tags: ["Anthropic", "Provenance", "Human-in-the-loop"],
+    image: "/projects/praxess-workspace.webp",
+    imageAlt: "Praxess case workspace showing evidence gaps, case state, and the next best action.",
+    role: "Co-builder",
+    year: "Jul 2026",
     tone: "carbon",
   },
   {
     number: "03",
-    name: "grndwork",
-    label: "Product / career discovery",
-    href: projectLinks.grndworkLive,
-    repo: projectLinks.grndworkRepo,
+    name: "NeurTalk",
+    label: "Solo build / adaptive communication",
+    href: projectLinks.neurtalkRepo,
+    linkLabel: "View on GitHub",
     body:
-      "An early-access product that helps students turn broad interests into clearer roles, targets, and outreach.",
-    tags: ["React", "Product", "Career discovery"],
-    image: "/projects/grndwork-interface.webp",
-    imageAlt: "grndwork career discovery interface with role matches and career signals.",
-    role: "Product & engineering",
-    year: "2026",
+      "An on-device communication system for people losing speech and movement, combining visual context, linguistic identity, and head-controlled selection.",
+    tags: ["Gemma", "On-device", "Accessibility"],
+    image: "/projects/neurtalk-workspace.webp",
+    imageAlt: "NeurTalk adaptive communication workspace with visual context and head-control access.",
+    role: "Solo builder",
+    year: "Aug 2026",
     tone: "sky",
   },
   {
     number: "04",
-    name: "ForeverData",
-    label: "GTM / infrastructure",
-    href: projectLinks.foreverData,
+    name: "Relage",
+    label: "Solo build / care coordination",
+    href: projectLinks.relageLive,
+    repo: projectLinks.relageRepo,
     body:
-      "Go-to-market support for a data persistence product working across decentralized storage and Web3 infrastructure.",
-    tags: ["GTM", "Data infrastructure", "Web3"],
-    image: "/projects/foreverdata-interface.webp",
-    imageAlt: "ForeverData product website showing permanent data storage infrastructure.",
-    role: "Go-to-market",
-    year: "2025",
+      "An on-device agent that coordinates appointments, caregivers, accessible transportation, and reminders for older adults without making clinical decisions.",
+    tags: ["Gemma", "State machine", "Care logistics"],
+    image: "/projects/relage-workspace.webp",
+    imageAlt: "Relage care coordination dashboard for an older adult scheduling a cardiology visit.",
+    role: "Product & engineering",
+    year: "Aug 2026",
     tone: "violet",
+  },
+  {
+    number: "05",
+    name: "Gordon",
+    label: "AI tools / prompt coaching",
+    href: projectLinks.gordonRepo,
+    linkLabel: "View on GitHub",
+    body:
+      "An AI coding coach that watches how people prompt agents, scores six dimensions, and interrupts weak instructions with a roast, diagnosis, and rewrite.",
+    tags: ["Desktop overlay", "Prompt evaluation", "Voice"],
+    image: "/projects/gordon-interface.webp",
+    imageAlt: "Gordon AI coding coach interface with prompt evaluation and live coaching.",
+    role: "Product & interface",
+    year: "Jul 2026",
+    tone: "carbon",
+  },
+];
+
+const archiveProjects: ArchiveProject[] = [
+  {
+    number: "A1",
+    name: "Startup CRM",
+    body: "A lightweight operating layer for a startup league team, with Google Sheets as the source of truth.",
+    href: projectLinks.startupCrm,
+    meta: "Product + engineering",
+  },
+  {
+    number: "A2",
+    name: "grndwork",
+    body: "An early-access career discovery product that turns broad interests into clearer roles and outreach.",
+    href: projectLinks.grndworkLive,
+    repo: projectLinks.grndworkRepo,
+    meta: "React product build",
+  },
+  {
+    number: "A3",
+    name: "ForeverData",
+    body: "Go-to-market work for decentralized data persistence infrastructure.",
+    href: projectLinks.foreverData,
+    meta: "GTM + infrastructure",
   },
 ];
 
@@ -827,11 +886,13 @@ function ProjectRail() {
   const railRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
   const [activeProject, setActiveProject] = useState(0);
+  const railTravelVw = (railProjects.length - 1) * 85;
+  const railHeightVh = 100 + (railProjects.length - 1) * 105;
   const { scrollYProgress } = useScroll({
     target: railRef,
     offset: ["start start", "end end"],
   });
-  const x = useTransform(scrollYProgress, [0, 1], ["0vw", "-255vw"]);
+  const x = useTransform(scrollYProgress, [0, 1], ["0vw", `-${railTravelVw}vw`]);
   const progress = useSpring(scrollYProgress, {
     stiffness: 120,
     damping: 28,
@@ -839,11 +900,16 @@ function ProjectRail() {
   });
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    setActiveProject(Math.min(railProjects.length - 1, Math.floor(latest * railProjects.length)));
+    setActiveProject(Math.min(railProjects.length - 1, Math.round(latest * (railProjects.length - 1))));
   });
 
   return (
-    <section className="project-rail-section" id="work" ref={railRef}>
+    <section
+      className="project-rail-section"
+      id="work"
+      ref={railRef}
+      style={{ "--rail-height": `${railHeightVh}vh` } as CSSProperties}
+    >
       <div className="project-rail-sticky">
         <div className="project-rail-header">
           <div>
@@ -876,7 +942,7 @@ function ProjectRail() {
                 </dl>
                 <div className="rail-panel-links">
                   <a href={project.href} target="_blank" rel="noreferrer">
-                    Open project <ArrowUpRight size={15} />
+                    {project.linkLabel ?? "Open project"} <ArrowUpRight size={15} />
                   </a>
                   {project.repo ? (
                     <a href={project.repo} target="_blank" rel="noreferrer">
@@ -923,6 +989,45 @@ function ProjectRail() {
             <motion.span className="rail-progress-fill" style={{ scaleX: progress }} />
           </span>
           <span className="rail-progress-name">{railProjects[activeProject].name}</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProjectArchive() {
+  return (
+    <section className="project-archive" aria-labelledby="project-archive-title">
+      <div className="project-archive-inner">
+        <header className="project-archive-heading">
+          <div>
+            <span>Open archive</span>
+            <small>Earlier products and go-to-market work</small>
+          </div>
+          <h2 id="project-archive-title">More shipped work.</h2>
+        </header>
+
+        <div className="project-archive-list">
+          {archiveProjects.map((project) => (
+            <article className="project-archive-row" key={project.name}>
+              <span className="project-archive-number">{project.number}</span>
+              <div className="project-archive-copy">
+                <h3>{project.name}</h3>
+                <p>{project.body}</p>
+              </div>
+              <span className="project-archive-meta">{project.meta}</span>
+              <div className="project-archive-links">
+                <a href={project.href} target="_blank" rel="noreferrer">
+                  Open <ArrowUpRight size={14} />
+                </a>
+                {project.repo ? (
+                  <a href={project.repo} target="_blank" rel="noreferrer" aria-label={`${project.name} source code`}>
+                    <Github size={14} />
+                  </a>
+                ) : null}
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>
@@ -1088,6 +1193,7 @@ function PortfolioHome() {
       </header>
 
       <ProjectRail />
+      <ProjectArchive />
 
       <section className="point-of-view">
         <Reveal className="point-of-view-inner">
