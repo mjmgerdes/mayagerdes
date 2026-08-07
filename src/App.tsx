@@ -579,48 +579,6 @@ function SignalField() {
   return <canvas ref={canvasRef} className="signal-field" aria-hidden="true" />;
 }
 
-function DecodeText({ text, className }: { text: string; className?: string }) {
-  const reduceMotion = useReducedMotion();
-  const [output, setOutput] = useState(text);
-
-  useEffect(() => {
-    if (reduceMotion) {
-      setOutput(text);
-      return;
-    }
-
-    const glyphs = "01<>/[]{}+*";
-    const duration = 820;
-    const startedAt = performance.now();
-    let frame = 0;
-
-    const tick = (time: number) => {
-      const progress = Math.min(1, (time - startedAt) / duration);
-      const resolved = Math.floor(progress * text.length);
-      setOutput(
-        text
-          .split("")
-          .map((character, index) => {
-            if (character === " " || character === "/") return character;
-            if (index < resolved) return character;
-            return glyphs[Math.floor(Math.random() * glyphs.length)];
-          })
-          .join(""),
-      );
-      if (progress < 1) frame = requestAnimationFrame(tick);
-    };
-
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [reduceMotion, text]);
-
-  return (
-    <span className={className} aria-label={text}>
-      <span aria-hidden="true">{output}</span>
-    </span>
-  );
-}
-
 function PortraitFigure() {
   const reduceMotion = useReducedMotion();
   const rotateX = useMotionValue(0);
@@ -656,12 +614,7 @@ function PortraitFigure() {
         transition={{ duration: reduceMotion ? 0 : 1.05, delay: reduceMotion ? 0 : 0.18, ease: EASE }}
       >
         <img src="/profile/maya-gerdes-headshot.jpg" alt="Maya Gerdes" />
-        <span className="portrait-scan" aria-hidden="true" />
       </motion.div>
-      <figcaption>
-        <span>Ann Arbor, MI</span>
-        <span>Founder file / 2026</span>
-      </figcaption>
     </motion.figure>
   );
 }
@@ -883,25 +836,15 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
 
 function SectionHeading({
   number,
-  eyebrow,
   title,
-  body,
 }: {
   number: string;
-  eyebrow: string;
   title: string;
-  body?: string;
 }) {
   return (
     <div className="section-heading">
-      <div className="section-index">
-        <span>{number}</span>
-        <span>{eyebrow}</span>
-      </div>
-      <div>
-        <h2 aria-label={title}><RevealWords text={title} /></h2>
-        {body ? <p>{body}</p> : null}
-      </div>
+      <span className="section-index">{number}</span>
+      <h2 aria-label={title}><RevealWords text={title} /></h2>
     </div>
   );
 }
@@ -937,12 +880,10 @@ function ProjectRail() {
       <div className="project-rail-sticky">
         <div className="project-rail-header">
           <div>
-            <span>01 / Selected systems</span>
-            <strong>Products, experiments, and go-to-market work</strong>
+            <span>01 / Selected work</span>
           </div>
           <a href={projectLinks.relageWriteup} target="_blank" rel="noreferrer">
             <span>Gemma NYC track winner</span>
-            <small>Google DeepMind / Google for Developers</small>
             <ArrowUpRight size={15} />
           </a>
         </div>
@@ -990,7 +931,6 @@ function ProjectRail() {
               >
                 <span className="interface-window-bar" aria-hidden="true">
                   <i /><i /><i />
-                  <b>{project.name.toLowerCase()}.interface</b>
                 </span>
                 <img
                   src={project.image}
@@ -1123,15 +1063,12 @@ function PortfolioHome() {
               <span><i /> Founder, Praxigen</span>
               <span>Ann Arbor, MI</span>
             </div>
-            <p className="hero-kicker">
-              <DecodeText text="student / builder / founder" />
-            </p>
             <h1>
               <span className="hero-name-line"><span>Maya</span></span>
               <span className="hero-name-line"><span>Gerdes</span></span>
             </h1>
             <p className="hero-lead">
-              Building at the edge of healthcare, software, and human behavior.
+              I build healthcare software and study how people think and behave.
             </p>
             <p className="hero-bio">
               I study neuroscience, business, and entrepreneurship at the
@@ -1159,11 +1096,6 @@ function PortfolioHome() {
 
           <motion.div className="hero-visual" variants={heroItem}>
             <PortraitFigure />
-            <div className="hero-visual-readout" aria-hidden="true">
-              <span>MG / 2026</span>
-              <span>NEURO + SYSTEMS</span>
-              <span>42.2808 N</span>
-            </div>
           </motion.div>
         </motion.div>
 
@@ -1173,11 +1105,11 @@ function PortfolioHome() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduceMotion ? 0 : 0.62, delay: reduceMotion ? 0 : 0.56, ease: EASE }}
         >
-          <div><span>01 / Current</span><strong>Building Praxigen</strong></div>
-          <div><span>02 / Study</span><strong>Neuroscience + business</strong></div>
-          <div><span>03 / Signal</span><strong>Genetics + consciousness</strong></div>
+          <div><span>Current</span><strong>Building Praxigen</strong></div>
+          <div><span>Study</span><strong>Neuroscience + business</strong></div>
+          <div><span>Interests</span><strong>Genetics + consciousness</strong></div>
           <a href={projectLinks.relageWriteup} target="_blank" rel="noreferrer">
-            <span>04 / Recent</span><strong>Gemma NYC track winner</strong><ArrowUpRight size={14} />
+            <span>Recent</span><strong>Gemma NYC track winner</strong><ArrowUpRight size={14} />
           </a>
         </motion.div>
       </header>
@@ -1200,9 +1132,7 @@ function PortfolioHome() {
         <Reveal>
           <SectionHeading
             number="02"
-            eyebrow="Experience"
-            title="Where I have worked, researched, and led."
-            body="Roles across clinical research, product, client work, and campus organizations."
+            title="Experience"
           />
         </Reveal>
         <ExperienceLedger />
@@ -1212,8 +1142,7 @@ function PortfolioHome() {
         <Reveal>
           <SectionHeading
             number="03"
-            eyebrow="About"
-            title="The context behind the work."
+            title="About"
           />
         </Reveal>
 
@@ -1286,7 +1215,6 @@ function PersonalPage() {
         >
           <div>
             <a className="back-link" href="/"><ArrowLeft size={16} /> Main portfolio</a>
-            <p>Personal index / Maya Gerdes</p>
             <h1>A few things that shape how I think.</h1>
           </div>
           <p>
@@ -1297,16 +1225,13 @@ function PersonalPage() {
       </header>
 
       <section className="personal-quote">
-        <p>Same curiosity, different surfaces.</p>
         <blockquote>How do people feel, learn, perform, and change?</blockquote>
       </section>
 
       <section className="portfolio-section personal-section">
         <SectionHeading
           number="01"
-          eyebrow="Personal"
-          title="The things I make time for."
-          body="Not a second professional identity. Just the parts that explain the first one a little better."
+          title="Outside work"
         />
         <div className="personal-list">
           {personalCards.map((card, index) => {
@@ -1324,7 +1249,6 @@ function PersonalPage() {
       </section>
 
       <footer className="personal-footer">
-        <p>Back to the founder, researcher, and builder version.</p>
         <a href="/">Return to portfolio <ArrowUpRight size={15} /></a>
       </footer>
     </main>
