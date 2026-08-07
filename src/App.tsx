@@ -13,6 +13,7 @@ import {
   Mail,
   Menu,
   Music,
+  Trophy,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -59,6 +60,8 @@ const projectLinks = {
   neurtalkRepo: "https://github.com/mjmgerdes/neurtalk",
   relageLive: "https://mjmgerdes.github.io/relage/",
   relageRepo: "https://github.com/mjmgerdes/relage",
+  relageWriteup:
+    "https://www.kaggle.com/competitions/build-with-gemma-nyc-on-device-ai-for-healthcare/writeups/relage-from-appointment-to-arrival",
   gordonRepo: "https://github.com/mjmgerdes/gordon",
 };
 
@@ -91,16 +94,11 @@ type RailProject = {
   role: string;
   year: string;
   linkLabel?: string;
+  award?: {
+    href: string;
+    label: string;
+  };
   tone: "ice" | "carbon" | "sky" | "violet";
-};
-
-type ArchiveProject = {
-  number: string;
-  name: string;
-  body: string;
-  href: string;
-  repo?: string;
-  meta: string;
 };
 
 type PersonalCard = {
@@ -264,15 +262,38 @@ const railProjects: RailProject[] = [
     href: projectLinks.praxigen,
     body:
       "Healthcare workflow infrastructure for specialty practices, connecting payer requirements, clinical-note checks, appeals, pre-claim mismatches, and follow-up.",
-    tags: ["Founder build", "Product pilots", "Healthcare AI"],
+    tags: ["Founder build", "Product pilots", "Build & Pitch winner"],
     image: "/praxigen/workspace.webp",
     imageAlt: "Praxigen case workspace showing payer status, due dates, and next actions.",
     role: "Founder & technical builder",
     year: "2026 - now",
+    award: {
+      href: projectLinks.buildAndPitch,
+      label: "Build & Pitch win",
+    },
     tone: "ice",
   },
   {
     number: "02",
+    name: "Relage",
+    label: "Google DeepMind / Track winner",
+    href: projectLinks.relageLive,
+    repo: projectLinks.relageRepo,
+    body:
+      "Track 2 winner at Build with Gemma NYC, built in under eight hours at One World Trade Center. An on-device care logistics agent for rural older adults.",
+    tags: ["Official track winner", "On-device Gemma", "Privacy-first"],
+    image: "/projects/relage-workspace.webp",
+    imageAlt: "Relage care coordination dashboard for an older adult scheduling a cardiology visit.",
+    role: "Co-builder with Andrew Poveda",
+    year: "Aug 2026",
+    award: {
+      href: projectLinks.relageWriteup,
+      label: "Winner writeup",
+    },
+    tone: "carbon",
+  },
+  {
+    number: "03",
     name: "Praxess",
     label: "Hackathon / prior authorization",
     href: projectLinks.praxessLive,
@@ -284,10 +305,10 @@ const railProjects: RailProject[] = [
     imageAlt: "Praxess case workspace showing evidence gaps, case state, and the next best action.",
     role: "Co-builder",
     year: "Jul 2026",
-    tone: "carbon",
+    tone: "sky",
   },
   {
-    number: "03",
+    number: "04",
     name: "NeurTalk",
     label: "Solo build / adaptive communication",
     href: projectLinks.neurtalkRepo,
@@ -299,25 +320,24 @@ const railProjects: RailProject[] = [
     imageAlt: "NeurTalk adaptive communication workspace with visual context and head-control access.",
     role: "Solo builder",
     year: "Aug 2026",
-    tone: "sky",
-  },
-  {
-    number: "04",
-    name: "Relage",
-    label: "Solo build / care coordination",
-    href: projectLinks.relageLive,
-    repo: projectLinks.relageRepo,
-    body:
-      "An on-device agent that coordinates appointments, caregivers, accessible transportation, and reminders for older adults without making clinical decisions.",
-    tags: ["Gemma", "State machine", "Care logistics"],
-    image: "/projects/relage-workspace.webp",
-    imageAlt: "Relage care coordination dashboard for an older adult scheduling a cardiology visit.",
-    role: "Product & engineering",
-    year: "Aug 2026",
     tone: "violet",
   },
   {
     number: "05",
+    name: "Startup CRM",
+    label: "Operating system / founder network",
+    href: projectLinks.startupCrm,
+    body:
+      "A live operating layer for startup league teams, combining outreach CRM, interview tracking, AI coaching, scheduling, and a Google Sheets-backed source of truth.",
+    tags: ["CRM", "Workflow design", "Founder operations"],
+    image: "/projects/startup-crm-interface.webp",
+    imageAlt: "UStart League team dashboard with a season timeline, outreach, interviews, and operating metrics.",
+    role: "Product & engineering",
+    year: "2026",
+    tone: "ice",
+  },
+  {
+    number: "06",
     name: "Gordon",
     label: "AI tools / prompt coaching",
     href: projectLinks.gordonRepo,
@@ -326,35 +346,39 @@ const railProjects: RailProject[] = [
       "An AI coding coach that watches how people prompt agents, scores six dimensions, and interrupts weak instructions with a roast, diagnosis, and rewrite.",
     tags: ["Desktop overlay", "Prompt evaluation", "Voice"],
     image: "/projects/gordon-interface.webp",
-    imageAlt: "Gordon AI coding coach interface with prompt evaluation and live coaching.",
+    imageAlt: "Gordon Kitchen dashboard showing prompt scores, category tracking, token savings, and an incident log.",
     role: "Product & interface",
     year: "Jul 2026",
     tone: "carbon",
   },
-];
-
-const archiveProjects: ArchiveProject[] = [
   {
-    number: "A1",
-    name: "Startup CRM",
-    body: "A lightweight operating layer for a startup league team, with Google Sheets as the source of truth.",
-    href: projectLinks.startupCrm,
-    meta: "Product + engineering",
-  },
-  {
-    number: "A2",
+    number: "07",
     name: "grndwork",
-    body: "An early-access career discovery product that turns broad interests into clearer roles and outreach.",
+    label: "Early access / career discovery",
     href: projectLinks.grndworkLive,
     repo: projectLinks.grndworkRepo,
-    meta: "React product build",
+    body:
+      "A career discovery and opportunity-tracking product that turns broad interests into recommended roles, clearer outreach, and one place to manage applications.",
+    tags: ["Career discovery", "Opportunity matching", "React"],
+    image: "/projects/grndwork-interface.webp",
+    imageAlt: "grndwork opportunity dashboard showing interests, match score, open roles, and application tracking.",
+    role: "Product & engineering",
+    year: "2026",
+    tone: "violet",
   },
   {
-    number: "A3",
+    number: "08",
     name: "ForeverData",
-    body: "Go-to-market work for decentralized data persistence infrastructure.",
+    label: "Go-to-market / data infrastructure",
     href: projectLinks.foreverData,
-    meta: "GTM + infrastructure",
+    body:
+      "Go-to-market work for a permanent file-storage product on EigenDA, translating decentralized persistence into a clear wallet and upload flow.",
+    tags: ["GTM", "EigenDA", "Data persistence"],
+    image: "/projects/foreverdata-interface.webp",
+    imageAlt: "ForeverData interface with wallet connection and permanent file upload to EigenDA.",
+    role: "Go-to-market",
+    year: "2025",
+    tone: "sky",
   },
 ];
 
@@ -916,9 +940,9 @@ function ProjectRail() {
             <span>01 / Selected systems</span>
             <strong>Products, experiments, and go-to-market work</strong>
           </div>
-          <a href={projectLinks.buildAndPitch} target="_blank" rel="noreferrer">
-            <span>Build & Pitch winner</span>
-            <small>a16z NY Tech Week / Raylu</small>
+          <a href={projectLinks.relageWriteup} target="_blank" rel="noreferrer">
+            <span>Gemma NYC track winner</span>
+            <small>Google DeepMind / Google for Developers</small>
             <ArrowUpRight size={15} />
           </a>
         </div>
@@ -947,6 +971,11 @@ function ProjectRail() {
                   {project.repo ? (
                     <a href={project.repo} target="_blank" rel="noreferrer">
                       <Github size={14} /> Source
+                    </a>
+                  ) : null}
+                  {project.award ? (
+                    <a href={project.award.href} target="_blank" rel="noreferrer">
+                      <Trophy size={14} /> {project.award.label}
                     </a>
                   ) : null}
                 </div>
@@ -989,45 +1018,6 @@ function ProjectRail() {
             <motion.span className="rail-progress-fill" style={{ scaleX: progress }} />
           </span>
           <span className="rail-progress-name">{railProjects[activeProject].name}</span>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ProjectArchive() {
-  return (
-    <section className="project-archive" aria-labelledby="project-archive-title">
-      <div className="project-archive-inner">
-        <header className="project-archive-heading">
-          <div>
-            <span>Open archive</span>
-            <small>Earlier products and go-to-market work</small>
-          </div>
-          <h2 id="project-archive-title">More shipped work.</h2>
-        </header>
-
-        <div className="project-archive-list">
-          {archiveProjects.map((project) => (
-            <article className="project-archive-row" key={project.name}>
-              <span className="project-archive-number">{project.number}</span>
-              <div className="project-archive-copy">
-                <h3>{project.name}</h3>
-                <p>{project.body}</p>
-              </div>
-              <span className="project-archive-meta">{project.meta}</span>
-              <div className="project-archive-links">
-                <a href={project.href} target="_blank" rel="noreferrer">
-                  Open <ArrowUpRight size={14} />
-                </a>
-                {project.repo ? (
-                  <a href={project.repo} target="_blank" rel="noreferrer" aria-label={`${project.name} source code`}>
-                    <Github size={14} />
-                  </a>
-                ) : null}
-              </div>
-            </article>
-          ))}
         </div>
       </div>
     </section>
@@ -1186,14 +1176,13 @@ function PortfolioHome() {
           <div><span>01 / Current</span><strong>Building Praxigen</strong></div>
           <div><span>02 / Study</span><strong>Neuroscience + business</strong></div>
           <div><span>03 / Signal</span><strong>Genetics + consciousness</strong></div>
-          <a href={projectLinks.buildAndPitch} target="_blank" rel="noreferrer">
-            <span>04 / Recent</span><strong>Build & Pitch winner</strong><ArrowUpRight size={14} />
+          <a href={projectLinks.relageWriteup} target="_blank" rel="noreferrer">
+            <span>04 / Recent</span><strong>Gemma NYC track winner</strong><ArrowUpRight size={14} />
           </a>
         </motion.div>
       </header>
 
       <ProjectRail />
-      <ProjectArchive />
 
       <section className="point-of-view">
         <Reveal className="point-of-view-inner">
