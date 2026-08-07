@@ -1,5 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-labelledby="title">
+  <title id="title">Maya Gerdes monogram</title>
   <rect width="180" height="180" fill="#fbfcf9" />
-  <rect x="70" y="70" width="64" height="64" fill="#3ba6ff" />
-  <rect x="46" y="46" width="64" height="64" fill="#2152ff" />
+  <rect x="18" y="18" width="144" height="144" rx="22" fill="#2152ff" />
+  <path d="M45 126V54h18l27 27 27-27h18v72h-18V83L90 110 63 83v43H45Z" fill="#fbfcf9" />
+  <rect x="129" y="34" width="15" height="15" fill="#70c7ff" />
 </svg>
