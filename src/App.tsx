@@ -13,6 +13,7 @@ import {
   Mail,
   Menu,
   Music,
+  Piano,
   Trophy,
   X,
   type LucideIcon,
@@ -105,6 +106,20 @@ type PersonalCard = {
   icon: LucideIcon;
   title: string;
   body: string;
+};
+
+type PersonalMediaItem = {
+  number: string;
+  title: string;
+  shortTitle: string;
+  detail: string;
+  body: string;
+  kind: "music" | "image";
+  image?: string;
+  imageAlt?: string;
+  video?: string;
+  poster?: string;
+  fit?: "cover" | "contain";
 };
 
 type LenisWindow = Window & { mayaLenis?: Lenis };
@@ -402,6 +417,50 @@ const personalCards: PersonalCard[] = [
     icon: HeartPulse,
     title: "Biohacking",
     body: "Sleep, training, food, and small habits that are either useful or nonsense. I like figuring out which.",
+  },
+];
+
+const personalMedia: PersonalMediaItem[] = [
+  {
+    number: "01",
+    title: "Piano, guitar, DJ.",
+    shortTitle: "Music",
+    detail: "Music / ongoing",
+    body: "I play piano and guitar, DJ, and keep too many playlists.",
+    kind: "music",
+  },
+  {
+    number: "02",
+    title: "Serve Up at Michigan.",
+    shortTitle: "Sketchbook",
+    detail: "Drawing / 2025",
+    body: "A hand-drawn identity I made for Serve Up at Michigan.",
+    kind: "image",
+    image: "/personal/serve-up-sketch.webp",
+    imageAlt: "Hand-drawn Serve Up at Michigan pickleball logo by Maya Gerdes.",
+    fit: "contain",
+  },
+  {
+    number: "03",
+    title: "Dink & Drip.",
+    shortTitle: "Pickleball",
+    detail: "Drawing / 2025",
+    body: "A second pickleball graphic from my Serve Up sketchbook.",
+    kind: "image",
+    image: "/personal/dink-and-drip.webp",
+    imageAlt: "Blue Dink and Drip pickleball paddle illustration.",
+    fit: "contain",
+  },
+  {
+    number: "04",
+    title: "Ann Arbor, 2026.",
+    shortTitle: "Now",
+    detail: "Portrait / 2026",
+    body: "I study neuroscience and build Praxigen in Ann Arbor.",
+    kind: "image",
+    image: "/profile/maya-gerdes-headshot.jpg",
+    imageAlt: "Portrait of Maya Gerdes in Ann Arbor.",
+    fit: "cover",
   },
 ];
 
@@ -755,13 +814,13 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
   }, [menuOpen]);
 
   const close = () => setMenuOpen(false);
-  const anchorHref = (id: string) => (isPersonal ? `/#${id}` : `#${id}`);
+  const anchorHref = (id: string) => (isPersonal && id !== "personal" ? `/#${id}` : `#${id}`);
   const items = [
     { label: "Work", id: "work" },
     { label: "Experience", id: "experience" },
     { label: "About", id: "about" },
+    { label: "Personal", id: "personal" },
     { label: "Resume", href: "/Maya-Gerdes-Resume.pdf" },
-    { label: "Personal", href: "/me" },
   ];
   const mobileItems = [...items, { label: "Email", href: links.email }];
 
@@ -846,6 +905,187 @@ function SectionHeading({
       <span className="section-index">{number}</span>
       <h2 aria-label={title}><RevealWords text={title} /></h2>
     </div>
+  );
+}
+
+function PersonalMediaVisual({ item }: { item: PersonalMediaItem }) {
+  if (item.video) {
+    return (
+      <video
+        className="personal-media-video"
+        controls
+        playsInline
+        preload="metadata"
+        poster={item.poster}
+      >
+        <source src={item.video} />
+        Your browser does not support embedded video.
+      </video>
+    );
+  }
+
+  if (item.kind === "music") {
+    return (
+      <div className="personal-music-visual" aria-label="Piano and music illustration">
+        <div className="music-visual-topline">
+          <span>Home recordings</span>
+          <span>Piano / guitar</span>
+        </div>
+        <Piano size={56} strokeWidth={1.2} aria-hidden="true" />
+        <div className="music-wave" aria-hidden="true">
+          {Array.from({ length: 31 }, (_, index) => (
+            <i key={index} style={{ "--wave-index": index } as CSSProperties} />
+          ))}
+        </div>
+        <div className="music-keyboard" aria-hidden="true">
+          {Array.from({ length: 12 }, (_, index) => <i key={index} />)}
+        </div>
+        <span className="music-video-note">DJ / Playlists</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`personal-image-frame fit-${item.fit ?? "cover"}`}>
+      <img src={item.image} alt={item.imageAlt ?? ""} loading="eager" />
+    </div>
+  );
+}
+
+function PersonalStory({ compact = false }: { compact?: boolean }) {
+  const storyRef = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+  const [activeItem, setActiveItem] = useState(0);
+  const { scrollYProgress } = useScroll({
+    target: storyRef,
+    offset: ["start start", "end end"],
+  });
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (compact || reduceMotion) return;
+    setActiveItem(
+      Math.min(personalMedia.length - 1, Math.round(latest * (personalMedia.length - 1))),
+    );
+  });
+
+  const moveToItem = (index: number) => {
+    setActiveItem(index);
+    const story = storyRef.current;
+    if (!story || compact || reduceMotion) return;
+
+    const rect = story.getBoundingClientRect();
+    const storyTop = window.scrollY + rect.top;
+    const travel = Math.max(0, story.offsetHeight - window.innerHeight);
+    const target = storyTop + (travel * index) / (personalMedia.length - 1);
+    const lenis = (window as LenisWindow).mayaLenis;
+    if (lenis) lenis.scrollTo(target, { duration: 0.9 });
+    else window.scrollTo({ top: target, behavior: "smooth" });
+  };
+
+  if (compact) {
+    return (
+      <section className="personal-archive" id="personal">
+        <div className="personal-archive-heading">
+          <SectionHeading number="01" title="Archive" />
+        </div>
+        <div className="personal-archive-grid">
+          {personalMedia.map((item) => (
+            <article className="personal-archive-card" key={item.title}>
+              <div className="personal-archive-media"><PersonalMediaVisual item={item} /></div>
+              <div className="personal-archive-copy">
+                <span>{item.detail}</span>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  const current = personalMedia[activeItem];
+
+  return (
+    <section
+      className="personal-story"
+      id="personal"
+      ref={storyRef}
+      style={{ "--personal-story-height": `${personalMedia.length * 82}vh` } as CSSProperties}
+    >
+      <div className="personal-story-stage">
+        <div className="personal-story-layout">
+          <div className="personal-story-copy">
+            <span className="personal-story-index">04 / Personal</span>
+            <h2>Outside work</h2>
+
+            <div className="personal-story-nav" aria-label="Personal archive chapters">
+              {personalMedia.map((item, index) => (
+                <button
+                  type="button"
+                  className={index === activeItem ? "active" : ""}
+                  aria-current={index === activeItem ? "step" : undefined}
+                  onClick={() => moveToItem(index)}
+                  key={item.title}
+                >
+                  <span>{item.number}</span>
+                  <strong>{item.shortTitle}</strong>
+                  <i aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+
+            <a className="personal-story-link" href="/me">
+              Open the full archive <ArrowUpRight size={15} />
+            </a>
+          </div>
+
+          <div className="personal-story-display">
+            <AnimatePresence mode="wait">
+              <motion.article
+                className="personal-story-item"
+                key={current.title}
+                initial={reduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={reduceMotion ? undefined : { opacity: 0, y: -18, scale: 0.99 }}
+                transition={{ duration: reduceMotion ? 0 : 0.42, ease: EASE }}
+              >
+                <div className="personal-story-media"><PersonalMediaVisual item={current} /></div>
+                <div className="personal-story-caption">
+                  <span>{current.detail}</span>
+                  <div>
+                    <h3>{current.title}</h3>
+                    <p>{current.body}</p>
+                  </div>
+                </div>
+              </motion.article>
+            </AnimatePresence>
+          </div>
+
+          <div className="personal-mobile-track">
+            {personalMedia.map((item) => (
+              <article className="personal-mobile-card" key={item.title}>
+                <div className="personal-mobile-media"><PersonalMediaVisual item={item} /></div>
+                <div className="personal-mobile-caption">
+                  <span>{item.detail}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="personal-story-progress" aria-hidden="true">
+            <motion.span style={{ scaleX: progress }} />
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -1082,8 +1322,8 @@ function PortfolioHome() {
               <a href="/Maya-Gerdes-Resume.pdf" target="_blank" rel="noreferrer">
                 Resume <ArrowUpRight size={15} />
               </a>
-              <a href="/me">
-                Personal index <ArrowUpRight size={15} />
+              <a href="#personal" onClick={(event) => scrollToSection(event, "personal")}>
+                Personal archive <ArrowDown size={15} />
               </a>
             </div>
             <div className="hero-socials" aria-label="Maya Gerdes profiles">
@@ -1156,9 +1396,11 @@ function PortfolioHome() {
             <p>
               Outside work, I play guitar and piano, DJ, play pickleball, and
               keep a running list of questions about sleep, behavior, and the
-              brain. That side of me lives on its own page.
+              brain. A few of those things are just below.
             </p>
-            <a href="/me">Personal page <ArrowUpRight size={15} /></a>
+            <a href="#personal" onClick={(event) => scrollToSection(event, "personal")}>
+              Personal archive <ArrowDown size={15} />
+            </a>
           </Reveal>
 
           <div className="background-list">
@@ -1178,9 +1420,11 @@ function PortfolioHome() {
         </div>
       </section>
 
+      <PersonalStory />
+
       <footer className="contact-footer" id="contact">
         <div className="contact-footer-main">
-          <span>04 / Contact</span>
+          <span>05 / Contact</span>
           <h2>Let&apos;s talk.</h2>
           <a href={links.email}>mjgerdes@umich.edu <ArrowUpRight size={20} /></a>
         </div>
@@ -1215,11 +1459,11 @@ function PersonalPage() {
         >
           <div>
             <a className="back-link" href="/"><ArrowLeft size={16} /> Main portfolio</a>
-            <h1>A few things that shape how I think.</h1>
+            <h1>Music, movement, and a sketchbook.</h1>
           </div>
           <p>
-            This page is for music, movement, brains, and the small experiments
-            I keep coming back to when I am not working.
+            Piano, guitar, DJing, pickleball, and the questions I keep following
+            about the brain.
           </p>
         </motion.div>
       </header>
@@ -1228,10 +1472,12 @@ function PersonalPage() {
         <blockquote>How do people feel, learn, perform, and change?</blockquote>
       </section>
 
+      <PersonalStory compact />
+
       <section className="portfolio-section personal-section">
         <SectionHeading
-          number="01"
-          title="Outside work"
+          number="02"
+          title="Interests"
         />
         <div className="personal-list">
           {personalCards.map((card, index) => {
