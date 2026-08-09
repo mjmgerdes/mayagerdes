@@ -1,19 +1,14 @@
 import {
-  Activity,
   ArrowDown,
   ArrowLeft,
   ArrowUpRight,
   BadgeCheck,
-  Brain,
   BriefcaseBusiness,
   Github,
   GraduationCap,
-  HeartPulse,
   Linkedin,
   Mail,
   Menu,
-  Music,
-  Piano,
   Trophy,
   X,
   type LucideIcon,
@@ -102,24 +97,27 @@ type RailProject = {
   tone: "ice" | "carbon" | "sky" | "violet";
 };
 
-type PersonalCard = {
-  icon: LucideIcon;
-  title: string;
-  body: string;
-};
-
 type PersonalMediaItem = {
-  number: string;
+  number?: string;
   title: string;
-  shortTitle: string;
+  shortTitle?: string;
   detail: string;
   body: string;
-  kind: "music" | "image";
   image?: string;
   imageAlt?: string;
+  secondaryImage?: string;
+  secondaryImageAlt?: string;
   video?: string;
   poster?: string;
   fit?: "cover" | "contain";
+  position?: string;
+  shape?: "wide" | "landscape" | "portrait";
+};
+
+type PersonalArchiveGroup = {
+  number: string;
+  title: string;
+  items: PersonalMediaItem[];
 };
 
 type LenisWindow = Window & { mayaLenis?: Lenis };
@@ -397,70 +395,288 @@ const railProjects: RailProject[] = [
   },
 ];
 
-const personalCards: PersonalCard[] = [
-  {
-    icon: Music,
-    title: "Music",
-    body: "Guitar, piano, DJing, and playlists. It is the least forced part of my personality.",
+const personalArchive = {
+  clairDeLune: {
+    number: "01",
+    title: "Clair de Lune at fifteen.",
+    shortTitle: "Piano",
+    detail: "Piano / age 15",
+    body: "A home recording of Clair de Lune.",
+    video: "/personal/archive/clair-de-lune.mp4",
+    poster: "/personal/archive/clair-de-lune-poster.webp",
+    shape: "wide",
   },
-  {
-    icon: Brain,
-    title: "Neuroscience",
-    body: "Brains, behavior change, cognition, and why people get stuck or change.",
+  childhoodGuitar: {
+    number: "02",
+    title: "Guitar phase, fully committed.",
+    shortTitle: "Guitar",
+    detail: "Guitar / 2014",
+    body: "The pink glasses were part of the performance.",
+    image: "/personal/archive/childhood-guitar.webp",
+    imageAlt: "Maya Gerdes as a child posing with a guitar and pink sunglasses.",
+    position: "50% 44%",
+    shape: "portrait",
   },
-  {
-    icon: Activity,
-    title: "Pickleball",
-    body: "Fast feedback, friendly competition, and a very satisfying reset button.",
+  eyeStudy: {
+    number: "03",
+    title: "I still draw by hand.",
+    shortTitle: "Sketchbook",
+    detail: "Colored pencil / sketchbook",
+    body: "An eye study from my sketchbook.",
+    image: "/personal/archive/eye-study.webp",
+    imageAlt: "Colored pencil drawing of an eye by Maya Gerdes.",
+    fit: "contain",
+    shape: "wide",
   },
-  {
-    icon: HeartPulse,
-    title: "Biohacking",
-    body: "Sleep, training, food, and small habits that are either useful or nonsense. I like figuring out which.",
+  softballHelmet: {
+    number: "04",
+    title: "Softball raised me.",
+    shortTitle: "Softball",
+    detail: "Softball / high school",
+    body: "Years of practices, games, and learning how to reset quickly.",
+    image: "/personal/archive/softball-helmet.webp",
+    imageAlt: "Maya Gerdes smiling in a batting helmet beside the softball field.",
+    position: "50% 42%",
+    shape: "wide",
   },
-];
+  redwoods: {
+    number: "05",
+    title: "Outside whenever possible.",
+    shortTitle: "Outside",
+    detail: "California / 2023",
+    body: "Under the redwoods with my sister.",
+    image: "/personal/archive/redwoods.webp",
+    imageAlt: "Maya Gerdes and her sister standing beneath tall California redwoods.",
+    position: "50% 66%",
+    shape: "portrait",
+  },
+  childhoodPiano: {
+    title: "The first piano years.",
+    detail: "Piano / early years",
+    body: "Learning to play with family nearby.",
+    image: "/personal/archive/childhood-piano.webp",
+    imageAlt: "Maya Gerdes as a child sitting at a piano with family.",
+    shape: "landscape",
+  },
+  guitarWithDad: {
+    title: "Music by the lake.",
+    detail: "Guitar / summer 2025",
+    body: "An afternoon with my dad, a guitar, and no real agenda.",
+    video: "/personal/archive/guitar-with-dad.mp4",
+    poster: "/personal/archive/guitar-with-dad-poster.webp",
+    shape: "landscape",
+  },
+  djDeck: {
+    title: "Learning the decks.",
+    detail: "DJing / 2025",
+    body: "One transition at a time.",
+    image: "/personal/archive/dj-deck.webp",
+    imageAlt: "DJ controller and laptop running mixing software.",
+    shape: "portrait",
+  },
+  jazzNight: {
+    title: "A room with live music.",
+    detail: "Jazz / 2022",
+    body: "One of many nights planned around a piano.",
+    image: "/personal/archive/jazz-night.webp",
+    imageAlt: "A piano player performing in a dimly lit jazz room.",
+    shape: "wide",
+  },
+  masonDrawing: {
+    title: "Mason, drawn from a photo.",
+    detail: "Portrait study / charcoal",
+    body: "Reference on one side, finished drawing on the other.",
+    image: "/personal/archive/mason-drawing.webp",
+    imageAlt: "Hand-drawn portrait of a black dog named Mason.",
+    secondaryImage: "/personal/archive/mason-reference.webp",
+    secondaryImageAlt: "Reference photo of Mason used for the drawing.",
+    shape: "landscape",
+  },
+  tuckerDrawing: {
+    title: "Tucker, drawn from a photo.",
+    detail: "Portrait study / colored pencil",
+    body: "Another reference-to-paper study.",
+    image: "/personal/archive/tucker-drawing.webp",
+    imageAlt: "Hand-drawn portrait of a brown dog named Tucker.",
+    secondaryImage: "/personal/archive/tucker-reference.webp",
+    secondaryImageAlt: "Reference photo of Tucker used for the drawing.",
+    shape: "landscape",
+  },
+  softballAtBat: {
+    title: "In the box.",
+    detail: "Softball / high school",
+    body: "One more season at bat.",
+    image: "/personal/archive/softball-at-bat.webp",
+    imageAlt: "Maya Gerdes at bat during a high school softball game.",
+    position: "50% 34%",
+    shape: "portrait",
+  },
+  siblingsSkiing: {
+    title: "Ski days with my siblings.",
+    detail: "Skiing / family",
+    body: "Cold hands, good company.",
+    image: "/personal/archive/siblings-skiing.webp",
+    imageAlt: "Maya Gerdes skiing with her siblings.",
+    shape: "portrait",
+  },
+  kayak: {
+    title: "Out on the water.",
+    detail: "Kayaking",
+    body: "A very good reason to put the phone away.",
+    image: "/personal/archive/kayak.webp",
+    imageAlt: "Maya Gerdes kayaking outdoors.",
+    shape: "portrait",
+  },
+  siblings: {
+    title: "The four of us.",
+    detail: "Family",
+    body: "Me and my three siblings.",
+    image: "/personal/archive/siblings.webp",
+    imageAlt: "Maya Gerdes with her three siblings.",
+    position: "50% 34%",
+    shape: "portrait",
+  },
+  ginger: {
+    title: "Me and Ginger.",
+    detail: "Home",
+    body: "A reliably good welcome home.",
+    image: "/personal/archive/ginger.webp",
+    imageAlt: "Maya Gerdes with her dog Ginger.",
+    position: "50% 36%",
+    shape: "portrait",
+  },
+  birdInMiami: {
+    title: "A completely normal day in Miami.",
+    detail: "Friends / Miami",
+    body: "My best friend, me, and a very large bird.",
+    image: "/personal/archive/bird-in-miami.webp",
+    imageAlt: "Maya Gerdes and her best friend posing with a large white bird in Miami.",
+    position: "50% 30%",
+    shape: "portrait",
+  },
+  yankeesGame: {
+    title: "A night at Yankee Stadium.",
+    detail: "New York",
+    body: "Baseball with a friend.",
+    image: "/personal/archive/yankees-game.webp",
+    imageAlt: "Maya Gerdes and a friend at a New York Yankees game.",
+    position: "50% 28%",
+    shape: "portrait",
+  },
+  michiganGame: {
+    title: "Game day in Ann Arbor.",
+    detail: "University of Michigan",
+    body: "The Big House, in full voice.",
+    image: "/personal/archive/michigan-game.webp",
+    imageAlt: "Maya Gerdes at a University of Michigan football game.",
+    position: "50% 32%",
+    shape: "portrait",
+  },
+  hackathon: {
+    title: "Eight hours, one prototype.",
+    detail: "Hackathon / 2026",
+    body: "Building Relage with Andrew at One World Trade Center.",
+    image: "/personal/archive/hackathon.webp",
+    imageAlt: "Maya Gerdes and Andrew Poveda building Relage together at a hackathon.",
+    shape: "wide",
+  },
+  speaker: {
+    title: "At the mic.",
+    detail: "Speaking / 2026",
+    body: "A student event and a room full of questions.",
+    image: "/personal/archive/speaker.webp",
+    imageAlt: "Maya Gerdes speaking into a microphone at a student event.",
+    position: "50% 38%",
+    shape: "landscape",
+  },
+  labBench: {
+    title: "CRISPR bench days.",
+    detail: "Human genetics lab",
+    body: "Bench work from my cancer-sensing research.",
+    image: "/personal/archive/lab-bench.webp",
+    imageAlt: "Petri dishes and lab materials on Maya Gerdes's CRISPR research bench.",
+    shape: "portrait",
+  },
+  crisprLab: {
+    title: "The old lab.",
+    detail: "CRISPR research",
+    body: "Where I learned to be patient with experiments.",
+    image: "/personal/archive/crispr-lab.webp",
+    imageAlt: "The University of Michigan lab where Maya Gerdes conducted CRISPR research.",
+    shape: "portrait",
+  },
+  suturePractice: {
+    title: "Learning with my hands.",
+    detail: "Suture practice",
+    body: "Some skills make more sense off the page.",
+    image: "/personal/archive/suture-practice.webp",
+    imageAlt: "Suture practice pad and surgical instruments.",
+    shape: "portrait",
+  },
+} satisfies Record<string, PersonalMediaItem>;
 
 const personalMedia: PersonalMediaItem[] = [
+  personalArchive.clairDeLune,
+  personalArchive.childhoodGuitar,
+  personalArchive.eyeStudy,
+  personalArchive.softballHelmet,
+  personalArchive.redwoods,
+];
+
+const personalArchiveGroups: PersonalArchiveGroup[] = [
   {
     number: "01",
-    title: "Piano, guitar, DJ.",
-    shortTitle: "Music",
-    detail: "Music / ongoing",
-    body: "I play piano and guitar, DJ, and keep too many playlists.",
-    kind: "music",
+    title: "Music",
+    items: [
+      personalArchive.clairDeLune,
+      personalArchive.childhoodGuitar,
+      personalArchive.guitarWithDad,
+      personalArchive.childhoodPiano,
+      personalArchive.djDeck,
+      personalArchive.jazzNight,
+    ],
   },
   {
     number: "02",
-    title: "Serve Up at Michigan.",
-    shortTitle: "Sketchbook",
-    detail: "Drawing / 2025",
-    body: "A hand-drawn identity I made for Serve Up at Michigan.",
-    kind: "image",
-    image: "/personal/serve-up-sketch.webp",
-    imageAlt: "Hand-drawn Serve Up at Michigan pickleball logo by Maya Gerdes.",
-    fit: "contain",
+    title: "Sketchbook",
+    items: [
+      personalArchive.eyeStudy,
+      personalArchive.masonDrawing,
+      personalArchive.tuckerDrawing,
+    ],
   },
   {
     number: "03",
-    title: "Dink & Drip.",
-    shortTitle: "Pickleball",
-    detail: "Drawing / 2025",
-    body: "A second pickleball graphic from my Serve Up sketchbook.",
-    kind: "image",
-    image: "/personal/dink-and-drip.webp",
-    imageAlt: "Blue Dink and Drip pickleball paddle illustration.",
-    fit: "contain",
+    title: "Movement",
+    items: [
+      personalArchive.softballHelmet,
+      personalArchive.softballAtBat,
+      personalArchive.redwoods,
+      personalArchive.siblingsSkiing,
+      personalArchive.kayak,
+    ],
   },
   {
     number: "04",
-    title: "Ann Arbor, 2026.",
-    shortTitle: "Now",
-    detail: "Portrait / 2026",
-    body: "I study neuroscience and build Praxigen in Ann Arbor.",
-    kind: "image",
-    image: "/profile/maya-gerdes-headshot.jpg",
-    imageAlt: "Portrait of Maya Gerdes in Ann Arbor.",
-    fit: "cover",
+    title: "People and places",
+    items: [
+      personalArchive.siblings,
+      personalArchive.ginger,
+      personalArchive.birdInMiami,
+      personalArchive.yankeesGame,
+      personalArchive.michiganGame,
+    ],
+  },
+  {
+    number: "05",
+    title: "At the workbench",
+    items: [
+      personalArchive.hackathon,
+      personalArchive.speaker,
+      personalArchive.labBench,
+      personalArchive.crisprLab,
+      personalArchive.suturePractice,
+    ],
   },
 ];
 
@@ -908,46 +1124,63 @@ function SectionHeading({
   );
 }
 
-function PersonalMediaVisual({ item }: { item: PersonalMediaItem }) {
+function PersonalMediaVisual({
+  item,
+  priority = false,
+}: {
+  item: PersonalMediaItem;
+  priority?: boolean;
+}) {
   if (item.video) {
     return (
       <video
         className="personal-media-video"
+        aria-label={`Video: ${item.title}`}
         controls
         playsInline
         preload="metadata"
         poster={item.poster}
       >
-        <source src={item.video} />
+        <source src={item.video} type="video/mp4" />
         Your browser does not support embedded video.
       </video>
     );
   }
 
-  if (item.kind === "music") {
+  if (item.secondaryImage) {
     return (
-      <div className="personal-music-visual" aria-label="Piano and music illustration">
-        <div className="music-visual-topline">
-          <span>Home recordings</span>
-          <span>Piano / guitar</span>
+      <div className="personal-image-pair">
+        <div>
+          <img
+            src={item.image}
+            alt={item.imageAlt ?? ""}
+            loading={priority ? "eager" : "lazy"}
+            decoding="async"
+          />
+          <span>Drawing</span>
         </div>
-        <Piano size={56} strokeWidth={1.2} aria-hidden="true" />
-        <div className="music-wave" aria-hidden="true">
-          {Array.from({ length: 31 }, (_, index) => (
-            <i key={index} style={{ "--wave-index": index } as CSSProperties} />
-          ))}
+        <div>
+          <img
+            src={item.secondaryImage}
+            alt={item.secondaryImageAlt ?? ""}
+            loading="lazy"
+            decoding="async"
+          />
+          <span>Reference</span>
         </div>
-        <div className="music-keyboard" aria-hidden="true">
-          {Array.from({ length: 12 }, (_, index) => <i key={index} />)}
-        </div>
-        <span className="music-video-note">DJ / Playlists</span>
       </div>
     );
   }
 
   return (
     <div className={`personal-image-frame fit-${item.fit ?? "cover"}`}>
-      <img src={item.image} alt={item.imageAlt ?? ""} loading="eager" />
+      <img
+        src={item.image}
+        alt={item.imageAlt ?? ""}
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
+        style={item.position ? { objectPosition: item.position } : undefined}
+      />
     </div>
   );
 }
@@ -993,16 +1226,31 @@ function PersonalStory({ compact = false }: { compact?: boolean }) {
         <div className="personal-archive-heading">
           <SectionHeading number="01" title="Archive" />
         </div>
-        <div className="personal-archive-grid">
-          {personalMedia.map((item) => (
-            <article className="personal-archive-card" key={item.title}>
-              <div className="personal-archive-media"><PersonalMediaVisual item={item} /></div>
-              <div className="personal-archive-copy">
-                <span>{item.detail}</span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
+        <div className="personal-archive-groups">
+          {personalArchiveGroups.map((group) => (
+            <section className="personal-archive-group" key={group.title}>
+              <header className="personal-archive-group-heading">
+                <span>{group.number}</span>
+                <h3>{group.title}</h3>
+              </header>
+              <div className="personal-archive-grid">
+                {group.items.map((item) => (
+                  <article
+                    className={`personal-archive-card shape-${item.shape ?? "landscape"}`}
+                    key={item.title}
+                  >
+                    <div className="personal-archive-media">
+                      <PersonalMediaVisual item={item} />
+                    </div>
+                    <div className="personal-archive-copy">
+                      <span>{item.detail}</span>
+                      <h4>{item.title}</h4>
+                      <p>{item.body}</p>
+                    </div>
+                  </article>
+                ))}
               </div>
-            </article>
+            </section>
           ))}
         </div>
       </section>
@@ -1055,7 +1303,9 @@ function PersonalStory({ compact = false }: { compact?: boolean }) {
                 exit={reduceMotion ? undefined : { opacity: 0, y: -18, scale: 0.99 }}
                 transition={{ duration: reduceMotion ? 0 : 0.42, ease: EASE }}
               >
-                <div className="personal-story-media"><PersonalMediaVisual item={current} /></div>
+                <div className="personal-story-media">
+                  <PersonalMediaVisual item={current} priority />
+                </div>
                 <div className="personal-story-caption">
                   <span>{current.detail}</span>
                   <div>
@@ -1068,9 +1318,11 @@ function PersonalStory({ compact = false }: { compact?: boolean }) {
           </div>
 
           <div className="personal-mobile-track">
-            {personalMedia.map((item) => (
+            {personalMedia.map((item, index) => (
               <article className="personal-mobile-card" key={item.title}>
-                <div className="personal-mobile-media"><PersonalMediaVisual item={item} /></div>
+                <div className="personal-mobile-media">
+                  <PersonalMediaVisual item={item} priority={index === 0} />
+                </div>
                 <div className="personal-mobile-caption">
                   <span>{item.detail}</span>
                   <h3>{item.title}</h3>
@@ -1459,40 +1711,16 @@ function PersonalPage() {
         >
           <div>
             <a className="back-link" href="/"><ArrowLeft size={16} /> Main portfolio</a>
-            <h1>Music, movement, and a sketchbook.</h1>
+            <h1>Outside the resume.</h1>
           </div>
           <p>
-            Piano, guitar, DJing, pickleball, and the questions I keep following
-            about the brain.
+            Music, drawings, softball, the people I love, and a few places I
+            keep returning to.
           </p>
         </motion.div>
       </header>
 
-      <section className="personal-quote">
-        <blockquote>How do people feel, learn, perform, and change?</blockquote>
-      </section>
-
       <PersonalStory compact />
-
-      <section className="portfolio-section personal-section">
-        <SectionHeading
-          number="02"
-          title="Interests"
-        />
-        <div className="personal-list">
-          {personalCards.map((card, index) => {
-            const Icon = card.icon;
-            return (
-              <Reveal className="personal-row" delay={index * 0.055} key={card.title}>
-                <span>0{index + 1}</span>
-                <Icon size={21} />
-                <h3>{card.title}</h3>
-                <p>{card.body}</p>
-              </Reveal>
-            );
-          })}
-        </div>
-      </section>
 
       <footer className="personal-footer">
         <a href="/">Return to portfolio <ArrowUpRight size={15} /></a>
