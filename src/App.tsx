@@ -108,6 +108,7 @@ type PersonalMediaItem = {
   imageAlt?: string;
   secondaryImage?: string;
   secondaryImageAlt?: string;
+  flipAlignment?: "mason";
   video?: string;
   poster?: string;
   fit?: "cover" | "contain";
@@ -493,6 +494,7 @@ const personalArchive = {
     imageAlt: "Hand-drawn portrait of a black dog named Mason.",
     secondaryImage: "/personal/archive/mason-reference.JPG",
     secondaryImageAlt: "Reference photo of Mason used for the drawing.",
+    flipAlignment: "mason",
     shape: "landscape",
   },
   tuckerDrawing: {
@@ -1156,7 +1158,9 @@ function PersonalMediaVisual({
     return (
       <button
         type="button"
-        className={`personal-image-flip${isFlipped ? " is-flipped" : ""}`}
+        className={`personal-image-flip${
+          item.flipAlignment ? ` align-${item.flipAlignment}` : ""
+        }${isFlipped ? " is-flipped" : ""}`}
         onClick={() => setIsFlipped((flipped) => !flipped)}
         aria-label={
           isFlipped
