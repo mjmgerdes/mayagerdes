@@ -1668,7 +1668,7 @@ p {
 
 .personal-image-frame,
 .personal-media-video,
-.personal-image-pair {
+.personal-image-flip {
   width: 100%;
   height: 100%;
 }
@@ -1702,39 +1702,78 @@ p {
   object-position: 50% 50%;
 }
 
-.personal-image-pair {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
-  background: #cbd2df;
-}
-
-.personal-image-pair > div {
-  position: relative;
-  min-width: 0;
+.personal-image-flip {
+  display: block;
+  padding: 0;
   overflow: hidden;
-  background: #edf1f8;
+  border: 0;
+  background: #11151d;
+  cursor: pointer;
+  perspective: 1500px;
 }
 
-.personal-image-pair img {
+.personal-image-flip-inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 680ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.personal-image-flip.is-flipped .personal-image-flip-inner {
+  transform: rotateY(180deg);
+}
+
+.personal-image-flip-face {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  background: #11151d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.personal-image-flip-back {
+  transform: rotateY(180deg);
+}
+
+.personal-image-flip-face img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% 50%;
 }
 
-.personal-image-pair span {
+.personal-flip-hint {
   position: absolute;
-  bottom: 12px;
-  left: 12px;
-  padding: 5px 7px;
+  right: 14px;
+  bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 9px;
   color: #fff;
-  background: rgba(8, 11, 18, 0.8);
-  border-radius: 3px;
+  background: rgba(8, 11, 18, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
   font-family: "IBM Plex Mono", monospace;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
+  transition: background-color 220ms var(--ease), transform 220ms var(--ease);
+}
+
+.personal-image-flip:hover .personal-flip-hint {
+  background: rgba(23, 91, 255, 0.92);
+  transform: translateY(-2px);
+}
+
+.personal-image-flip:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: -4px;
 }
 
 .personal-story-caption {

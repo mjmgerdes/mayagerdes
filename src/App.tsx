@@ -9,6 +9,7 @@ import {
   Linkedin,
   Mail,
   Menu,
+  RefreshCw,
   Trophy,
   X,
   type LucideIcon,
@@ -414,7 +415,7 @@ const personalArchive = {
     body: "The pink glasses were part of the performance.",
     image: "/personal/archive/childhood-guitar.webp",
     imageAlt: "Maya Gerdes as a child posing with a guitar and pink sunglasses.",
-    position: "50% 44%",
+    position: "50% 30%",
     shape: "portrait",
   },
   eyeStudy: {
@@ -483,12 +484,14 @@ const personalArchive = {
     shape: "wide",
   },
   masonDrawing: {
+    number: "03",
     title: "Mason, drawn from a photo.",
-    detail: "Portrait study / charcoal",
-    body: "Reference on one side, finished drawing on the other.",
+    shortTitle: "Sketchbook",
+    detail: "Charcoal / from reference",
+    body: "A charcoal portrait of Mason, drawn from the photo on the back.",
     image: "/personal/archive/mason-drawing.webp",
     imageAlt: "Hand-drawn portrait of a black dog named Mason.",
-    secondaryImage: "/personal/archive/mason-reference.webp",
+    secondaryImage: "/personal/archive/mason-reference.JPG",
     secondaryImageAlt: "Reference photo of Mason used for the drawing.",
     shape: "landscape",
   },
@@ -618,7 +621,7 @@ const personalArchive = {
 const personalMedia: PersonalMediaItem[] = [
   personalArchive.childhoodGuitar,
   personalArchive.softballHelmet,
-  personalArchive.eyeStudy,
+  personalArchive.masonDrawing,
   personalArchive.clairDeLune,
   personalArchive.redwoods,
 ];
@@ -1131,6 +1134,8 @@ function PersonalMediaVisual({
   item: PersonalMediaItem;
   priority?: boolean;
 }) {
+  const [isFlipped, setIsFlipped] = useState(false);
+
   if (item.video) {
     return (
       <video
@@ -1149,26 +1154,50 @@ function PersonalMediaVisual({
 
   if (item.secondaryImage) {
     return (
-      <div className="personal-image-pair">
-        <div>
-          <img
-            src={item.image}
-            alt={item.imageAlt ?? ""}
-            loading={priority ? "eager" : "lazy"}
-            decoding="async"
-          />
-          <span>Drawing</span>
-        </div>
-        <div>
-          <img
-            src={item.secondaryImage}
-            alt={item.secondaryImageAlt ?? ""}
-            loading="lazy"
-            decoding="async"
-          />
-          <span>Reference</span>
-        </div>
-      </div>
+      <button
+        type="button"
+        className={`personal-image-flip${isFlipped ? " is-flipped" : ""}`}
+        onClick={() => setIsFlipped((flipped) => !flipped)}
+        aria-label={
+          isFlipped
+            ? `Show drawing for ${item.title}`
+            : `Show original photo for ${item.title}`
+        }
+        aria-pressed={isFlipped}
+      >
+        <span className="personal-image-flip-inner">
+          <span
+            className="personal-image-flip-face personal-image-flip-front"
+            aria-hidden={isFlipped}
+          >
+            <img
+              src={item.image}
+              alt={item.imageAlt ?? ""}
+              loading={priority ? "eager" : "lazy"}
+              decoding="async"
+            />
+            <span className="personal-flip-hint">
+              <RefreshCw size={13} aria-hidden="true" />
+              Original photo
+            </span>
+          </span>
+          <span
+            className="personal-image-flip-face personal-image-flip-back"
+            aria-hidden={!isFlipped}
+          >
+            <img
+              src={item.secondaryImage}
+              alt={item.secondaryImageAlt ?? ""}
+              loading="lazy"
+              decoding="async"
+            />
+            <span className="personal-flip-hint">
+              <RefreshCw size={13} aria-hidden="true" />
+              Back to drawing
+            </span>
+          </span>
+        </span>
+      </button>
     );
   }
 
