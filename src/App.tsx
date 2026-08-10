@@ -397,7 +397,7 @@ const railProjects: RailProject[] = [
 
 const personalArchive = {
   clairDeLune: {
-    number: "01",
+    number: "04",
     title: "Clair de Lune at fifteen.",
     shortTitle: "Piano",
     detail: "Piano / age 15",
@@ -407,7 +407,7 @@ const personalArchive = {
     shape: "wide",
   },
   childhoodGuitar: {
-    number: "02",
+    number: "01",
     title: "Guitar phase, fully committed.",
     shortTitle: "Guitar",
     detail: "Guitar / 2014",
@@ -429,7 +429,7 @@ const personalArchive = {
     shape: "wide",
   },
   softballHelmet: {
-    number: "04",
+    number: "02",
     title: "Softball raised me.",
     shortTitle: "Softball",
     detail: "Softball / high school",
@@ -616,10 +616,10 @@ const personalArchive = {
 } satisfies Record<string, PersonalMediaItem>;
 
 const personalMedia: PersonalMediaItem[] = [
-  personalArchive.clairDeLune,
   personalArchive.childhoodGuitar,
-  personalArchive.eyeStudy,
   personalArchive.softballHelmet,
+  personalArchive.eyeStudy,
+  personalArchive.clairDeLune,
   personalArchive.redwoods,
 ];
 
@@ -628,11 +628,11 @@ const personalArchiveGroups: PersonalArchiveGroup[] = [
     number: "01",
     title: "Music",
     items: [
-      personalArchive.clairDeLune,
       personalArchive.childhoodGuitar,
-      personalArchive.guitarWithDad,
       personalArchive.childhoodPiano,
+      personalArchive.guitarWithDad,
       personalArchive.djDeck,
+      personalArchive.clairDeLune,
       personalArchive.jazzNight,
     ],
   },
