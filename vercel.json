@@ -3,6 +3,10 @@
     {
       "source": "/me",
       "destination": "/index.html"
+    },
+    {
+      "source": "/resume",
+      "destination": "/index.html"
     }
   ]
 }

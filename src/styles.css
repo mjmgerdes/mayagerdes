@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap");
 
 :root {
   color: #0b0d12;
@@ -153,6 +153,19 @@ p {
   transform: translateY(0);
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  padding: 0;
+  margin: -1px;
+  white-space: nowrap;
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+}
+
 .scroll-progress {
   position: fixed;
   z-index: 1000;
@@ -213,16 +226,15 @@ p {
 .brand {
   position: relative;
   display: inline-flex;
+  min-width: 20px;
+  min-height: 20px;
   width: fit-content;
   align-items: center;
-  gap: 9px;
-  font-size: 14px;
-  font-weight: 700;
 }
 
 .brand::before {
-  width: 16px;
-  height: 16px;
+  width: 19px;
+  height: 19px;
   flex: none;
   content: "";
   background: url("/favicon-blue.svg?v=3") center / contain no-repeat;
@@ -266,6 +278,14 @@ p {
 .nav-links a:focus-visible::after {
   transform: scaleX(1);
   transform-origin: left;
+}
+
+.nav-links a[aria-current="page"] {
+  color: var(--ink);
+}
+
+.nav-links a[aria-current="page"]::after {
+  transform: scaleX(1);
 }
 
 .nav-email {
@@ -413,37 +433,16 @@ p {
   max-width: 620px;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 26px;
-  padding-bottom: 11px;
+  margin-bottom: 28px;
   color: var(--muted);
-  border-bottom: 1px solid rgba(11, 13, 18, 0.18);
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 10px;
-  font-weight: 500;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
   text-transform: uppercase;
 }
 
 .hero-presence span:first-child {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
   color: var(--ink);
-}
-
-.hero-presence i {
-  display: block;
-  width: 6px;
-  height: 6px;
-  background: var(--acid);
-  border-radius: 50%;
-  box-shadow: 0 0 0 4px rgba(59, 166, 255, 0.13);
-  animation: status-pulse 2.6s ease-in-out infinite;
-}
-
-@keyframes status-pulse {
-  50% {
-    box-shadow: 0 0 0 7px rgba(59, 166, 255, 0);
-  }
 }
 
 .hero-copy h1 {
@@ -587,7 +586,7 @@ p {
   color: #fff;
   background: var(--ink);
   border-radius: 3px;
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   white-space: nowrap;
   opacity: 0;
@@ -710,7 +709,7 @@ p {
 .hero-notes span {
   margin-bottom: 6px;
   color: var(--muted);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   font-weight: 500;
   text-transform: uppercase;
@@ -787,7 +786,7 @@ p {
 
 .project-rail-header > div span {
   color: var(--acid);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -895,7 +894,7 @@ p {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -941,7 +940,7 @@ p {
 }
 
 .rail-panel-copy dt {
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   text-transform: uppercase;
   opacity: 0.55;
 }
@@ -1041,7 +1040,7 @@ p {
   background: rgba(11, 13, 18, 0.88);
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 4px;
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   text-transform: uppercase;
   opacity: 0;
@@ -1071,7 +1070,7 @@ p {
 
 .rail-panel-tags span {
   display: inline;
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   font-weight: 500;
   text-transform: uppercase;
@@ -1095,7 +1094,7 @@ p {
   gap: 16px;
   align-items: center;
   color: rgba(255, 255, 255, 0.62);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 9px;
   text-transform: uppercase;
 }
@@ -1147,7 +1146,7 @@ p {
 
 .section-index {
   color: var(--faint);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 11px;
   font-weight: 600;
 }
@@ -1198,7 +1197,7 @@ p {
 .point-of-view-inner > p {
   padding-top: 9px;
   color: var(--orange);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -1318,7 +1317,7 @@ p {
 .experience-count {
   padding-top: 14px;
   color: var(--faint);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
 }
 
@@ -1344,7 +1343,7 @@ p {
   color: var(--blue);
   border: 1px solid #b8c7ee;
   border-radius: 5px;
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   font-weight: 600;
 }
@@ -1374,7 +1373,7 @@ p {
 .experience-meta time {
   display: block;
   color: var(--muted);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 11px;
   font-weight: 500;
   white-space: nowrap;
@@ -1392,7 +1391,7 @@ p {
   display: inline;
   padding: 0;
   color: var(--blue-dark);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   font-weight: 500;
 }
@@ -1550,7 +1549,7 @@ p {
 .personal-mobile-caption > span,
 .personal-archive-copy > span {
   color: var(--blue-dark);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -1585,7 +1584,7 @@ p {
 }
 
 .personal-story-nav button > span {
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
 }
 
@@ -1767,7 +1766,7 @@ p {
   background: rgba(8, 11, 18, 0.86);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 4px;
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -1857,7 +1856,7 @@ p {
 
 .contact-footer-main > span {
   color: var(--acid);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -1899,7 +1898,7 @@ p {
   padding-top: 20px;
   color: rgba(255, 255, 255, 0.48);
   border-top: 1px solid rgba(255, 255, 255, 0.15);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   text-transform: uppercase;
 }
@@ -1981,7 +1980,7 @@ p {
   gap: 6px;
   margin-bottom: 34px;
   color: var(--muted);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -2067,7 +2066,7 @@ p {
 
 .personal-archive-group-heading > span {
   color: var(--blue-dark);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
   font-weight: 600;
 }
@@ -2168,7 +2167,7 @@ p {
 
 .personal-row > span {
   color: var(--faint);
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 10px;
 }
 
@@ -2206,6 +2205,319 @@ p {
   padding: 46px max(34px, calc((100% - 1192px) / 2));
   background: var(--paper);
   border-top: 1px solid var(--line);
+}
+
+/* Resume */
+.resume-page {
+  background: var(--paper);
+}
+
+.resume-hero {
+  position: relative;
+  min-height: 590px;
+  padding: 136px 34px 84px;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(33, 82, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(33, 82, 255, 0.055) 1px, transparent 1px),
+    #edf3ff;
+  background-size: 64px 64px;
+  border-bottom: 1px solid rgba(33, 82, 255, 0.22);
+}
+
+.resume-hero::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 5px;
+  content: "";
+  background: var(--blue);
+}
+
+.resume-hero-inner {
+  display: grid;
+  width: min(100%, 1192px);
+  min-height: 370px;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.55fr);
+  gap: 90px;
+  align-items: end;
+  margin: 0 auto;
+}
+
+.resume-hero .back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 86px;
+  color: #536071;
+  font-size: 13px;
+  font-weight: 600;
+  transition: color 180ms ease, transform 250ms var(--ease);
+}
+
+.resume-hero .back-link:hover {
+  color: var(--blue);
+  transform: translateX(-4px);
+}
+
+.resume-kicker,
+.resume-section-label span,
+.resume-entry-number,
+.resume-footer span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.resume-kicker {
+  margin-bottom: 14px;
+}
+
+.resume-hero h1 {
+  font-size: 80px;
+  font-weight: 600;
+  line-height: 0.92;
+}
+
+.resume-hero-summary {
+  padding-bottom: 4px;
+}
+
+.resume-hero-summary > p {
+  max-width: 430px;
+  color: #354052;
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.resume-download {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
+  padding: 0 18px;
+  color: #fff;
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: color 200ms ease, background 200ms ease, transform 250ms var(--ease);
+}
+
+.resume-download:hover {
+  color: var(--ink);
+  background: transparent;
+  transform: translateY(-2px);
+}
+
+.resume-contact-row {
+  display: grid;
+  width: min(calc(100% - 68px), 1192px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 auto;
+  border-right: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.resume-contact-row > * {
+  display: flex;
+  min-height: 70px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 18px;
+  color: #515b68;
+  border-right: 1px solid var(--line);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.resume-contact-row > *:last-child {
+  border-right: 0;
+}
+
+.resume-contact-row a:hover {
+  color: var(--blue);
+}
+
+.resume-document {
+  width: min(calc(100% - 68px), 1192px);
+  margin: 0 auto;
+  border: 1px solid var(--line);
+}
+
+.resume-section {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 58px;
+  padding: 88px 44px;
+  border-top: 1px solid var(--line);
+}
+
+.resume-section:first-child {
+  border-top: 0;
+}
+
+.resume-section-label {
+  position: sticky;
+  top: 96px;
+  align-self: start;
+}
+
+.resume-section-label h2 {
+  max-width: 180px;
+  margin-top: 12px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.resume-education-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 30px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.resume-education-heading h3,
+.resume-entry-main h3 {
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.resume-education-heading p,
+.resume-entry-main p {
+  margin-top: 6px;
+  color: var(--body);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.resume-education-heading > div:last-child,
+.resume-entry-meta {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.resume-education-detail {
+  padding: 22px 0;
+  color: var(--body);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.resume-facts,
+.resume-skills {
+  border-top: 1px solid var(--line);
+}
+
+.resume-facts > div,
+.resume-skills > div {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  gap: 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.resume-facts span,
+.resume-skills span {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.resume-facts p,
+.resume-skills p {
+  color: var(--body);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.resume-entry-list {
+  display: grid;
+}
+
+.resume-entry {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 172px;
+  gap: 10px 18px;
+  padding: 0 0 40px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid var(--line);
+}
+
+.resume-entry:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+
+.resume-entry-number {
+  padding-top: 6px;
+  color: #8c95a1;
+}
+
+.resume-entry ul {
+  grid-column: 2 / -1;
+  display: grid;
+  gap: 9px;
+  margin-top: 11px;
+  padding-left: 17px;
+  color: #404957;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.resume-entry li::marker {
+  color: var(--blue);
+}
+
+.resume-footer {
+  display: flex;
+  min-height: 210px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  margin-top: 100px;
+  padding: 48px max(34px, calc((100% - 1192px) / 2));
+  color: #fff;
+  background: var(--dark);
+}
+
+.resume-footer p {
+  margin-top: 9px;
+  color: #abb2bc;
+  font-size: 14px;
+}
+
+.resume-footer a {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 18px;
+  padding: 0 18px;
+  border: 1px solid #4a515b;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: color 180ms ease, background 180ms ease;
+}
+
+.resume-footer a:hover {
+  color: var(--ink);
+  background: #fff;
 }
 
 /* Tablet */
@@ -2964,5 +3276,189 @@ p {
     gap: 18px;
     padding: 0 20px;
     overflow: visible;
+  }
+}
+
+@media (max-width: 1080px) {
+  .resume-hero-inner {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 0.65fr);
+    gap: 50px;
+  }
+
+  .resume-section {
+    grid-template-columns: 156px minmax(0, 1fr);
+    gap: 36px;
+    padding: 72px 32px;
+  }
+}
+
+@media (max-width: 900px) {
+  .resume-hero {
+    min-height: 0;
+    padding: 112px 20px 68px;
+  }
+
+  .resume-hero-inner {
+    min-height: 0;
+    grid-template-columns: 1fr;
+    gap: 46px;
+  }
+
+  .resume-hero .back-link {
+    margin-bottom: 54px;
+  }
+
+  .resume-hero h1 {
+    font-size: 70px;
+  }
+
+  .resume-hero-summary > p {
+    font-size: 18px;
+  }
+
+  .resume-contact-row,
+  .resume-document {
+    width: calc(100% - 40px);
+  }
+
+  .resume-contact-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .resume-contact-row > *:nth-child(2) {
+    border-right: 0;
+  }
+
+  .resume-contact-row > *:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+
+  .resume-section {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 66px 28px;
+  }
+
+  .resume-section-label {
+    position: static;
+    display: flex;
+    align-items: baseline;
+    gap: 15px;
+  }
+
+  .resume-section-label h2 {
+    max-width: none;
+    margin-top: 0;
+  }
+
+  .resume-footer {
+    margin-top: 76px;
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+}
+
+@media (max-width: 560px) {
+  .resume-hero {
+    padding: 102px 20px 56px;
+    background-size: 48px 48px;
+  }
+
+  .resume-hero .back-link {
+    margin-bottom: 44px;
+  }
+
+  .resume-hero h1 {
+    font-size: 54px;
+  }
+
+  .resume-hero-summary > p {
+    font-size: 17px;
+  }
+
+  .resume-download {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .resume-contact-row {
+    width: calc(100% - 32px);
+    grid-template-columns: 1fr;
+  }
+
+  .resume-contact-row > * {
+    min-height: 58px;
+    border-top: 1px solid var(--line);
+    border-right: 0;
+  }
+
+  .resume-contact-row > *:first-child {
+    border-top: 0;
+  }
+
+  .resume-document {
+    width: calc(100% - 32px);
+  }
+
+  .resume-section {
+    gap: 34px;
+    padding: 52px 20px;
+  }
+
+  .resume-education-heading {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .resume-education-heading > div:last-child {
+    text-align: left;
+  }
+
+  .resume-facts > div,
+  .resume-skills > div {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .resume-entry {
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 10px 12px;
+    padding-bottom: 34px;
+    margin-bottom: 34px;
+  }
+
+  .resume-entry-main,
+  .resume-entry-meta,
+  .resume-entry ul {
+    grid-column: 2;
+  }
+
+  .resume-entry-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px 12px;
+    margin-top: 7px;
+    text-align: left;
+  }
+
+  .resume-entry ul {
+    margin-top: 8px;
+  }
+
+  .resume-education-heading h3,
+  .resume-entry-main h3 {
+    font-size: 20px;
+  }
+
+  .resume-footer {
+    align-items: stretch;
+    flex-direction: column;
+    margin-top: 64px;
+    padding: 42px 20px;
+  }
+
+  .resume-footer a {
+    justify-content: space-between;
   }
 }

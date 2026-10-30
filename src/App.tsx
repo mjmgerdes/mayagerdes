@@ -4,6 +4,7 @@ import {
   ArrowUpRight,
   BadgeCheck,
   BriefcaseBusiness,
+  Download,
   Github,
   GraduationCap,
   Linkedin,
@@ -76,6 +77,14 @@ type ExperienceItem = {
   date: string;
   summary: string;
   tags: string[];
+};
+
+type ResumeEntry = {
+  organization: string;
+  role: string;
+  location: string;
+  date: string;
+  bullets: string[];
 };
 
 type RailProject = {
@@ -266,6 +275,101 @@ const experiences: ExperienceItem[] = [
     summary:
       "Managed chapter finances and built professional-development programming for a pre-medical community.",
     tags: ["Finance", "Professional development"],
+  },
+];
+
+const resumeExperience: ResumeEntry[] = [
+  {
+    organization: "Praxigen, Inc.",
+    role: "Founder & CEO",
+    location: "New York City, NY",
+    date: "Apr 2026 - Present",
+    bullets: [
+      "Founded a HealthTech startup and AI prior-authorization platform piloted across 10+ specialty practices, cutting submission time by 80% across insurance PA and appeal workflows with 100% approval or overturn across 40+ submissions.",
+      "Designed, built, and deployed the full-stack MVP grounded in 1,300+ payer requirements, including case management, clinical note checks, audit logs, automated payer calls, and product analytics.",
+      "Led 3 developers and 3 BDRs across product development, prioritizing the roadmap from customer feedback and shipping features from discovery to launch.",
+      "Led 120+ provider interviews and go-to-market work, generated 600K+ LinkedIn impressions, delivered technical demos to 80+ practice leaders, and achieved 20% trial conversion.",
+    ],
+  },
+  {
+    organization: "Michigan Blockchain Consulting",
+    role: "Product Manager",
+    location: "Ann Arbor, MI",
+    date: "Aug 2025 - Present",
+    bullets: [
+      "Led 3 developers from requirements through launch of ForeverData, a permanent file-storage product on EigenDA; defined the roadmap, UX, wallet upload flow, and product requirements before its sale to Eigen Labs.",
+      "Led product and go-to-market strategy for 4 blockchain clients, translating user needs into product requirements and launch plans.",
+    ],
+  },
+  {
+    organization: "Michigan Medicine, Department of Human Genetics",
+    role: "Research Assistant",
+    location: "Ann Arbor, MI",
+    date: "Aug 2025 - May 2026",
+    bullets: [
+      "Engineered CRISPR constructs for a patent-pending DNA-sensing system targeting cancer-specific genomic alterations; used SnapGene modeling and experimental data to diagnose failures and improve system performance.",
+      "Led recruiting and onboarding to scale the wet-lab team to 15+ researchers; built protocols and documentation for new members.",
+    ],
+  },
+  {
+    organization: "Michigan Medicine & College of Engineering",
+    role: "Research Assistant",
+    location: "Ann Arbor, MI",
+    date: "Nov 2024 - Sept 2025",
+    bullets: [
+      "Conducted translational research across computational vascular biomechanics and cardiovascular surgery, integrating wet-lab and computational approaches to improve vascular imaging and reconstruction in surgical planning.",
+      "Analyzed pre- and post-operative CABG and cardiac catheterization datasets for 1,500+ patients using Epic and Excel to support outcome prediction research.",
+    ],
+  },
+  {
+    organization: "Neuropsychiatry & Forensic Neurology Private Practice",
+    role: "Intern",
+    location: "New York City, NY",
+    date: "May 2025 - Aug 2025",
+    bullets: [
+      "Worked across outpatient neuropsychiatric clinical workflows, including diagnostic evaluations, cognitive assessments, and treatment planning across 50+ patient cases.",
+      "Formulated structured interview protocols for 12+ forensic neuropsychiatric evaluations, improving data collection for expert witness testimony and case development.",
+    ],
+  },
+];
+
+const resumeLeadership: ResumeEntry[] = [
+  {
+    organization: "Cancer Screening Advocates",
+    role: "President & Founding Campus Lead",
+    location: "Ann Arbor, MI",
+    date: "Nov 2025 - Present",
+    bullets: [
+      "Launched the first university chapter of a national cancer-prevention nonprofit, built a partnership with Michigan Medicine, reached 1K+ students, and raised $10K+.",
+    ],
+  },
+  {
+    organization: "Pi Sigma Epsilon, Ross Professional Business Fraternity",
+    role: "Speaker Chair",
+    location: "Ann Arbor, MI",
+    date: "Jan 2025 - May 2026",
+    bullets: [
+      "Led outreach to industry professionals and partners, building cross-functional relationships for speaker events with 120+ attendees.",
+    ],
+  },
+];
+
+const resumeSkills = [
+  {
+    label: "Technical",
+    value: "Python, JavaScript/TypeScript, R, C++, React, Supabase, Vercel, GitHub, Excel, Power BI, Tableau, MATLAB",
+  },
+  {
+    label: "AI / ML",
+    value: "LLMs, RAG, model evaluation, prompt design, OpenAI and Claude APIs, Lovable, Cursor",
+  },
+  {
+    label: "Product",
+    value: "Roadmapping, user research, A/B testing, product analytics, GTM, competitive analysis, Figma, Jira, UX design",
+  },
+  {
+    label: "Interests",
+    value: "HealthTech, entrepreneurship, pickleball and fitness, music, cognitive science, AI and frontier technology",
   },
 ];
 
@@ -1012,11 +1116,11 @@ function scrollToSection(
   else target.scrollIntoView({ behavior: "smooth" });
 }
 
-function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
+function SiteNav({ page = "home" }: { page?: "home" | "personal" | "resume" }) {
   const reduceMotion = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const isPersonal = page === "personal";
+  const isHome = page === "home";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 34);
@@ -1035,13 +1139,13 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
   }, [menuOpen]);
 
   const close = () => setMenuOpen(false);
-  const anchorHref = (id: string) => (isPersonal && id !== "personal" ? `/#${id}` : `#${id}`);
+  const anchorHref = (id: string) => (isHome ? `#${id}` : `/#${id}`);
   const items = [
     { label: "Work", id: "work" },
     { label: "Experience", id: "experience" },
     { label: "About", id: "about" },
     { label: "Personal", id: "personal" },
-    { label: "Resume", href: "/Maya-Gerdes-Resume.pdf" },
+    { label: "Resume", href: "/resume" },
   ];
   const mobileItems = [...items, { label: "Email", href: links.email }];
 
@@ -1051,13 +1155,19 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" }) {
         className={`site-nav${scrolled ? " is-scrolled" : ""}`}
         aria-label="Primary navigation"
       >
-        <a className="brand" href={isPersonal ? "/" : "#top"}>
-          Maya Gerdes
+        <a className="brand" href={isHome ? "#top" : "/"} aria-label="Maya Gerdes home">
+          <span className="sr-only">Maya Gerdes home</span>
         </a>
         <div className="nav-links">
           {items.map((item) =>
             item.href ? (
-              <a key={item.label} href={item.href}>{item.label}</a>
+              <a
+                key={item.label}
+                href={item.href}
+                aria-current={page === "resume" && item.label === "Resume" ? "page" : undefined}
+              >
+                {item.label}
+              </a>
             ) : (
               <a
                 key={item.label}
@@ -1585,7 +1695,7 @@ function PortfolioHome() {
         >
           <motion.div className="hero-copy" variants={heroItem}>
             <div className="hero-presence">
-              <span><i /> Founder, Praxigen</span>
+              <span>University of Michigan</span>
               <span>Ann Arbor, MI</span>
             </div>
             <h1>
@@ -1593,18 +1703,19 @@ function PortfolioHome() {
               <span className="hero-name-line"><span>Gerdes</span></span>
             </h1>
             <p className="hero-lead">
-              I build healthcare software and study how people think and behave.
+              I love learning problems deeply and building solutions. Neuroscience,
+              cognition, tech, and entrepreneurship.
             </p>
             <p className="hero-bio">
-              I study neuroscience, business, and entrepreneurship at the
-              University of Michigan. I&apos;m interested in genetics, human
-              consciousness, and the future of healthcare.
+              At Michigan, I study Biopsychology, Cognition, and Neuroscience
+              alongside entrepreneurship and business. I move between research,
+              product, and company-building.
             </p>
             <div className="hero-actions">
               <a className="primary-action" href="#work" onClick={(event) => scrollToSection(event, "work")}>
                 Enter selected work <ArrowDown size={15} />
               </a>
-              <a href="/Maya-Gerdes-Resume.pdf" target="_blank" rel="noreferrer">
+              <a href="/resume">
                 Resume <ArrowUpRight size={15} />
               </a>
               <a href="#personal" onClick={(event) => scrollToSection(event, "personal")}>
@@ -1762,6 +1873,124 @@ function PersonalPage() {
   );
 }
 
+function ResumeEntryList({ entries }: { entries: ResumeEntry[] }) {
+  return (
+    <div className="resume-entry-list">
+      {entries.map((entry, index) => (
+        <article
+          className="resume-entry"
+          key={`${entry.organization}-${entry.role}`}
+        >
+          <span className="resume-entry-number">{String(index + 1).padStart(2, "0")}</span>
+          <div className="resume-entry-main">
+            <h3>{entry.organization}</h3>
+            <p>{entry.role}</p>
+          </div>
+          <div className="resume-entry-meta">
+            <span>{entry.location}</span>
+            <time>{entry.date}</time>
+          </div>
+          <ul>
+            {entry.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function ResumePage() {
+  return (
+    <main className="resume-page">
+      <SiteNav page="resume" />
+
+      <header className="resume-hero">
+        <div className="resume-hero-inner">
+          <div>
+            <a className="back-link" href="/"><ArrowLeft size={16} /> Main portfolio</a>
+            <p className="resume-kicker">Maya Gerdes / 2026</p>
+            <h1>Resume.</h1>
+          </div>
+          <div className="resume-hero-summary">
+            <p>
+              Founder, product builder, and neuroscience student working across
+              healthcare, research, and emerging technology.
+            </p>
+            <a
+              className="resume-download"
+              href="/Maya-Gerdes-Resume.pdf"
+              download="Maya_Gerdes_Resume_2026.pdf"
+            >
+              Download PDF <Download size={17} />
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <div className="resume-contact-row">
+        <a href={links.email}>mjgerdes@umich.edu</a>
+        <a href="tel:+19736341419">+1 973 634 1419</a>
+        <a href={links.linkedin} target="_blank" rel="noreferrer">LinkedIn <ArrowUpRight size={13} /></a>
+        <span>Ann Arbor / New York</span>
+      </div>
+
+      <div className="resume-document">
+        <section className="resume-section">
+          <div className="resume-section-label"><span>01</span><h2>Education</h2></div>
+          <div className="resume-education">
+            <div className="resume-education-heading">
+              <div>
+                <h3>University of Michigan</h3>
+                <p>B.S. in Biopsychology, Cognition, and Neuroscience · Honors</p>
+              </div>
+              <div>
+                <span>Ann Arbor, MI</span>
+                <time>Expected May 2028</time>
+              </div>
+            </div>
+            <p className="resume-education-detail">GPA 3.96 / 4.00 · Minors in Entrepreneurship and Business (Ross)</p>
+            <div className="resume-facts">
+              <div><span>Coursework</span><p>Calculus I-III, Programming & OOP, Statistics, Honors Physics I/II</p></div>
+              <div><span>Honors</span><p>Branstrom Prize, Angell Scholar, Phi Kappa Phi, Nu Rho Psi</p></div>
+              <div><span>Programs</span><p>Ballard, MCombinator, UStart</p></div>
+              <div><span>Awards</span><p>a16z Build & Pitch, Google DeepMind NYC, UStart Demo Day</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section className="resume-section">
+          <div className="resume-section-label"><span>02</span><h2>Professional experience</h2></div>
+          <ResumeEntryList entries={resumeExperience} />
+        </section>
+
+        <section className="resume-section">
+          <div className="resume-section-label"><span>03</span><h2>Leadership</h2></div>
+          <ResumeEntryList entries={resumeLeadership} />
+        </section>
+
+        <section className="resume-section">
+          <div className="resume-section-label"><span>04</span><h2>Additional</h2></div>
+          <div className="resume-skills">
+            {resumeSkills.map((skill) => (
+              <div key={skill.label}><span>{skill.label}</span><p>{skill.value}</p></div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <footer className="resume-footer">
+        <div>
+          <span>Official copy</span>
+          <p>One-page PDF, ready for applications.</p>
+        </div>
+        <a href="/Maya-Gerdes-Resume.pdf" download="Maya_Gerdes_Resume_2026.pdf">
+          Download resume <Download size={17} />
+        </a>
+      </footer>
+    </main>
+  );
+}
+
 function App() {
   const normalizedPath = window.location.pathname.replace(/\/$/, "") || "/";
   const reduceMotion = useReducedMotion();
@@ -1776,7 +2005,13 @@ function App() {
     <>
       <SmoothScroll />
       <motion.div className="scroll-progress" style={{ scaleX: reduceMotion ? scrollYProgress : progress }} aria-hidden="true" />
-      {normalizedPath === "/me" ? <PersonalPage /> : <PortfolioHome />}
+      {normalizedPath === "/me" ? (
+        <PersonalPage />
+      ) : normalizedPath === "/resume" ? (
+        <ResumePage />
+      ) : (
+        <PortfolioHome />
+      )}
     </>
   );
 }
