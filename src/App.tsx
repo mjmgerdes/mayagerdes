@@ -111,8 +111,8 @@ type PersonalMediaItem = {
   number?: string;
   title: string;
   shortTitle?: string;
-  detail: string;
-  body: string;
+  detail?: string;
+  body?: string;
   image?: string;
   imageAlt?: string;
   secondaryImage?: string;
@@ -123,12 +123,6 @@ type PersonalMediaItem = {
   fit?: "cover" | "contain";
   position?: string;
   shape?: "wide" | "landscape" | "portrait";
-};
-
-type PersonalArchiveGroup = {
-  number: string;
-  title: string;
-  items: PersonalMediaItem[];
 };
 
 type LenisWindow = Window & { mayaLenis?: Lenis };
@@ -514,10 +508,10 @@ const personalArchive = {
   },
   childhoodGuitar: {
     number: "01",
-    title: "Guitar phase, fully committed.",
-    shortTitle: "Guitar",
-    detail: "Guitar / 2014",
-    body: "The pink glasses were part of the performance.",
+    title: "Self-taught guitarist & pianist. Currently: learning to DJ with my DDJ-FLX4 and produce music on Ableton.",
+    shortTitle: "Music",
+    detail: "Music / since age five",
+    body: "I've been playing guitar since I was five years old!",
     image: "/personal/archive/childhood-guitar.webp",
     imageAlt: "Maya Gerdes as a child posing with a guitar and pink sunglasses.",
     position: "50% 30%",
@@ -536,20 +530,20 @@ const personalArchive = {
   },
   softballHelmet: {
     number: "02",
-    title: "Softball raised me.",
-    shortTitle: "Softball",
-    detail: "Softball / high school",
-    body: "Years of practices, games, and learning how to reset quickly.",
+    title: "Softball, pickleball, and lifting.",
+    shortTitle: "Sports",
+    detail: "Sports / always moving",
+    body: "I played softball most of my life, spending my last two years playing as varsity captain and starting shortstop.",
     image: "/personal/archive/softball-helmet.webp",
     imageAlt: "Maya Gerdes smiling in a batting helmet beside the softball field.",
     position: "50% 42%",
     shape: "wide",
   },
   redwoods: {
-    number: "05",
-    title: "Outside whenever possible.",
-    shortTitle: "Outside",
-    detail: "California / 2023",
+    number: "04",
+    title: "I love exploring nature with family and friends.",
+    shortTitle: "Outdoors",
+    detail: "Outdoors / California",
     body: "Under the redwoods with my sister.",
     image: "/personal/archive/redwoods.webp",
     imageAlt: "Maya Gerdes and her sister standing beneath tall California redwoods.",
@@ -590,10 +584,10 @@ const personalArchive = {
   },
   masonDrawing: {
     number: "03",
-    title: "Mason, drawn from a photo.",
-    shortTitle: "Sketchbook",
-    detail: "Charcoal / from reference",
-    body: "A charcoal portrait of Mason, drawn from the photo on the back.",
+    title: "Meet Mason! (I draw dogs a lot)",
+    shortTitle: "Drawing",
+    detail: "Colored pencil / from reference",
+    body: "My first color pencil sketch, featuring my favorite leonberger, Mason.",
     image: "/personal/archive/mason-drawing.webp",
     imageAlt: "Hand-drawn portrait of a black dog named Mason.",
     secondaryImage: "/personal/archive/mason-reference.JPG",
@@ -728,65 +722,170 @@ const personalMedia: PersonalMediaItem[] = [
   personalArchive.childhoodGuitar,
   personalArchive.softballHelmet,
   personalArchive.masonDrawing,
-  personalArchive.clairDeLune,
   personalArchive.redwoods,
 ];
 
-const personalArchiveGroups: PersonalArchiveGroup[] = [
-  {
-    number: "01",
-    title: "Music",
-    items: [
-      personalArchive.childhoodGuitar,
-      personalArchive.childhoodPiano,
-      personalArchive.guitarWithDad,
-      personalArchive.djDeck,
-      personalArchive.clairDeLune,
-      personalArchive.jazzNight,
-    ],
+const addedPersonalMedia = {
+  builderEventStage: {
+    title: "Builder event",
+    image: "/personal/archive/additions/builder-event-stage.webp",
+    imageAlt: "Audience gathered for a builder event presentation.",
+    shape: "landscape",
   },
-  {
-    number: "02",
-    title: "Sketchbook",
-    items: [
-      personalArchive.eyeStudy,
-      personalArchive.masonDrawing,
-      personalArchive.tuckerDrawing,
-    ],
+  childhoodCamping: {
+    title: "Childhood camping",
+    image: "/personal/archive/additions/childhood-camping.webp",
+    imageAlt: "Maya Gerdes as a child standing beside a tent while camping.",
+    shape: "portrait",
   },
-  {
-    number: "03",
-    title: "Movement",
-    items: [
-      personalArchive.softballHelmet,
-      personalArchive.softballAtBat,
-      personalArchive.redwoods,
-      personalArchive.siblingsSkiing,
-      personalArchive.kayak,
-    ],
+  dogAndDrawing: {
+    title: "Dog and drawing",
+    image: "/personal/archive/additions/dog-and-drawing.webp",
+    imageAlt: "A dog sitting beside Maya's colored pencil portrait of it.",
+    shape: "portrait",
   },
-  {
-    number: "04",
-    title: "People and places",
-    items: [
-      personalArchive.siblings,
-      personalArchive.ginger,
-      personalArchive.birdInMiami,
-      personalArchive.yankeesGame,
-      personalArchive.michiganGame,
-    ],
+  dogColoredPencil: {
+    title: "Colored pencil dog portrait",
+    image: "/personal/archive/additions/dog-colored-pencil.webp",
+    imageAlt: "A colored pencil portrait of a dog drawn by Maya Gerdes.",
+    shape: "portrait",
   },
-  {
-    number: "05",
-    title: "At the workbench",
-    items: [
-      personalArchive.hackathon,
-      personalArchive.speaker,
-      personalArchive.labBench,
-      personalArchive.crisprLab,
-      personalArchive.suturePractice,
-    ],
+  dogOnBoat: {
+    title: "Dog on the water",
+    image: "/personal/archive/additions/dog-on-boat.webp",
+    imageAlt: "A dog looking over the water from a boat.",
+    shape: "portrait",
   },
+  friendsSummer: {
+    title: "Summer with friends",
+    image: "/personal/archive/additions/friends-summer.webp",
+    imageAlt: "Maya Gerdes smiling outdoors with two friends.",
+    shape: "landscape",
+  },
+  hackathonRoom: {
+    title: "Hackathon room",
+    image: "/personal/archive/additions/hackathon-room.webp",
+    imageAlt: "Builders working together beneath blue and purple lights at a hackathon.",
+    shape: "landscape",
+  },
+  hackathonWorkspace: {
+    title: "Hackathon workspace",
+    image: "/personal/archive/additions/hackathon-workspace.webp",
+    imageAlt: "A busy hackathon workspace filled with laptops, boxes, and builders.",
+    shape: "portrait",
+  },
+  lakesideHandstand: {
+    title: "Lakeside handstand",
+    image: "/personal/archive/additions/lakeside-handstand.webp",
+    imageAlt: "Maya Gerdes doing a handstand on a dock at sunset.",
+    shape: "landscape",
+  },
+  mayaWithDog: {
+    title: "At home with a dog",
+    image: "/personal/archive/additions/maya-with-dog.webp",
+    imageAlt: "Maya Gerdes holding a small dog at home.",
+    shape: "portrait",
+  },
+  michiganNight: {
+    title: "Michigan night",
+    image: "/personal/archive/additions/michigan-night.webp",
+    imageAlt: "Maya Gerdes and friends celebrating together at night in Michigan colors.",
+    shape: "portrait",
+  },
+  michiganStadium: {
+    title: "Michigan Stadium",
+    image: "/personal/archive/additions/michigan-stadium.webp",
+    imageAlt: "A packed Michigan Stadium beneath a blue evening sky.",
+    shape: "portrait",
+  },
+  poolRobot: {
+    title: "Pool robot",
+    image: "/personal/archive/additions/pool-robot.webp",
+    imageAlt: "A homemade floating robot being tested in a swimming pool.",
+    shape: "landscape",
+  },
+  pseGroup: {
+    title: "Pi Sigma Epsilon",
+    image: "/personal/archive/additions/pse-group.webp",
+    imageAlt: "Maya Gerdes with members of Pi Sigma Epsilon in professional attire.",
+    shape: "landscape",
+  },
+  skiDay: {
+    title: "Ski day",
+    image: "/personal/archive/additions/ski-day.webp",
+    imageAlt: "Two skiers smiling together on a bright mountain day.",
+    shape: "portrait",
+  },
+  softballAction: {
+    title: "At bat",
+    image: "/personal/archive/additions/softball-action.webp",
+    imageAlt: "Maya Gerdes at bat during a softball game.",
+    shape: "portrait",
+  },
+  studentGroup: {
+    title: "Student group",
+    image: "/personal/archive/additions/student-group.webp",
+    imageAlt: "A large student organization gathered together in a classroom.",
+    shape: "landscape",
+  },
+  waterfrontEvening: {
+    title: "Waterfront evening",
+    image: "/personal/archive/additions/waterfront-evening.webp",
+    imageAlt: "Friends swimming off a dock beneath a pastel evening sky.",
+    shape: "landscape",
+  },
+  workshopPresentation: {
+    title: "Workshop presentation",
+    image: "/personal/archive/additions/workshop-presentation.webp",
+    imageAlt: "An audience watching a presentation in a bright workshop space.",
+    shape: "portrait",
+  },
+} satisfies Record<string, PersonalMediaItem>;
+
+const personalArchiveItems: PersonalMediaItem[] = [
+  addedPersonalMedia.michiganNight,
+  personalArchive.childhoodGuitar,
+  addedPersonalMedia.friendsSummer,
+  addedPersonalMedia.dogOnBoat,
+  personalArchive.eyeStudy,
+  addedPersonalMedia.softballAction,
+  addedPersonalMedia.mayaWithDog,
+  addedPersonalMedia.builderEventStage,
+  personalArchive.masonDrawing,
+  addedPersonalMedia.lakesideHandstand,
+  personalArchive.guitarWithDad,
+  addedPersonalMedia.pseGroup,
+  addedPersonalMedia.childhoodCamping,
+  personalArchive.djDeck,
+  addedPersonalMedia.hackathonRoom,
+  personalArchive.redwoods,
+  addedPersonalMedia.dogColoredPencil,
+  addedPersonalMedia.michiganStadium,
+  personalArchive.clairDeLune,
+  addedPersonalMedia.studentGroup,
+  personalArchive.softballHelmet,
+  addedPersonalMedia.workshopPresentation,
+  personalArchive.tuckerDrawing,
+  addedPersonalMedia.waterfrontEvening,
+  personalArchive.siblingsSkiing,
+  addedPersonalMedia.hackathonWorkspace,
+  personalArchive.siblings,
+  addedPersonalMedia.poolRobot,
+  personalArchive.jazzNight,
+  addedPersonalMedia.dogAndDrawing,
+  personalArchive.ginger,
+  addedPersonalMedia.skiDay,
+  personalArchive.birdInMiami,
+  personalArchive.kayak,
+  personalArchive.childhoodPiano,
+  personalArchive.softballAtBat,
+  personalArchive.yankeesGame,
+  personalArchive.michiganGame,
+  personalArchive.hackathon,
+  personalArchive.speaker,
+  personalArchive.labBench,
+  personalArchive.crisprLab,
+  personalArchive.suturePractice,
 ];
 
 const backgroundItems = [
@@ -1369,31 +1468,17 @@ function PersonalStory({ compact = false }: { compact?: boolean }) {
         <div className="personal-archive-heading">
           <SectionHeading number="01" title="Archive" />
         </div>
-        <div className="personal-archive-groups">
-          {personalArchiveGroups.map((group) => (
-            <section className="personal-archive-group" key={group.title}>
-              <header className="personal-archive-group-heading">
-                <span>{group.number}</span>
-                <h3>{group.title}</h3>
-              </header>
-              <div className="personal-archive-grid">
-                {group.items.map((item) => (
-                  <article
-                    className={`personal-archive-card shape-${item.shape ?? "landscape"}`}
-                    key={item.title}
-                  >
-                    <div className="personal-archive-media">
-                      <PersonalMediaVisual item={item} />
-                    </div>
-                    <div className="personal-archive-copy">
-                      <span>{item.detail}</span>
-                      <h4>{item.title}</h4>
-                      <p>{item.body}</p>
-                    </div>
-                  </article>
-                ))}
+        <div className="personal-feed">
+          {personalArchiveItems.map((item, index) => (
+            <article
+              className={`personal-feed-item shape-${item.shape ?? "landscape"}`}
+              aria-label={item.imageAlt ?? item.title}
+              key={`${item.title}-${index}`}
+            >
+              <div className="personal-feed-media">
+                <PersonalMediaVisual item={item} priority={index < 4} />
               </div>
-            </section>
+            </article>
           ))}
         </div>
       </section>
@@ -1413,7 +1498,7 @@ function PersonalStory({ compact = false }: { compact?: boolean }) {
         <div className="personal-story-layout">
           <div className="personal-story-copy">
             <span className="personal-story-index">04 / Personal</span>
-            <h2>Outside work</h2>
+            <h2>Hobbies + Interests</h2>
 
             <div className="personal-story-nav" aria-label="Personal archive chapters">
               {personalMedia.map((item, index) => (
@@ -1858,7 +1943,7 @@ function PersonalPage() {
             <h1>Outside the resume.</h1>
           </div>
           <p>
-            Music, drawings, softball, the people I love, and a few places I
+            Music, drawings, movement, the people I love, and a few places I
             keep returning to.
           </p>
         </motion.div>

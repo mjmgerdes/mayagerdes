@@ -1734,6 +1734,10 @@ p {
   -webkit-backface-visibility: hidden;
 }
 
+.personal-image-flip.align-mason .personal-image-flip-front {
+  background: #7b5f3e;
+}
+
 .personal-image-flip-back {
   transform: rotateY(180deg);
 }
@@ -2031,98 +2035,64 @@ p {
 }
 
 .personal-archive-heading,
-.personal-archive-groups {
+.personal-feed {
   width: min(100%, 1260px);
   margin: 0 auto;
   padding-right: 34px;
   padding-left: 34px;
 }
 
-.personal-archive-groups {
-  margin-top: 68px;
+.personal-feed {
+  margin-top: 42px;
+  column-count: 3;
+  column-gap: 14px;
 }
 
-.personal-archive-group {
-  display: grid;
-  grid-template-columns: 178px minmax(0, 1fr);
-  gap: clamp(34px, 5vw, 78px);
-  padding: 34px 0 108px;
-  border-top: 1px solid var(--line);
-}
-
-.personal-archive-group:last-child {
-  padding-bottom: 0;
-}
-
-.personal-archive-group-heading {
-  position: sticky;
-  top: 94px;
-  display: grid;
-  align-self: start;
-  grid-template-columns: 34px minmax(0, 1fr);
-  gap: 10px;
-  align-items: baseline;
-}
-
-.personal-archive-group-heading > span {
-  color: var(--blue-dark);
-  font-family: "IBM Plex Sans", sans-serif;
-  font-size: 10px;
-  font-weight: 600;
-}
-
-.personal-archive-group-heading h3 {
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.25;
-}
-
-.personal-archive-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 68px 20px;
-}
-
-.personal-archive-card {
-  min-width: 0;
-}
-
-.personal-archive-card.shape-wide {
-  grid-column: 1 / -1;
-}
-
-.personal-archive-media {
-  aspect-ratio: 4 / 3;
-  border: 1px solid #cdd4cf;
+.personal-feed-item {
+  break-inside: avoid;
+  margin-bottom: 14px;
+  overflow: hidden;
+  background: #eef1f5;
+  border: 1px solid rgba(11, 13, 18, 0.14);
   border-radius: 6px;
 }
 
-.personal-archive-card.shape-wide .personal-archive-media {
-  aspect-ratio: 16 / 9;
+.personal-feed-media {
+  width: 100%;
+  overflow: hidden;
 }
 
-.personal-archive-card.shape-portrait .personal-archive-media {
+.personal-feed-media .personal-image-frame {
+  height: auto;
+  background: transparent;
+}
+
+.personal-feed-media .personal-image-frame img {
+  width: 100%;
+  height: auto;
+  padding: 0;
+  object-fit: contain;
+}
+
+.personal-feed-media .personal-media-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 210px;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+}
+
+.personal-feed-media .personal-image-flip {
+  aspect-ratio: 4 / 3;
+}
+
+.personal-feed-item.shape-portrait .personal-image-flip {
   aspect-ratio: 4 / 5;
 }
 
-.personal-archive-copy {
-  padding: 17px 2px 0;
-}
-
-.personal-archive-copy > span {
-  display: block;
-}
-
-.personal-archive-copy h4 {
-  margin-top: 8px;
-  font-family: "IBM Plex Sans", sans-serif;
-  font-size: 19px;
-  font-weight: 600;
-  line-height: 1.28;
-}
-
-.personal-archive-copy p {
-  max-width: 480px;
+.personal-feed-item.shape-wide .personal-image-flip {
+  aspect-ratio: 16 / 9;
 }
 
 .personal-section {
@@ -2955,35 +2925,19 @@ p {
   }
 
   .personal-archive-heading,
-  .personal-archive-groups {
+  .personal-feed {
     padding-right: 20px;
     padding-left: 20px;
   }
 
-  .personal-archive-groups {
-    margin-top: 54px;
+  .personal-feed {
+    margin-top: 36px;
+    column-count: 2;
+    column-gap: 12px;
   }
 
-  .personal-archive-group {
-    grid-template-columns: 132px minmax(0, 1fr);
-    gap: 28px;
-    padding-bottom: 86px;
-  }
-
-  .personal-archive-group-heading {
-    grid-template-columns: 26px minmax(0, 1fr);
-  }
-
-  .personal-archive-grid {
-    gap: 54px 16px;
-  }
-
-  .personal-archive-copy {
-    padding-top: 15px;
-  }
-
-  .personal-archive-copy > span {
-    padding-top: 0;
+  .personal-feed-item {
+    margin-bottom: 12px;
   }
 }
 
@@ -3098,30 +3052,12 @@ p {
     aspect-ratio: 1 / 0.9;
   }
 
-  .personal-archive-grid {
-    grid-template-columns: 1fr;
-    gap: 52px;
+  .personal-feed {
+    column-count: 1;
   }
 
-  .personal-archive-group {
-    grid-template-columns: 1fr;
-    gap: 30px;
-    padding-top: 26px;
-    padding-bottom: 78px;
-  }
-
-  .personal-archive-group-heading {
-    position: relative;
-    top: auto;
-    grid-template-columns: 32px minmax(0, 1fr);
-  }
-
-  .personal-archive-group-heading h3 {
-    font-size: 20px;
-  }
-
-  .personal-archive-card.shape-wide {
-    grid-column: auto;
+  .personal-feed-media .personal-media-video {
+    min-height: 190px;
   }
 
   .contact-footer {
