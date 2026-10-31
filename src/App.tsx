@@ -63,7 +63,7 @@ const projectLinks = {
   gordonRepo: "https://github.com/mjmgerdes/gordon",
 };
 
-type ExperienceCategory = "Work" | "Research" | "Clubs";
+type ExperienceCategory = "Work" | "Research" | "Clubs" | "Honors + Awards";
 
 type ExperienceItem = {
   category: ExperienceCategory;
@@ -127,7 +127,7 @@ type PersonalMediaItem = {
 
 type LenisWindow = Window & { mayaLenis?: Lenis };
 
-const experienceTabs: ExperienceCategory[] = ["Work", "Research", "Clubs"];
+const experienceTabs: ExperienceCategory[] = ["Work", "Research", "Clubs", "Honors + Awards"];
 
 const experiences: ExperienceItem[] = [
   {
@@ -270,6 +270,131 @@ const experiences: ExperienceItem[] = [
       "Managed chapter finances and built professional-development programming for a pre-medical community.",
     tags: ["Finance", "Professional development"],
   },
+  {
+    category: "Clubs",
+    logo: {
+      alt: "Nu Rho Psi",
+      image: "/logos/nu-rho-psi.png",
+      text: "NRP",
+    },
+    title: "Neuroscience National Honor Society Member",
+    org: "Nu Rho Psi",
+    date: "Sep 2025 - Present",
+    summary:
+      "Selected for the national honor society in neuroscience, recognizing scholarship and professional interest in brain research.",
+    tags: ["Neuroscience", "Scholarship", "Service"],
+  },
+  {
+    category: "Honors + Awards",
+    logo: {
+      alt: "Phi Kappa Phi",
+      image: "/logos/phi-kappa-phi.png",
+      text: "PKP",
+    },
+    title: "Collegiate Honor Society Member",
+    org: "The Honor Society of Phi Kappa Phi",
+    date: "Jan 2026 - Present",
+    summary:
+      "Invited to Phi Kappa Phi, an all-discipline collegiate honor society recognizing sustained academic achievement.",
+    tags: ["Academic distinction", "Invitation only"],
+  },
+  {
+    category: "Honors + Awards",
+    logo: {
+      alt: "University of Michigan Honors",
+      image: "/logos/michigan-honors.png",
+      text: "M",
+    },
+    title: "University Honors",
+    org: "University of Michigan",
+    date: "Aug 2024 - May 2028",
+    summary:
+      "Earned University Honors for term academic performance meeting the University's GPA and graded-credit criteria.",
+    tags: ["Academic achievement", "University Honors"],
+  },
+  {
+    category: "Honors + Awards",
+    logo: {
+      alt: "Google DeepMind",
+      image: "/logos/google-deepmind.png",
+      text: "GDM",
+    },
+    title: "1st Place - Agentic Care Copilots",
+    org: "Google DeepMind NYC Hackathon / Build with Gemma",
+    date: "2026",
+    summary:
+      "Built Relage with Andrew Poveda in under eight hours and won the Agentic Care Copilots track among 45+ healthcare AI teams.",
+    tags: ["Relage", "Gemma", "1st Place"],
+  },
+  {
+    category: "Honors + Awards",
+    logo: {
+      alt: "a16z",
+      text: "a16z",
+    },
+    title: "1st Place - Build & Pitch Hackathon",
+    org: "a16z NYC Tech Week",
+    date: "2026",
+    summary:
+      "Built and pitched Praxigen, winning first place at the NYC Tech Week Build & Pitch hackathon.",
+    tags: ["Praxigen", "Build & Pitch", "1st Place"],
+  },
+  {
+    category: "Honors + Awards",
+    logo: {
+      alt: "ElevenLabs",
+      image: "/logos/elevenlabs.png",
+      text: "11",
+    },
+    title: "Startup Grant Recipient",
+    org: "ElevenLabs",
+    date: "2026",
+    summary:
+      "Selected for an ElevenLabs startup grant supporting Praxigen's product development.",
+    tags: ["Praxigen", "Startup grant"],
+  },
+  {
+    category: "Honors + Awards",
+    logo: {
+      alt: "Ballard Spahr",
+      image: "/logos/ballard-spahr.png",
+      text: "BS",
+    },
+    title: "Ballard Academy for Student Entrepreneurs",
+    org: "Ballard Spahr",
+    date: "2026",
+    summary:
+      "Selected for the startup accelerator supporting Praxigen through founder programming and legal mentorship.",
+    tags: ["Praxigen", "Accelerator"],
+  },
+  {
+    category: "Honors + Awards",
+    logo: {
+      alt: "MCombinator",
+      image: "/logos/mcombinator.png",
+      text: "MC",
+    },
+    title: "Startup Accelerator",
+    org: "MCombinator",
+    date: "2026",
+    summary:
+      "Selected for MCombinator's startup accelerator to advance Praxigen.",
+    tags: ["Praxigen", "Accelerator"],
+  },
+  {
+    category: "Honors + Awards",
+    logo: {
+      alt: "University of Michigan Ross",
+      image: "/logos/michigan-ross.png",
+      text: "M",
+    },
+    title: "1st Place - Business+Tech Demo Day",
+    org: "University of Michigan",
+    date: "2026",
+    summary:
+      "Won first place pitching Praxigen at the University of Michigan Business+Tech Demo Day.",
+    tags: ["Praxigen", "Demo Day", "1st Place"],
+  },
 ];
 
 const resumeExperience: ResumeEntry[] = [
@@ -376,13 +501,13 @@ const railProjects: RailProject[] = [
     body:
       "Healthcare workflow infrastructure for specialty practices, connecting payer requirements, clinical-note checks, appeals, pre-claim mismatches, and follow-up.",
     tags: ["Founder build", "Product pilots", "Build & Pitch winner"],
-    image: "/praxigen/workspace.webp",
-    imageAlt: "Praxigen case workspace showing payer status, due dates, and next actions.",
+    image: "/projects/praxigen-landing.webp",
+    imageAlt: "Praxigen landing page for end-to-end prior authorization workflows for surgical teams.",
     role: "Founder & technical builder",
     year: "2026 - now",
     award: {
       href: projectLinks.buildAndPitch,
-      label: "Build & Pitch win",
+      label: "a16z NYC Tech Week - Build & Pitch Hackathon Win",
     },
     tone: "ice",
   },
@@ -395,8 +520,8 @@ const railProjects: RailProject[] = [
     body:
       "Track 2 winner at Build with Gemma NYC, built in under eight hours at One World Trade Center. An on-device care logistics agent for rural older adults.",
     tags: ["Official track winner", "On-device Gemma", "Privacy-first"],
-    image: "/projects/relage-workspace.webp",
-    imageAlt: "Relage care coordination dashboard for an older adult scheduling a cardiology visit.",
+    image: "/projects/relage-intro.webp",
+    imageAlt: "Relage, from appointment to arrival where access is hardest, built for the Build with Gemma NYC healthcare hackathon.",
     role: "Co-builder with Andrew Poveda",
     year: "Aug 2026",
     award: {
@@ -1602,10 +1727,6 @@ function ProjectRail() {
           <div>
             <span>01 / Selected work</span>
           </div>
-          <a href={projectLinks.relageWriteup} target="_blank" rel="noreferrer">
-            <span>Gemma NYC track winner</span>
-            <ArrowUpRight size={15} />
-          </a>
         </div>
 
         <motion.div
@@ -1830,7 +1951,7 @@ function PortfolioHome() {
           <div><span>Study</span><strong>Neuroscience + business</strong></div>
           <div><span>Interests</span><strong>Genetics + consciousness</strong></div>
           <a href={projectLinks.relageWriteup} target="_blank" rel="noreferrer">
-            <span>Recent</span><strong>Gemma NYC track winner</strong><ArrowUpRight size={14} />
+            <span>Recent</span><strong>Google DeepMind NYC Hackathon Winner</strong><ArrowUpRight size={14} />
           </a>
         </motion.div>
       </header>
