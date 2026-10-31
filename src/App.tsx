@@ -1340,6 +1340,28 @@ function scrollToSection(
   else target.scrollIntoView({ behavior: "smooth" });
 }
 
+function illuminateGlass(event: ReactMouseEvent<HTMLElement>) {
+  const element = event.currentTarget;
+  const bounds = element.getBoundingClientRect();
+  const x = event.clientX - bounds.left;
+  const y = event.clientY - bounds.top;
+  const xRatio = x / bounds.width - 0.5;
+  const yRatio = y / bounds.height - 0.5;
+
+  element.style.setProperty("--glass-x", `${x}px`);
+  element.style.setProperty("--glass-y", `${y}px`);
+  element.style.setProperty("--glass-rx", `${yRatio * -2.2}deg`);
+  element.style.setProperty("--glass-ry", `${xRatio * 2.2}deg`);
+}
+
+function settleGlass(event: ReactMouseEvent<HTMLElement>) {
+  const element = event.currentTarget;
+  element.style.setProperty("--glass-x", "50%");
+  element.style.setProperty("--glass-y", "42%");
+  element.style.setProperty("--glass-rx", "0deg");
+  element.style.setProperty("--glass-ry", "0deg");
+}
+
 function SiteNav({ page = "home" }: { page?: "home" | "personal" | "resume" }) {
   const reduceMotion = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
@@ -1947,10 +1969,23 @@ function PortfolioHome() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduceMotion ? 0 : 0.62, delay: reduceMotion ? 0 : 0.56, ease: EASE }}
         >
-          <div><span>Current</span><strong>Building Praxigen</strong></div>
-          <div><span>Study</span><strong>Neuroscience + business</strong></div>
-          <div><span>Interests</span><strong>Genetics + consciousness</strong></div>
-          <a href={projectLinks.relageWriteup} target="_blank" rel="noreferrer">
+          <div className="hero-note" onPointerMove={illuminateGlass} onPointerLeave={settleGlass}>
+            <span>Current</span><strong>Building Praxigen</strong>
+          </div>
+          <div className="hero-note" onPointerMove={illuminateGlass} onPointerLeave={settleGlass}>
+            <span>Study</span><strong>Neuroscience + business</strong>
+          </div>
+          <div className="hero-note" onPointerMove={illuminateGlass} onPointerLeave={settleGlass}>
+            <span>Interests</span><strong>Genetics + consciousness</strong>
+          </div>
+          <a
+            className="hero-note hero-note-recent"
+            href={projectLinks.relageWriteup}
+            target="_blank"
+            rel="noreferrer"
+            onPointerMove={illuminateGlass}
+            onPointerLeave={settleGlass}
+          >
             <span>Recent</span><strong>Google DeepMind NYC Hackathon Winner</strong><ArrowUpRight size={14} />
           </a>
         </motion.div>

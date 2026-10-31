@@ -392,8 +392,19 @@ p {
   right: 0;
   bottom: -1px;
   left: 0;
-  height: 158px;
-  background: linear-gradient(180deg, rgba(251, 252, 249, 0) 0%, rgba(131, 139, 149, 0.12) 44%, var(--dark) 100%);
+  height: clamp(240px, 31vh, 320px);
+  background: linear-gradient(
+    180deg,
+    rgba(11, 13, 17, 0) 0%,
+    rgba(11, 13, 17, 0.015) 12%,
+    rgba(11, 13, 17, 0.055) 25%,
+    rgba(11, 13, 17, 0.14) 39%,
+    rgba(11, 13, 17, 0.3) 54%,
+    rgba(11, 13, 17, 0.52) 69%,
+    rgba(11, 13, 17, 0.75) 82%,
+    rgba(11, 13, 17, 0.93) 94%,
+    var(--dark) 100%
+  );
 }
 
 .signal-field {
@@ -681,19 +692,91 @@ p {
 
 .hero-notes > div,
 .hero-notes > a {
+  --glass-x: 50%;
+  --glass-y: 50%;
+  --glass-rx: 0deg;
+  --glass-ry: 0deg;
   position: relative;
   display: flex;
   min-height: 76px;
   align-items: flex-start;
   flex-direction: column;
   justify-content: center;
+  isolation: isolate;
+  overflow: hidden;
   padding: 14px 18px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0.18)),
+    rgba(242, 247, 252, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 8px;
-  box-shadow: 0 18px 44px -34px rgba(11, 13, 18, 0.75);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
+  box-shadow:
+    0 22px 54px -38px rgba(5, 13, 28, 0.82),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    inset 0 -1px 0 rgba(102, 133, 177, 0.12);
+  -webkit-backdrop-filter: blur(26px) saturate(160%) brightness(1.04);
+  backdrop-filter: blur(26px) saturate(160%) brightness(1.04);
+  transform: perspective(900px) translateY(0) rotateX(var(--glass-rx)) rotateY(var(--glass-ry));
+  transform-style: preserve-3d;
+  transition:
+    background 420ms var(--ease),
+    border-color 420ms var(--ease),
+    box-shadow 420ms var(--ease),
+    transform 220ms var(--ease);
+  will-change: transform;
+}
+
+.hero-notes > div::before,
+.hero-notes > a::before {
+  position: absolute;
+  z-index: 0;
+  inset: -1px;
+  pointer-events: none;
+  content: "";
+  background: radial-gradient(
+    210px circle at var(--glass-x) var(--glass-y),
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(190, 222, 255, 0.34) 28%,
+    rgba(113, 175, 255, 0.12) 47%,
+    transparent 70%
+  );
+  opacity: 0.24;
+  transition: opacity 360ms var(--ease);
+}
+
+.hero-notes > div::after,
+.hero-notes > a::after {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.36), transparent 42%),
+    radial-gradient(110% 80% at 50% 116%, rgba(55, 131, 255, 0.1), transparent 62%);
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.26),
+    inset -1px 0 0 rgba(104, 145, 204, 0.08);
+}
+
+.hero-notes > div:hover,
+.hero-notes > a:hover,
+.hero-notes > a:focus-visible {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.22)),
+    rgba(229, 241, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.88);
+  box-shadow:
+    0 28px 66px -38px rgba(20, 76, 159, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(84, 137, 212, 0.14);
+  transform: perspective(900px) translateY(-2px) rotateX(var(--glass-rx)) rotateY(var(--glass-ry));
+}
+
+.hero-notes > div:hover::before,
+.hero-notes > a:hover::before,
+.hero-notes > a:focus-visible::before {
+  opacity: 0.76;
 }
 
 .hero-notes > div:first-child {
@@ -702,6 +785,8 @@ p {
 
 .hero-notes span,
 .hero-notes strong {
+  position: relative;
+  z-index: 1;
   display: block;
 }
 
@@ -721,19 +806,39 @@ p {
 
 .hero-notes > a {
   padding-right: 42px;
-  background: rgba(223, 239, 255, 0.83);
-  transition: background 180ms ease;
+  background:
+    linear-gradient(135deg, rgba(218, 238, 255, 0.64), rgba(174, 215, 255, 0.25)),
+    rgba(222, 239, 255, 0.24);
 }
 
 .hero-notes > a:hover {
-  background: var(--acid);
+  background:
+    linear-gradient(135deg, rgba(224, 242, 255, 0.72), rgba(161, 207, 255, 0.3)),
+    rgba(213, 235, 255, 0.28);
 }
 
 .hero-notes > a svg {
   position: absolute;
+  z-index: 1;
   top: 50%;
-  right: 18px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  padding: 7px;
+  background: rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  border-radius: 50%;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
   transform: translateY(-50%);
+  transition:
+    background 300ms ease,
+    transform 360ms var(--ease);
+}
+
+.hero-notes > a:hover svg,
+.hero-notes > a:focus-visible svg {
+  background: rgba(255, 255, 255, 0.58);
+  transform: translate(2px, calc(-50% - 2px));
 }
 
 /* Horizontal work rail */
@@ -3102,6 +3207,39 @@ p {
   }
 }
 
+@media (hover: none) {
+  .hero-notes > div,
+  .hero-notes > a {
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .hero-notes > div::before,
+  .hero-notes > a::before {
+    opacity: 0.18;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .hero-notes > div,
+  .hero-notes > a {
+    background: rgba(246, 249, 252, 0.96);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .hero-notes > a {
+    background: rgba(225, 240, 255, 0.97);
+  }
+}
+
+@media (prefers-contrast: more) {
+  .hero-notes > div,
+  .hero-notes > a {
+    border-color: rgba(11, 13, 18, 0.45);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -3110,6 +3248,12 @@ p {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .hero-notes > div,
+  .hero-notes > a {
+    transform: none !important;
+    will-change: auto;
   }
 
   .project-rail-section {
