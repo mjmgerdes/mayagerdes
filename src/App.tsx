@@ -1373,7 +1373,7 @@ function SectionHeading({
 }) {
   return (
     <div className="section-heading">
-      <span className="section-index">{number}</span>
+      <span className="section-index" aria-hidden="true">{number}</span>
       <h2 aria-label={title}><RevealWords text={title} /></h2>
     </div>
   );
@@ -1538,8 +1538,7 @@ function PersonalStory({ compact = false }: { compact?: boolean }) {
       <div className="personal-story-stage">
         <div className="personal-story-layout">
           <div className="personal-story-copy">
-            <span className="personal-story-index">04 / Personal</span>
-            <h2>Hobbies + Interests</h2>
+            <SectionHeading number="04" title="Hobbies + Interests" />
 
             <div className="personal-story-nav" aria-label="Personal archive chapters">
               {personalMedia.map((item, index) => (
@@ -1652,9 +1651,7 @@ function ProjectRail() {
     >
       <div className="project-rail-sticky">
         <div className="project-rail-header">
-          <div>
-            <span>01</span><h2>Selected work</h2>
-          </div>
+          <SectionHeading number="01" title="Selected work" />
           <div className="rail-navigation glass-control" aria-label="Project navigation">
             <button type="button" aria-label="Previous project" title="Previous project" disabled={activeProject === 0} onClick={() => moveToProject(activeProject - 1)}><ChevronLeft size={18} /></button>
             <button type="button" aria-label="Next project" title="Next project" disabled={activeProject === railProjects.length - 1} onClick={() => moveToProject(activeProject + 1)}><ChevronRight size={18} /></button>
@@ -1855,7 +1852,7 @@ function PortfolioHome() {
         >
           <motion.div className="hero-copy" variants={heroItem}>
             <div className="hero-presence">
-              <a href={projectLinks.praxigen} target="_blank" rel="noreferrer"><span className="presence-dot" /> Building Praxigen <ArrowUpRight size={13} /></a>
+              <span>University of Michigan</span>
               <span>Ann Arbor / New York</span>
             </div>
             <h1>
@@ -1863,13 +1860,13 @@ function PortfolioHome() {
               <span className="hero-name-line"><span>Gerdes</span></span>
             </h1>
             <p className="hero-lead">
-              I like understanding hard problems.<br />Then building something that helps.
+              I love learning problems deeply and building solutions. Neuroscience,
+              cognition, tech, and entrepreneurship.
             </p>
             <p className="hero-bio">
-              I study neuroscience at Michigan and build Praxigen, software for
-              the work between a doctor&apos;s decision and a patient&apos;s care.
-              Most days, I&apos;m somewhere between research, code, and conversations
-              with the people using what I build.
+              At Michigan, I study Biopsychology, Cognition, and Neuroscience
+              alongside entrepreneurship and business. I move between research,
+              product, and company-building.
             </p>
             <div className="hero-actions">
               <a className="primary-action" href="#work" onClick={(event) => scrollToSection(event, "work")}>
@@ -1892,7 +1889,7 @@ function PortfolioHome() {
 
           <motion.div className="hero-visual" variants={heroItem}>
             <PortraitFigure />
-            <div className="portrait-caption"><span>University of Michigan</span><a href="#personal" onClick={(event) => scrollToSection(event, "personal")}>Beyond the work <ArrowDown size={13} /></a></div>
+            <div className="portrait-caption"><a href="#personal" onClick={(event) => scrollToSection(event, "personal")}>Beyond the work <ArrowDown size={13} /></a></div>
           </motion.div>
         </motion.div>
 
@@ -1906,7 +1903,7 @@ function PortfolioHome() {
             <span>Study</span><strong>Neuroscience + business</strong>
           </div>
           <div className="hero-note">
-            <span>Interests</span><strong>Genetics + consciousness</strong>
+            <span>Interests</span><strong>Genetics + consciousness + tech</strong>
           </div>
           <a
             className="hero-note hero-note-recent"
