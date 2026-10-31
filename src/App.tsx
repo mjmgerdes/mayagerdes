@@ -2,6 +2,8 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
   BadgeCheck,
   BriefcaseBusiness,
   Download,
@@ -1060,133 +1062,6 @@ function SmoothScroll() {
 
   return null;
 }
-
-function SignalField() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const reduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-
-    let width = 0;
-    let height = 0;
-    let ratio = 1;
-    let frame = 0;
-    const pointer = { x: 0, y: 0, active: false };
-
-    const resize = () => {
-      const bounds = canvas.getBoundingClientRect();
-      width = bounds.width;
-      height = bounds.height;
-      ratio = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.max(1, Math.round(width * ratio));
-      canvas.height = Math.max(1, Math.round(height * ratio));
-      pointer.x = width * 0.7;
-      pointer.y = height * 0.42;
-    };
-
-    const onPointerMove = (event: PointerEvent) => {
-      const bounds = canvas.getBoundingClientRect();
-      pointer.x = event.clientX - bounds.left;
-      pointer.y = event.clientY - bounds.top;
-      pointer.active =
-        pointer.x >= 0 && pointer.x <= bounds.width && pointer.y >= 0 && pointer.y <= bounds.height;
-    };
-
-    const draw = (time: number) => {
-      context.setTransform(1, 0, 0, 1, 0, 0);
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      context.lineWidth = 0.7;
-
-      const rowGap = width < 700 ? 48 : 42;
-      const columnGap = width < 700 ? 58 : 70;
-      const rows = Math.ceil(height / rowGap) + 2;
-      const columns = Math.ceil(width / columnGap) + 2;
-
-      for (let row = -1; row < rows; row += 1) {
-        const baseY = row * rowGap;
-        context.beginPath();
-        for (let x = 0; x <= width + 16; x += 16) {
-          const distanceX = x - pointer.x;
-          const distanceY = baseY - pointer.y;
-          const influence = pointer.active
-            ? Math.exp(-(distanceX * distanceX) / 36000) * Math.exp(-(distanceY * distanceY) / 70000)
-            : 0;
-          const bend = (pointer.y - baseY) * influence * 0.16;
-          const wave = reduceMotion ? 0 : Math.sin(time * 0.00032 + x * 0.012 + row * 0.5) * 2.2;
-          const y = baseY + bend + wave;
-          if (x === 0) context.moveTo(x, y);
-          else context.lineTo(x, y);
-        }
-        context.strokeStyle = row % 5 === 0
-          ? "rgba(59, 166, 255, 0.34)"
-          : "rgba(33, 82, 255, 0.14)";
-        context.stroke();
-      }
-
-      for (let column = -1; column < columns; column += 1) {
-        const baseX = column * columnGap;
-        context.beginPath();
-        for (let y = 0; y <= height + 16; y += 16) {
-          const distanceX = baseX - pointer.x;
-          const distanceY = y - pointer.y;
-          const influence = pointer.active
-            ? Math.exp(-(distanceY * distanceY) / 36000) * Math.exp(-(distanceX * distanceX) / 62000)
-            : 0;
-          const bend = (pointer.x - baseX) * influence * 0.13;
-          const wave = reduceMotion ? 0 : Math.cos(time * 0.00027 + y * 0.01 + column * 0.42) * 1.7;
-          const x = baseX + bend + wave;
-          if (y === 0) context.moveTo(x, y);
-          else context.lineTo(x, y);
-        }
-        context.strokeStyle = "rgba(15, 22, 33, 0.07)";
-        context.stroke();
-      }
-
-      context.fillStyle = "rgba(33, 82, 255, 0.34)";
-      for (let row = 0; row < rows; row += 1) {
-        for (let column = 0; column < columns; column += 1) {
-          if ((row + column) % 3 !== 0) continue;
-          context.fillRect(column * columnGap - 0.75, row * rowGap - 0.75, 1.5, 1.5);
-        }
-      }
-
-      if (!reduceMotion) {
-        const scanY = (time * 0.035) % Math.max(height, 1);
-        context.beginPath();
-        context.moveTo(0, scanY);
-        context.lineTo(width, scanY);
-        context.strokeStyle = "rgba(59, 166, 255, 0.18)";
-        context.lineWidth = 1;
-        context.stroke();
-      }
-    };
-
-    const animate = (time: number) => {
-      draw(time);
-      frame = requestAnimationFrame(animate);
-    };
-
-    resize();
-    window.addEventListener("resize", resize);
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    if (reduceMotion) draw(0);
-    else frame = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("pointermove", onPointerMove);
-    };
-  }, [reduceMotion]);
-
-  return <canvas ref={canvasRef} className="signal-field" aria-hidden="true" />;
-}
-
 function PortraitFigure() {
   const reduceMotion = useReducedMotion();
   const rotateX = useMotionValue(0);
@@ -1342,37 +1217,52 @@ function scrollToSection(
 
 function illuminateGlass(event: ReactMouseEvent<HTMLElement>) {
   const element = event.currentTarget;
+  if (!window.matchMedia("(hover: hover) and (prefers-reduced-motion: no-preference)").matches) return;
   const bounds = element.getBoundingClientRect();
   const x = event.clientX - bounds.left;
   const y = event.clientY - bounds.top;
-  const xRatio = x / bounds.width - 0.5;
-  const yRatio = y / bounds.height - 0.5;
-
-  element.style.setProperty("--glass-x", `${x}px`);
-  element.style.setProperty("--glass-y", `${y}px`);
-  element.style.setProperty("--glass-rx", `${yRatio * -2.2}deg`);
-  element.style.setProperty("--glass-ry", `${xRatio * 2.2}deg`);
+  element.style.setProperty("--glass-x", `${(x / bounds.width) * 100}%`);
+  element.style.setProperty("--glass-y", `${(y / bounds.height) * 100}%`);
 }
 
 function settleGlass(event: ReactMouseEvent<HTMLElement>) {
   const element = event.currentTarget;
   element.style.setProperty("--glass-x", "50%");
   element.style.setProperty("--glass-y", "42%");
-  element.style.setProperty("--glass-rx", "0deg");
-  element.style.setProperty("--glass-ry", "0deg");
 }
 
 function SiteNav({ page = "home" }: { page?: "home" | "personal" | "resume" }) {
   const reduceMotion = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [darkSurface, setDarkSurface] = useState(false);
   const isHome = page === "home";
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 34);
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      setScrolled(window.scrollY > 34);
+      const sections = ["work", "experience", "about", "personal", "contact"];
+      const current = sections.find((id) => {
+        const bounds = document.getElementById(id)?.getBoundingClientRect();
+        return bounds && bounds.top <= 180 && bounds.bottom > 180;
+      });
+      setActiveSection(current ?? "");
+      setDarkSurface(["work", "contact"].some((id) => {
+        const bounds = document.getElementById(id)?.getBoundingClientRect();
+        return bounds && bounds.top <= 48 && bounds.bottom > 48;
+      }));
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
     window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    update();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
   useEffect(() => {
@@ -1398,32 +1288,34 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" | "resume" }) {
   return (
     <>
       <nav
-        className={`site-nav${scrolled ? " is-scrolled" : ""}`}
+        className={`site-nav glass-control${scrolled ? " is-scrolled" : ""}`}
+        data-tone={darkSurface ? "dark" : "light"}
         aria-label="Primary navigation"
+        onPointerMove={illuminateGlass}
+        onPointerLeave={settleGlass}
       >
         <a className="brand" href={isHome ? "#top" : "/"} aria-label="Maya Gerdes home">
-          <span className="sr-only">Maya Gerdes home</span>
+          <span>Maya Gerdes</span>
         </a>
-        <div className="nav-links">
-          {items.map((item) =>
-            item.href ? (
+        <div className="nav-links" onMouseLeave={() => setHoveredLink(null)}>
+          {items.map((item) => {
+            const selected = item.id === activeSection || (page === "resume" && item.label === "Resume") || (page === "personal" && item.id === "personal");
+            const lit = hoveredLink ? hoveredLink === item.label : selected;
+            return (
               <a
                 key={item.label}
-                href={item.href}
-                aria-current={page === "resume" && item.label === "Resume" ? "page" : undefined}
+                href={item.href ?? anchorHref(item.id!)}
+                aria-current={selected ? (item.href ? "page" : "location") : undefined}
+                onClick={item.id ? (event) => scrollToSection(event, item.id!) : undefined}
+                onMouseEnter={() => setHoveredLink(item.label)}
+                onFocus={() => setHoveredLink(item.label)}
+                onBlur={() => setHoveredLink(null)}
               >
-                {item.label}
+                {lit && <motion.span className="nav-lens" layoutId={reduceMotion ? undefined : "nav-lens"} transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 36 }} />}
+                <span>{item.label}</span>
               </a>
-            ) : (
-              <a
-                key={item.label}
-                href={anchorHref(item.id!)}
-                onClick={(event) => scrollToSection(event, item.id!)}
-              >
-                {item.label}
-              </a>
-            ),
-          )}
+            );
+          })}
         </div>
         <a className="nav-email" href={links.email}>
           Email <ArrowUpRight size={14} />
@@ -1433,6 +1325,7 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" | "resume" }) {
           type="button"
           aria-label={menuOpen ? "Close navigation" : "Open navigation"}
           aria-expanded={menuOpen}
+          aria-controls="mobile-navigation"
           onClick={() => setMenuOpen((open) => !open)}
         >
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -1442,7 +1335,8 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" | "resume" }) {
       <AnimatePresence>
         {menuOpen ? (
           <motion.div
-            className="mobile-menu"
+            id="mobile-navigation"
+            className="mobile-menu glass-control"
             initial={reduceMotion ? false : { opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
@@ -1732,6 +1626,18 @@ function ProjectRail() {
     damping: 28,
     restDelta: 0.001,
   });
+  const progressWidth = useTransform(progress, (value) => `${value * 100}%`);
+
+  const moveToProject = (index: number) => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const top = window.scrollY + rail.getBoundingClientRect().top;
+    const travel = Math.max(0, rail.offsetHeight - window.innerHeight);
+    const target = top + (travel * index) / (railProjects.length - 1);
+    const lenis = (window as LenisWindow).mayaLenis;
+    if (lenis) lenis.scrollTo(target, { duration: 0.85 });
+    else window.scrollTo({ top: target, behavior: reduceMotion ? "instant" : "smooth" });
+  };
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setActiveProject(Math.min(railProjects.length - 1, Math.round(latest * (railProjects.length - 1))));
@@ -1747,7 +1653,11 @@ function ProjectRail() {
       <div className="project-rail-sticky">
         <div className="project-rail-header">
           <div>
-            <span>01 / Selected work</span>
+            <span>01</span><h2>Selected work</h2>
+          </div>
+          <div className="rail-navigation glass-control" aria-label="Project navigation">
+            <button type="button" aria-label="Previous project" title="Previous project" disabled={activeProject === 0} onClick={() => moveToProject(activeProject - 1)}><ChevronLeft size={18} /></button>
+            <button type="button" aria-label="Next project" title="Next project" disabled={activeProject === railProjects.length - 1} onClick={() => moveToProject(activeProject + 1)}><ChevronRight size={18} /></button>
           </div>
         </div>
 
@@ -1761,6 +1671,9 @@ function ProjectRail() {
               key={project.name}
               onPointerMove={illuminateGlass}
               onPointerLeave={settleGlass}
+              onFocusCapture={() => {
+                if (!reduceMotion && window.matchMedia("(min-width: 901px)").matches && index !== activeProject) moveToProject(index);
+              }}
             >
               <div className="rail-panel-copy">
                 <div className="rail-panel-index">
@@ -1798,7 +1711,9 @@ function ProjectRail() {
                 aria-label={`Open ${project.name}`}
               >
                 <span className="interface-window-bar" aria-hidden="true">
-                  <i /><i /><i />
+                  <span className="window-dots"><i /><i /><i /></span>
+                  <span>{new URL(project.href).hostname.replace(/^www\./, "")}</span>
+                  <ArrowUpRight size={12} />
                 </span>
                 <img
                   src={project.image}
@@ -1824,7 +1739,7 @@ function ProjectRail() {
             <span className="rail-progress-total">{String(railProjects.length).padStart(2, "0")}</span>
           </div>
           <span className="rail-progress-track">
-            <motion.span className="rail-progress-fill" style={{ scaleX: progress }} />
+            <motion.span className="rail-progress-fill" style={{ width: progressWidth }} />
           </span>
           <span className="rail-progress-name">{railProjects[activeProject].name}</span>
         </div>
@@ -1852,24 +1767,37 @@ function ExperienceLedger() {
   return (
     <>
       <div className="experience-controls" role="tablist" aria-label="Experience filters">
-        {experienceTabs.map((tab) => (
+        {experienceTabs.map((tab, index) => (
           <button
             type="button"
             role="tab"
+            id={`experience-tab-${index}`}
+            aria-controls="experience-panel"
+            tabIndex={tab === activeTab ? 0 : -1}
             aria-selected={tab === activeTab}
             className={tab === activeTab ? "active" : ""}
             key={tab}
             onClick={() => setActiveTab(tab)}
+            onKeyDown={(event) => {
+              const last = experienceTabs.length - 1;
+              const next = event.key === "ArrowRight" ? (index + 1) % experienceTabs.length
+                : event.key === "ArrowLeft" ? (index + last) % experienceTabs.length
+                : event.key === "Home" ? 0 : event.key === "End" ? last : null;
+              if (next === null) return;
+              event.preventDefault();
+              setActiveTab(experienceTabs[next]);
+              document.getElementById(`experience-tab-${next}`)?.focus();
+            }}
           >
             {tab === activeTab ? (
-              <motion.span className="experience-tab-active" layoutId="experience-tab-active" />
+              <motion.span className="experience-tab-active" layoutId="experience-tab-active" transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 36 }} />
             ) : null}
             <span>{tab}</span>
           </button>
         ))}
       </div>
 
-      <motion.div className="experience-list" layout>
+      <motion.div className="experience-list" id="experience-panel" role="tabpanel" aria-labelledby={`experience-tab-${experienceTabs.indexOf(activeTab)}`} layout>
         <AnimatePresence mode="popLayout">
           {items.map((experience, index) => (
             <motion.article
@@ -1878,7 +1806,6 @@ function ExperienceLedger() {
               initial={reduceMotion ? false : { opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
-              whileHover={reduceMotion ? undefined : { x: 6 }}
               transition={{ duration: reduceMotion ? 0 : 0.3, ease: EASE }}
               key={`${experience.org}-${experience.title}`}
             >
@@ -1920,7 +1847,6 @@ function PortfolioHome() {
       <SiteNav />
 
       <header className="portfolio-hero" id="top">
-        <SignalField />
         <motion.div
           className="hero-layout"
           variants={heroVariants}
@@ -1929,25 +1855,25 @@ function PortfolioHome() {
         >
           <motion.div className="hero-copy" variants={heroItem}>
             <div className="hero-presence">
-              <span>University of Michigan</span>
-              <span>Ann Arbor, MI</span>
+              <a href={projectLinks.praxigen} target="_blank" rel="noreferrer"><span className="presence-dot" /> Building Praxigen <ArrowUpRight size={13} /></a>
+              <span>Ann Arbor / New York</span>
             </div>
             <h1>
               <span className="hero-name-line"><span>Maya</span></span>
               <span className="hero-name-line"><span>Gerdes</span></span>
             </h1>
             <p className="hero-lead">
-              I love learning problems deeply and building solutions. Neuroscience,
-              cognition, tech, and entrepreneurship.
+              I like understanding hard problems.<br />Then building something that helps.
             </p>
             <p className="hero-bio">
-              At Michigan, I study Biopsychology, Cognition, and Neuroscience
-              alongside entrepreneurship and business. I move between research,
-              product, and company-building.
+              I study neuroscience at Michigan and build Praxigen, software for
+              the work between a doctor&apos;s decision and a patient&apos;s care.
+              Most days, I&apos;m somewhere between research, code, and conversations
+              with the people using what I build.
             </p>
             <div className="hero-actions">
               <a className="primary-action" href="#work" onClick={(event) => scrollToSection(event, "work")}>
-                Enter selected work <ArrowDown size={15} />
+                Selected work <ArrowDown size={15} />
               </a>
               <a href="/resume">
                 Resume <ArrowUpRight size={15} />
@@ -1966,6 +1892,7 @@ function PortfolioHome() {
 
           <motion.div className="hero-visual" variants={heroItem}>
             <PortraitFigure />
+            <div className="portrait-caption"><span>University of Michigan</span><a href="#personal" onClick={(event) => scrollToSection(event, "personal")}>Beyond the work <ArrowDown size={13} /></a></div>
           </motion.div>
         </motion.div>
 
@@ -1975,13 +1902,10 @@ function PortfolioHome() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduceMotion ? 0 : 0.62, delay: reduceMotion ? 0 : 0.56, ease: EASE }}
         >
-          <div className="hero-note" onPointerMove={illuminateGlass} onPointerLeave={settleGlass}>
-            <span>Current</span><strong>Building Praxigen</strong>
-          </div>
-          <div className="hero-note" onPointerMove={illuminateGlass} onPointerLeave={settleGlass}>
+          <div className="hero-note">
             <span>Study</span><strong>Neuroscience + business</strong>
           </div>
-          <div className="hero-note" onPointerMove={illuminateGlass} onPointerLeave={settleGlass}>
+          <div className="hero-note">
             <span>Interests</span><strong>Genetics + consciousness</strong>
           </div>
           <a
@@ -1989,10 +1913,8 @@ function PortfolioHome() {
             href={projectLinks.relageWriteup}
             target="_blank"
             rel="noreferrer"
-            onPointerMove={illuminateGlass}
-            onPointerLeave={settleGlass}
           >
-            <span>Recent</span><strong>Google DeepMind NYC Hackathon Winner</strong><ArrowUpRight size={14} />
+            <span>Recent</span><strong>Google DeepMind NYC Hackathon Winner</strong><ArrowUpRight size={16} />
           </a>
         </motion.div>
       </header>
