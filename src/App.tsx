@@ -26,6 +26,7 @@ import {
   useMotionValueEvent,
   useSpring,
   useTransform,
+  type MotionValue,
 } from "framer-motion";
 import Lenis from "lenis";
 import {
@@ -1062,43 +1063,32 @@ function SmoothScroll() {
 
   return null;
 }
+
+function usePinnedLayout() {
+  const [enabled, setEnabled] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 901px) and (min-height: 640px)");
+    const update = () => setEnabled(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  return enabled;
+}
+
 function PortraitFigure() {
   const reduceMotion = useReducedMotion();
-  const rotateX = useMotionValue(0);
-  const rotateY = useMotionValue(0);
-  const smoothX = useSpring(rotateX, { stiffness: 180, damping: 24 });
-  const smoothY = useSpring(rotateY, { stiffness: 180, damping: 24 });
-
-  const onPointerMove = (event: ReactMouseEvent<HTMLElement>) => {
-    if (reduceMotion) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-    const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-    rotateY.set(x * 3.5);
-    rotateX.set(y * -3.5);
-  };
-
-  const reset = () => {
-    rotateX.set(0);
-    rotateY.set(0);
-  };
-
   return (
-    <motion.figure
-      className="hero-portrait"
-      style={{ rotateX: smoothX, rotateY: smoothY, transformPerspective: 1000 }}
-      onPointerMove={onPointerMove}
-      onPointerLeave={reset}
-    >
+    <figure className="intro-portrait">
       <motion.div
-        className="hero-portrait-image"
-        initial={reduceMotion ? false : { clipPath: "inset(0 0 100% 0)" }}
-        animate={{ clipPath: "inset(0 0 0% 0)" }}
-        transition={{ duration: reduceMotion ? 0 : 1.05, delay: reduceMotion ? 0 : 0.18, ease: EASE }}
+        className="intro-portrait-mask"
+        initial={reduceMotion ? false : { clipPath: "inset(0 0 100% 0)", y: 12 }}
+        animate={{ clipPath: "inset(0 0 0% 0)", y: 0 }}
+        transition={{ duration: reduceMotion ? 0 : 0.85, delay: reduceMotion ? 0 : 0.16, ease: EASE }}
       >
         <img src="/profile/maya-gerdes-headshot.jpg" alt="Maya Gerdes" />
       </motion.div>
-    </motion.figure>
+    </figure>
   );
 }
 
@@ -1212,7 +1202,7 @@ function scrollToSection(
 
   const lenis = (window as LenisWindow).mayaLenis;
   if (lenis) lenis.scrollTo(target, { offset: -72, duration: 1.05 });
-  else target.scrollIntoView({ behavior: "smooth" });
+  else target.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
 }
 
 function illuminateGlass(event: ReactMouseEvent<HTMLElement>) {
@@ -1288,7 +1278,7 @@ function SiteNav({ page = "home" }: { page?: "home" | "personal" | "resume" }) {
   return (
     <>
       <nav
-        className={`site-nav glass-control${scrolled ? " is-scrolled" : ""}`}
+        className={`site-nav editorial-nav${scrolled ? " is-scrolled" : ""}`}
         data-tone={darkSurface ? "dark" : "light"}
         aria-label="Primary navigation"
         onPointerMove={illuminateGlass}
@@ -1469,40 +1459,6 @@ function PersonalMediaVisual({
 }
 
 function PersonalStory({ compact = false }: { compact?: boolean }) {
-  const storyRef = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
-  const [activeItem, setActiveItem] = useState(0);
-  const { scrollYProgress } = useScroll({
-    target: storyRef,
-    offset: ["start start", "end end"],
-  });
-  const progress = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 30,
-    restDelta: 0.001,
-  });
-
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    if (compact || reduceMotion) return;
-    setActiveItem(
-      Math.min(personalMedia.length - 1, Math.round(latest * (personalMedia.length - 1))),
-    );
-  });
-
-  const moveToItem = (index: number) => {
-    setActiveItem(index);
-    const story = storyRef.current;
-    if (!story || compact || reduceMotion) return;
-
-    const rect = story.getBoundingClientRect();
-    const storyTop = window.scrollY + rect.top;
-    const travel = Math.max(0, story.offsetHeight - window.innerHeight);
-    const target = storyTop + (travel * index) / (personalMedia.length - 1);
-    const lenis = (window as LenisWindow).mayaLenis;
-    if (lenis) lenis.scrollTo(target, { duration: 0.9 });
-    else window.scrollTo({ top: target, behavior: "smooth" });
-  };
-
   if (compact) {
     return (
       <section className="personal-archive" id="personal">
@@ -1526,95 +1482,117 @@ function PersonalStory({ compact = false }: { compact?: boolean }) {
     );
   }
 
-  const current = personalMedia[activeItem];
+  return <PersonalGallery />;
+}
+
+function PersonalGallery() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const windowRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const pinned = usePinnedLayout() && !reduceMotion;
+  const [travel, setTravel] = useState(0);
+  const [active, setActive] = useState(0);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
+  const x = useTransform(scrollYProgress, [0, 1], [0, -travel]);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    const viewport = windowRef.current;
+    if (!track || !viewport) return;
+    const measure = () => setTravel(Math.max(0, track.scrollWidth - viewport.clientWidth));
+    const observer = new ResizeObserver(measure);
+    observer.observe(track);
+    observer.observe(viewport);
+    measure();
+    return () => observer.disconnect();
+  }, []);
+
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
+    if (pinned) setActive(Math.min(personalMedia.length - 1, Math.round(value * (personalMedia.length - 1))));
+  });
+
+  const moveToItem = (index: number) => {
+    const section = sectionRef.current;
+    const viewport = windowRef.current;
+    const card = trackRef.current?.children[index] as HTMLElement | undefined;
+    if (!section || !viewport || !card) return;
+    setActive(index);
+    if (!pinned) {
+      viewport.scrollTo({ left: card.offsetLeft - 24, behavior: reduceMotion ? "instant" : "smooth" });
+      return;
+    }
+    const top = window.scrollY + section.getBoundingClientRect().top;
+    const target = top + (section.offsetHeight - window.innerHeight) * index / (personalMedia.length - 1);
+    const lenis = (window as LenisWindow).mayaLenis;
+    if (lenis) lenis.scrollTo(target, { duration: 0.85 });
+    else window.scrollTo({ top: target, behavior: "smooth" });
+  };
 
   return (
-    <section
-      className="personal-story"
-      id="personal"
-      ref={storyRef}
-      style={{ "--personal-story-height": `${personalMedia.length * 82}vh` } as CSSProperties}
-    >
-      <div className="personal-story-stage">
-        <div className="personal-story-layout">
-          <div className="personal-story-copy">
-            <SectionHeading number="04" title="Hobbies + Interests" />
-
-            <div className="personal-story-nav" aria-label="Personal archive chapters">
-              {personalMedia.map((item, index) => (
-                <button
-                  type="button"
-                  className={index === activeItem ? "active" : ""}
-                  aria-current={index === activeItem ? "step" : undefined}
-                  onClick={() => moveToItem(index)}
-                  key={item.title}
-                >
-                  <span>{item.number}</span>
-                  <strong>{item.shortTitle}</strong>
-                  <i aria-hidden="true" />
-                </button>
-              ))}
-            </div>
-
-            <a className="personal-story-link" href="/me">
-              Open the full archive <ArrowUpRight size={15} />
-            </a>
-          </div>
-
-          <div className="personal-story-display">
-            <AnimatePresence mode="wait">
-              <motion.article
-                className="personal-story-item"
-                key={current.title}
-                initial={reduceMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={reduceMotion ? undefined : { opacity: 0, y: -18, scale: 0.99 }}
-                transition={{ duration: reduceMotion ? 0 : 0.42, ease: EASE }}
-              >
-                <div className="personal-story-media">
-                  <PersonalMediaVisual item={current} priority />
-                </div>
-                <div className="personal-story-caption">
-                  <span>{current.detail}</span>
-                  <div>
-                    <h3>{current.title}</h3>
-                    <p>{current.body}</p>
-                  </div>
-                </div>
-              </motion.article>
-            </AnimatePresence>
-          </div>
-
-          <div className="personal-mobile-track">
+    <section className={`personal-gallery${pinned ? " is-pinned" : ""}`} id="personal" ref={sectionRef}>
+      <div className="gallery-stage">
+        <div className="gallery-heading">
+          <SectionHeading number="04" title="Hobbies + Interests" />
+          <a className="editorial-link" href="/me">Open the full archive <ArrowUpRight size={16} /></a>
+        </div>
+        <div className="gallery-window" ref={windowRef} onScroll={() => {
+          if (pinned || !windowRef.current) return;
+          const viewport = windowRef.current;
+          const fraction = viewport.scrollLeft / Math.max(1, viewport.scrollWidth - viewport.clientWidth);
+          setActive(Math.min(personalMedia.length - 1, Math.round(fraction * (personalMedia.length - 1))));
+        }}>
+          <motion.div className="gallery-track" ref={trackRef} style={{ x: pinned ? x : 0 }}>
             {personalMedia.map((item, index) => (
-              <article className="personal-mobile-card" key={item.title}>
-                <div className="personal-mobile-media">
-                  <PersonalMediaVisual item={item} priority={index === 0} />
+              <article className={`gallery-item gallery-item-${index}`} key={item.title}>
+                <div className="gallery-item-label"><span>{item.number}</span><span>{item.shortTitle}</span></div>
+                <div className={`gallery-media${item.flipAlignment ? " personal-story-media" : ""}`} onFocusCapture={() => {
+                  if (pinned && index !== active) moveToItem(index);
+                }}>
+                  <PersonalMediaVisual item={item} priority={index < 2} />
                 </div>
-                <div className="personal-mobile-caption">
+                <div className="gallery-caption">
                   <span>{item.detail}</span>
                   <h3>{item.title}</h3>
                   <p>{item.body}</p>
                 </div>
               </article>
             ))}
-          </div>
-
-          <div className="personal-story-progress" aria-hidden="true">
-            <motion.span style={{ scaleX: progress }} />
-          </div>
+          </motion.div>
+        </div>
+        <div className="gallery-navigation" aria-label="Personal archive chapters">
+          {personalMedia.map((item, index) => (
+            <button type="button" key={item.shortTitle} aria-current={active === index ? "step" : undefined} onClick={() => moveToItem(index)}>
+              <span>{item.number}</span>{item.shortTitle}
+              <span className="gallery-nav-line" aria-hidden="true" />
+            </button>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
+function ProjectPreview({ project, index, progress, animated }: {
+  project: RailProject; index: number; progress: MotionValue<number>; animated: boolean;
+}) {
+  const scale = useTransform(progress, value => 1 - Math.min(1, Math.abs(value * (railProjects.length - 1) - index)) * 0.045);
+  return (
+    <motion.a className={`work-preview tone-${project.tone}`} href={project.href} target="_blank" rel="noreferrer"
+      aria-label={`Open ${project.name}`} style={{ scale: animated ? scale : 1 }}>
+      <img src={project.image} alt={project.imageAlt} loading={index === 0 ? "eager" : "lazy"} />
+      <span className="work-preview-link" aria-hidden="true"><ArrowUpRight size={22} /></span>
+    </motion.a>
+  );
+}
+
 function ProjectRail() {
   const railRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
+  const pinned = usePinnedLayout() && !reduceMotion;
   const [activeProject, setActiveProject] = useState(0);
-  const railTravelVw = (railProjects.length - 1) * 85;
-  const railHeightVh = 100 + (railProjects.length - 1) * 105;
+  const railTravelVw = (railProjects.length - 1) * 90;
+  const railHeightVh = 100 + (railProjects.length - 1) * 78;
   const { scrollYProgress } = useScroll({
     target: railRef,
     offset: ["start start", "end end"],
@@ -1644,92 +1622,71 @@ function ProjectRail() {
 
   return (
     <section
-      className="project-rail-section"
+      className={`project-showcase${pinned ? " is-pinned" : ""}`}
       id="work"
       ref={railRef}
       style={{ "--rail-height": `${railHeightVh}vh` } as CSSProperties}
     >
-      <div className="project-rail-sticky">
-        <div className="project-rail-header">
+      <div className="work-stage">
+        <div className="work-heading">
           <SectionHeading number="01" title="Selected work" />
-          <div className="rail-navigation glass-control" aria-label="Project navigation">
+          <div className="work-navigation" aria-label="Project navigation">
             <button type="button" aria-label="Previous project" title="Previous project" disabled={activeProject === 0} onClick={() => moveToProject(activeProject - 1)}><ChevronLeft size={18} /></button>
             <button type="button" aria-label="Next project" title="Next project" disabled={activeProject === railProjects.length - 1} onClick={() => moveToProject(activeProject + 1)}><ChevronRight size={18} /></button>
           </div>
         </div>
 
         <motion.div
-          className="project-rail-track"
-          style={{ x: reduceMotion ? 0 : x }}
+          className="work-track"
+          style={{ x: pinned ? x : 0 }}
         >
           {railProjects.map((project, index) => (
             <article
-              className={`rail-panel tone-${project.tone}`}
+              className="work-project"
               key={project.name}
-              onPointerMove={illuminateGlass}
-              onPointerLeave={settleGlass}
               onFocusCapture={() => {
-                if (!reduceMotion && window.matchMedia("(min-width: 901px)").matches && index !== activeProject) moveToProject(index);
+                if (pinned && index !== activeProject) moveToProject(index);
               }}
             >
-              <div className="rail-panel-copy">
-                <div className="rail-panel-index">
-                  <span>{project.number}</span>
-                  <span>{project.label}</span>
+              <ProjectPreview project={project} index={index} progress={scrollYProgress} animated={pinned} />
+              <div className="work-caption">
+                <div className="work-title">
+                  <div className="work-index"><span>{project.number}</span><span>{project.label}</span></div>
+                  <h3>{project.name}</h3>
+                  <div className="work-tags" aria-label={`${project.name} highlights`}>
+                    {project.tags.map((tag) => <span key={tag}>{tag}</span>)}
+                  </div>
                 </div>
-                <h3>{project.name}</h3>
-                <p>{project.body}</p>
-                <dl>
-                  <div><dt>Role</dt><dd>{project.role}</dd></div>
-                  <div><dt>Year</dt><dd>{project.year}</dd></div>
-                </dl>
-                <div className="rail-panel-links">
-                  <a href={project.href} target="_blank" rel="noreferrer">
-                    {project.linkLabel ?? "Open project"} <ArrowUpRight size={15} />
-                  </a>
-                  {project.repo ? (
-                    <a href={project.repo} target="_blank" rel="noreferrer">
-                      <Github size={14} /> Source
-                    </a>
-                  ) : null}
+                <div className="work-description">
+                  <p>{project.body}</p>
                   {project.award ? (
-                    <a href={project.award.href} target="_blank" rel="noreferrer">
+                    <a className="work-award" href={project.award.href} target="_blank" rel="noreferrer">
                       <Trophy size={14} /> {project.award.label}
                     </a>
                   ) : null}
                 </div>
-              </div>
-
-              <a
-                className="rail-panel-media"
-                href={project.href}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`Open ${project.name}`}
-              >
-                <span className="interface-window-bar" aria-hidden="true">
-                  <span className="window-dots"><i /><i /><i /></span>
-                  <span>{new URL(project.href).hostname.replace(/^www\./, "")}</span>
-                  <ArrowUpRight size={12} />
-                </span>
-                <img
-                  src={project.image}
-                  alt={project.imageAlt}
-                  loading={index === 0 ? "eager" : "lazy"}
-                />
-                <span className="media-open-indicator" aria-hidden="true">
-                  View <ArrowUpRight size={14} />
-                </span>
-              </a>
-
-              <div className="rail-panel-tags" aria-label={`${project.name} highlights`}>
-                {project.tags.map((tag) => <span key={tag}>{tag}</span>)}
+                <div className="work-details">
+                  <dl>
+                    <div><dt>Role</dt><dd>{project.role}</dd></div>
+                    <div><dt>Year</dt><dd>{project.year}</dd></div>
+                  </dl>
+                  <div className="work-links">
+                    <a href={project.href} target="_blank" rel="noreferrer">
+                      {project.linkLabel ?? "Open project"} <ArrowUpRight size={15} />
+                    </a>
+                    {project.repo ? (
+                      <a href={project.repo} target="_blank" rel="noreferrer">
+                        <Github size={14} /> Source
+                      </a>
+                    ) : null}
+                  </div>
+                </div>
               </div>
             </article>
           ))}
         </motion.div>
 
-        <div className="project-rail-progress" aria-hidden="true">
+        <div className="work-progress" aria-hidden="true">
           <div className="rail-progress-label">
             <span className="rail-progress-current">{String(activeProject + 1).padStart(2, "0")}</span>
             <span className="rail-progress-slash">/</span>
@@ -1839,62 +1796,70 @@ function PortfolioHome() {
   };
 
   return (
-    <main>
+    <main className="editorial-portfolio">
       <a className="skip-link" href="#work">Skip to selected work</a>
       <SiteNav />
 
-      <header className="portfolio-hero" id="top">
+      <header className="portfolio-intro" id="top">
         <motion.div
-          className="hero-layout"
+          className="intro-layout"
           variants={heroVariants}
           initial={reduceMotion ? false : "hidden"}
           animate="show"
         >
-          <motion.div className="hero-copy" variants={heroItem}>
-            <div className="hero-presence">
+          <motion.div className="intro-masthead" variants={heroItem}>
+            <div className="intro-presence">
               <span>University of Michigan</span>
               <span>Ann Arbor / New York</span>
             </div>
-            <h1>
+            <h1 aria-label="Maya Gerdes">
               <span className="hero-name-line"><span>Maya</span></span>
               <span className="hero-name-line"><span>Gerdes</span></span>
             </h1>
-            <p className="hero-lead">
-              I love learning problems deeply and building solutions. Neuroscience,
-              cognition, tech, and entrepreneurship.
-            </p>
-            <p className="hero-bio">
-              At Michigan, I study Biopsychology, Cognition, and Neuroscience
-              alongside entrepreneurship and business. I move between research,
-              product, and company-building.
-            </p>
-            <div className="hero-actions">
-              <a className="primary-action" href="#work" onClick={(event) => scrollToSection(event, "work")}>
-                Selected work <ArrowDown size={15} />
-              </a>
-              <a href="/resume">
-                Resume <ArrowUpRight size={15} />
-              </a>
-              <a href="#personal" onClick={(event) => scrollToSection(event, "personal")}>
-                Personal archive <ArrowDown size={15} />
-              </a>
-            </div>
-            <div className="hero-socials" aria-label="Maya Gerdes profiles">
-              <IconLink href={links.linkedin} label="LinkedIn" icon={Linkedin} size={19} />
-              <IconLink href={links.github} label="GitHub" icon={Github} size={19} />
-              <IconLink href={links.x} label="X / Twitter" icon={X} size={19} />
-              <IconLink href={links.email} label="Email Maya" icon={Mail} size={19} />
-            </div>
           </motion.div>
 
-          <motion.div className="hero-visual" variants={heroItem}>
-            <PortraitFigure />
-            <div className="portrait-caption"><a href="#personal" onClick={(event) => scrollToSection(event, "personal")}>Beyond the work <ArrowDown size={13} /></a></div>
-          </motion.div>
+          <div className="intro-body">
+            <motion.div className="intro-photo" variants={heroItem}>
+              <PortraitFigure />
+              <a className="intro-photo-link" href="#personal" onClick={(event) => scrollToSection(event, "personal")}>
+                Beyond the work <ArrowDown size={13} />
+              </a>
+            </motion.div>
+            <motion.div className="intro-statement" variants={heroItem}>
+              <p className="intro-lead">
+                I love learning problems deeply and building solutions. Neuroscience,
+                cognition, tech, and entrepreneurship.
+              </p>
+              <div className="intro-actions">
+                <a href="#work" onClick={(event) => scrollToSection(event, "work")}>
+                  Selected work <ArrowDown size={15} />
+                </a>
+                <a href="/resume">
+                  Resume <ArrowUpRight size={15} />
+                </a>
+              </div>
+            </motion.div>
+            <motion.div className="intro-context" variants={heroItem}>
+              <p className="intro-bio">
+                At Michigan, I study Biopsychology, Cognition, and Neuroscience
+                alongside entrepreneurship and business. I move between research,
+                product, and company-building.
+              </p>
+              <a className="intro-personal-link" href="#personal" onClick={(event) => scrollToSection(event, "personal")}>
+                Personal archive <ArrowDown size={15} />
+              </a>
+              <div className="hero-socials" aria-label="Maya Gerdes profiles">
+                <IconLink href={links.linkedin} label="LinkedIn" icon={Linkedin} size={19} />
+                <IconLink href={links.github} label="GitHub" icon={Github} size={19} />
+                <IconLink href={links.x} label="X / Twitter" icon={X} size={19} />
+                <IconLink href={links.email} label="Email Maya" icon={Mail} size={19} />
+              </div>
+            </motion.div>
+          </div>
         </motion.div>
 
         <motion.div
-          className="hero-notes"
+          className="intro-notes"
           initial={reduceMotion ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduceMotion ? 0 : 0.62, delay: reduceMotion ? 0 : 0.56, ease: EASE }}
