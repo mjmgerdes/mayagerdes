@@ -930,6 +930,10 @@ p {
 }
 
 .rail-panel {
+  --glass-x: 50%;
+  --glass-y: 50%;
+  --glass-rx: 0deg;
+  --glass-ry: 0deg;
   position: relative;
   display: grid;
   width: 82vw;
@@ -941,35 +945,104 @@ p {
   grid-template-rows: 1fr auto;
   gap: 22px 46px;
   align-items: center;
+  isolation: isolate;
   overflow: hidden;
   padding: 34px;
-  border: 0;
+  border: 1px solid rgba(255, 255, 255, 0.52);
   border-radius: 8px;
-  box-shadow: 0 40px 100px -58px rgba(0, 0, 0, 0.92);
+  box-shadow:
+    0 46px 108px -58px rgba(0, 0, 0, 0.92),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    inset 0 -1px 0 rgba(90, 137, 196, 0.14);
+  -webkit-backdrop-filter: blur(28px) saturate(145%) brightness(1.02);
+  backdrop-filter: blur(28px) saturate(145%) brightness(1.02);
+  transform: perspective(1200px) translateY(0) rotateX(var(--glass-rx)) rotateY(var(--glass-ry));
+  transform-style: preserve-3d;
+  transition:
+    border-color 420ms var(--ease-soft),
+    box-shadow 420ms var(--ease-soft),
+    transform 240ms var(--ease);
+  will-change: transform;
 }
 
 .rail-panel::before {
-  display: none;
+  position: absolute;
+  z-index: 0;
+  inset: -1px;
+  pointer-events: none;
+  content: "";
+  background: radial-gradient(
+    680px circle at var(--glass-x) var(--glass-y),
+    rgba(255, 255, 255, 0.66) 0%,
+    rgba(177, 218, 255, 0.2) 28%,
+    rgba(77, 157, 226, 0.08) 48%,
+    transparent 72%
+  );
+  opacity: 0.18;
+  transition: opacity 420ms var(--ease-soft);
+}
+
+.rail-panel::after {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 25%),
+    radial-gradient(115% 82% at 50% 116%, rgba(66, 157, 224, 0.1), transparent 64%);
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.18),
+    inset -1px 0 0 rgba(92, 148, 208, 0.08);
+}
+
+.rail-panel:hover {
+  border-color: rgba(255, 255, 255, 0.68);
+  box-shadow:
+    0 52px 116px -58px rgba(0, 0, 0, 0.96),
+    0 18px 50px -42px rgba(75, 167, 222, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    inset 0 -1px 0 rgba(90, 151, 219, 0.18);
+  transform: perspective(1200px) translateY(-3px) rotateX(var(--glass-rx)) rotateY(var(--glass-ry));
+}
+
+.rail-panel:hover::before {
+  opacity: 0.68;
 }
 
 .tone-ice {
   color: #0c1220;
-  background: linear-gradient(135deg, #edf4ff 0%, #e7effc 100%);
+  background:
+    linear-gradient(135deg, rgba(239, 246, 255, 0.74), rgba(211, 229, 250, 0.54)),
+    rgba(218, 233, 250, 0.34);
 }
 
 .tone-carbon {
   color: #f6f7ee;
-  background: linear-gradient(135deg, #141620 0%, #0e1016 100%);
+  background:
+    linear-gradient(135deg, rgba(35, 39, 53, 0.72), rgba(10, 13, 21, 0.58)),
+    rgba(10, 13, 21, 0.42);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .tone-sky {
   color: #0b1720;
-  background: linear-gradient(135deg, #edfafd 0%, #e7f4f8 100%);
+  background:
+    linear-gradient(135deg, rgba(239, 252, 255, 0.74), rgba(204, 237, 246, 0.52)),
+    rgba(214, 240, 247, 0.34);
 }
 
 .tone-violet {
   color: #fbf8ff;
-  background: linear-gradient(135deg, #1d1927 0%, #14111c 100%);
+  background:
+    linear-gradient(135deg, rgba(48, 43, 65, 0.72), rgba(17, 15, 26, 0.58)),
+    rgba(20, 18, 30, 0.42);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.tone-carbon:hover,
+.tone-violet:hover {
+  border-color: rgba(255, 255, 255, 0.32);
 }
 
 .rail-panel-copy {
@@ -1067,6 +1140,7 @@ p {
 
 .rail-panel-media {
   position: relative;
+  z-index: 1;
   display: flex;
   min-width: 0;
   align-self: center;
@@ -1185,45 +1259,67 @@ p {
   position: absolute;
   z-index: 7;
   right: 34px;
-  bottom: 18px;
+  bottom: 24px;
   left: 34px;
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) 120px;
-  gap: 16px;
+  min-height: 24px;
+  grid-template-columns: 72px minmax(0, 1fr) 120px;
+  gap: 20px;
   align-items: center;
+  padding: 6px 0 8px;
   color: rgba(255, 255, 255, 0.62);
   font-family: "IBM Plex Sans", sans-serif;
-  font-size: 9px;
+  font-size: 10px;
   text-transform: uppercase;
 }
 
 .rail-progress-label {
   display: flex;
-  gap: 5px;
+  align-items: baseline;
+  gap: 7px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
 }
 
-.rail-progress-label span:first-child {
-  color: var(--acid);
+.rail-progress-current {
+  color: #75b6dc;
+  font-weight: 600;
+}
+
+.rail-progress-slash {
+  color: rgba(255, 255, 255, 0.24);
+}
+
+.rail-progress-total {
+  color: rgba(255, 255, 255, 0.46);
 }
 
 .rail-progress-track {
   display: block;
-  height: 1px;
+  height: 3px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.17);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .rail-progress-fill {
   display: block;
   width: 100%;
   height: 100%;
-  background: var(--acid);
+  background: linear-gradient(90deg, rgba(91, 158, 199, 0.82), rgba(117, 183, 220, 0.96));
+  border-radius: inherit;
+  box-shadow:
+    0 0 8px rgba(87, 171, 219, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
   transform-origin: left;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .rail-progress-name {
   justify-self: end;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 10px;
 }
 
 /* Section system */
@@ -3209,13 +3305,15 @@ p {
 
 @media (hover: none) {
   .hero-notes > div,
-  .hero-notes > a {
+  .hero-notes > a,
+  .rail-panel {
     transform: none !important;
     will-change: auto;
   }
 
   .hero-notes > div::before,
-  .hero-notes > a::before {
+  .hero-notes > a::before,
+  .rail-panel::before {
     opacity: 0.18;
   }
 }
@@ -3231,12 +3329,39 @@ p {
   .hero-notes > a {
     background: rgba(225, 240, 255, 0.97);
   }
+
+  .rail-panel {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .tone-ice {
+    background: #e9f1fc;
+  }
+
+  .tone-carbon {
+    background: #12151d;
+  }
+
+  .tone-sky {
+    background: #e7f5f8;
+  }
+
+  .tone-violet {
+    background: #17141f;
+  }
 }
 
 @media (prefers-contrast: more) {
   .hero-notes > div,
-  .hero-notes > a {
+  .hero-notes > a,
+  .rail-panel {
     border-color: rgba(11, 13, 18, 0.45);
+  }
+
+  .tone-carbon,
+  .tone-violet {
+    border-color: rgba(255, 255, 255, 0.46);
   }
 }
 
@@ -3251,7 +3376,8 @@ p {
   }
 
   .hero-notes > div,
-  .hero-notes > a {
+  .hero-notes > a,
+  .rail-panel {
     transform: none !important;
     will-change: auto;
   }

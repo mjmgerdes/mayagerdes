@@ -1756,7 +1756,12 @@ function ProjectRail() {
           style={{ x: reduceMotion ? 0 : x }}
         >
           {railProjects.map((project, index) => (
-            <article className={`rail-panel tone-${project.tone}`} key={project.name}>
+            <article
+              className={`rail-panel tone-${project.tone}`}
+              key={project.name}
+              onPointerMove={illuminateGlass}
+              onPointerLeave={settleGlass}
+            >
               <div className="rail-panel-copy">
                 <div className="rail-panel-index">
                   <span>{project.number}</span>
@@ -1814,8 +1819,9 @@ function ProjectRail() {
 
         <div className="project-rail-progress" aria-hidden="true">
           <div className="rail-progress-label">
-            <span>{String(activeProject + 1).padStart(2, "0")}</span>
-            <span>/ {String(railProjects.length).padStart(2, "0")}</span>
+            <span className="rail-progress-current">{String(activeProject + 1).padStart(2, "0")}</span>
+            <span className="rail-progress-slash">/</span>
+            <span className="rail-progress-total">{String(railProjects.length).padStart(2, "0")}</span>
           </div>
           <span className="rail-progress-track">
             <motion.span className="rail-progress-fill" style={{ scaleX: progress }} />
